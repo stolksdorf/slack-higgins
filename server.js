@@ -56,14 +56,6 @@ sendDiagmsg("Server restart!");
 
 app.get('/roll', function(req, res){
 
-	var text = req.query.text;
-
-
-	if(_.includes(text, 'check') || _.includes(text, 'throw')){
-		rollCheck(text);
-	}else{
-		rollDice(text);
-	}
 
 
 
@@ -86,7 +78,7 @@ app.get('/roll', function(req, res){
 		roll = (roll == 20 ? 'CRIT!' : roll);
 		roll = (roll == 1 ? 'FAIL!' : roll);
 
-		return res.status(200).send({
+		return {
 			'response_type': 'in_channel',
 			'text': roll,
 			'attachments': [
@@ -94,7 +86,7 @@ app.get('/roll', function(req, res){
 					'text': (hasMod ? JSON.stringify(rolls) : '')
 				}
 			]
-		});
+		};
 
 	}
 
@@ -111,7 +103,7 @@ app.get('/roll', function(req, res){
 			return _.random(1, dice_type);
 		});
 
-		return res.status(200).send({
+		return {
 			'response_type': 'in_channel',
 			'text': num_dice+'d'+dice_type+': ' + _.sum(rolledDice),
 			'attachments': [
@@ -119,8 +111,20 @@ app.get('/roll', function(req, res){
 					'text': JSON.stringify(rolledDice)
 				}
 			]
-		});
+		};
 	}
+
+
+	var text = req.query.text;
+
+
+	if(_.includes(text, 'check') || _.includes(text, 'throw')){
+		res.status(200).send(rollCheck(text));
+	}else{
+		res.status(200).send(rollDice(text));
+	}
+
+
 
 })
 
