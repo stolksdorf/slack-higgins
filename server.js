@@ -17,7 +17,7 @@ var _ = require('lodash');
 
 
 
-var sendDiagmsg = function(text){
+var sendDiagmsg = function(text, cb){
 	request
 		.post(diagnosticsURL)
 		.send({
@@ -42,6 +42,8 @@ var sendDiagmsg = function(text){
 				console.log('Sent without error', text);
 			}
 			console.log('ERR', err);
+
+			cb && cb()
 		});
 }
 
@@ -96,9 +98,10 @@ var rollCmd = {
 
 
 
-process.on('exit', function() {
-	console.log('About to close');
-	sendDiagmsg("Server shutting down... goodnight. :moon:");
+process.on('SIGTERM', function (){
+	sendDiagmsg("Server shutting down for real... goodnight. :moon:", function(){
+		process.exit(0)
+	});
 });
 
 
