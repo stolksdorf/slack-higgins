@@ -36,6 +36,12 @@ var sendDiagmsg = function(text){
 				}
 			]
 			*/
+		})
+		.end(function(err){
+			if(!err){
+				console.log('Sent without error', text);
+			}
+			console.log('ERR', err);
 		});
 }
 
