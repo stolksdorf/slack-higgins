@@ -58,32 +58,70 @@ app.get('/roll', function(req, res){
 
 	var text = req.query.text;
 
-	//roll logic
-	var num_dice = Number(text.split('d')[0] || 1);
-	var dice_type = Number(text.split('d')[1]);
+
+	if(_.includes(text, 'check') || _.includes(text, 'throw')){
+		rollCheck(text);
+	}else{
+		rollDice(text);
+	}
 
 
 
-	var rolledDice = _.times(num_dice, function(){
-		return _.random(1, dice_type);
-	});
+	var rollCheck = function(text){
+		var roll = 10;
+		var rolls = [_.random(1,20), _.random(1,20)];
+		var hasMod = false;
+
+		if(_.includes(text, 'adv') || _.includes(text, 'inspiration')){
+			roll = _.max(rolls);
+			hasMod = true;
+		}else if(_.includes(text, 'dis')){
+			roll = _.min(rolls);
+			hasMod = true;
+		}else{
+			roll = rolls[0];
+		}
+
+
+		roll = (roll == 20 ? 'CRIT!' : roll);
+		roll = (roll == 1 ? 'FAIL!' : roll);
+
+		return res.status(200).send({
+			'response_type': 'in_channel',
+			'text': roll,
+			'attachments': [
+				{
+					'text': (hasMod ? JSON.stringify(rolls) : '')
+				}
+			]
+		});
+
+	}
+
+
+	var rollDice = function(text){
+
+		//roll logic
+		var num_dice = Number(text.split('d')[0] || 1);
+		var dice_type = Number(text.split('d')[1]);
 
 
 
-	sendDiagmsg("Roll Command Fired");
+		var rolledDice = _.times(num_dice, function(){
+			return _.random(1, dice_type);
+		});
 
+		return res.status(200).send({
+			'response_type': 'in_channel',
+			'text': num_dice+'d'+dice_type+': ' + _.sum(rolledDice),
+			'attachments': [
+				{
+					'text': JSON.stringify(rolledDice)
+				}
+			]
+		});
+	}
 
-
-
-	return res.status(200).send({
-		'response_type': 'in_channel',
-		'text': num_dice+'d'+dice_type+': ' + _.sum(rolledDice),
-		'attachments': [
-			{
-				'text': JSON.stringify(rolledDice)
-			}
-		]
-	});
 })
 
 
