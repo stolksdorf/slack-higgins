@@ -1,0 +1,22 @@
+{
+  "name": "butlerbot",
+  "version": "1.0.0",
+  "description": "a slackbot for my personal slack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stolksdorf/butlerbot.git"
+  },
+  "keywords": [
+    "slack"
+  ],
+  "author": "stolksdorf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stolksdorf/butlerbot/issues"
+  },
+  "homepage": "https://github.com/stolksdorf/butlerbot#readme"
+}
