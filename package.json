@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/stolksdorf/butlerbot#readme",
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "lodash": "^4.0.1"
   }
 }
