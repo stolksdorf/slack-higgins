@@ -100,6 +100,7 @@ var rollCmd = {
 
 
 process.on('SIGTERM', function (){
+	console.log('reacting to SIGTERM');
 	sendDiagmsg("Server shutting down for real... goodnight. :moon:", function(){
 		process.exit(0)
 	});
