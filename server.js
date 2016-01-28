@@ -27,7 +27,7 @@ var sendDiagmsg = function(text){
 			"color": "#36a64f", // Can either be one of 'good', 'warning', 'danger', or any hex color code
 
 			// Fields are displayed in a table on the message
-			/*
+
 			"fields": [
 				{
 					"title": "Command Fired", // The title may not contain markup and will be escaped for you
@@ -35,7 +35,7 @@ var sendDiagmsg = function(text){
 					"short": false // Optional flag indicating whether the `value` is short enough to be displayed side-by-side with other values
 				}
 			]
-			*/
+
 		})
 		.end(function(err){
 			if(!err){
