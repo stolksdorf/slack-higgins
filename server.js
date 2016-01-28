@@ -92,7 +92,8 @@ var rollCmd = {
 	cmd : function(text, data){
 
 
-		//return a string for basic text, or object complex messaging
+		//return a string for basic text, or object complex
+		//messaging
 	}
 }
 
