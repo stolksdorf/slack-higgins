@@ -27,8 +27,6 @@ app.get('/roll', function(req, res){
 	});
 })
 
-})
-
 
 
 
@@ -41,3 +39,4 @@ app.get('/roll', function(req, res){
 var port = process.env.PORT || 8000;
 
 app.listen(port);
+console.log('running.');
