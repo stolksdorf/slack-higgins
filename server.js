@@ -96,6 +96,10 @@ var rollCmd = {
 
 
 
+process.on('exit', function() {
+	console.log('About to close');
+	sendDiagmsg("Server shutting down... goodnight. :moon:");
+});
 
 
 
