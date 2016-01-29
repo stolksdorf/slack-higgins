@@ -8,7 +8,7 @@ var diag = require('diag');
 
 
 
-diag.msg("Server restart!", { a : 7});
+diag.msg("Server restart!");
 
 
 
