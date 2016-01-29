@@ -37,7 +37,7 @@ module.exports = {
 		}).join(', ');
 
 		*/
-		console.log('sending', res, diagnosticsURL);
+		console.log('sending', text, diagnosticsURL);
 
 		request.post(diagnosticsURL)
 			.send({
