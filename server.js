@@ -11,10 +11,77 @@ var diag = require('diag');
 var SESSION = _.random(0,100)
 
 
-var git = require('git-rev');
-git.short(function(str){
-	diag.msg("Server restart! " + str);
+
+var cmds = require('fs').readdirSync('./commands');
+console.log(cmds);
+
+
+Error.stackTraceLimit = 30;
+
+_.each(cmds, function(cmdPath){
+
+	try{
+		var cmd = require('./commands/' + cmdPath);
+		var cmdUrl = '/' + cmdPath.replace('.js', '');
+
+		app.post(cmdUrl, function(req, res){
+			res.status(200).send({
+				text : "Opps, looks like you set your command to have a *method* of `POST`, it should be set to `GET`"
+			})
+		});
+
+
+		app.get(cmdUrl, function(req, res){
+			var text = req.query.text;
+
+			try{
+				cmd(text, req.query, function(response){
+					var msgObj = {};
+					if(_.isString(response)){
+						msgObj = {
+							text : response
+						};
+					}else if(!_.isPlainObject(response)){
+						msgObj = {
+							text : JSON.stringify(response)
+						};
+					}else{
+						msgObj = response;
+					}
+
+					res.status(200).send(_.extend({
+						'response_type': 'in_channel',
+					}, msgObj));
+				})
+			}catch(e){
+				diag.msg(e.message + ' in ' + cmdPath);
+			}
+		})
+	}catch(e){
+		console.log('error loading', cmdPath);
+		console.log(e.message);
+		console.log(e.stack);
+
+		diag.msg(e.message + ' in ' + cmdPath);
+	}
+
 })
+
+
+/*
+
+app.post('/test', function(req, res){
+
+
+	console.log(req.params);
+
+
+	return res.status(200).send({
+		'response_type': 'in_channel',
+		'text': "HEY TEST WORKED"
+	});
+})
+
 
 
 
@@ -104,24 +171,7 @@ var rollCmd = {
 	}
 }
 
-
-
-var exitHandler = function(type){
-	console.log('reacting to ' + type + SESSION);
-	diag.msg("Shutting down to " + type + SESSION, function(){
-
-		console.log('EXITING');
-		process.exit();
-	});
-}
-
-
-//process.on('exit', exitHandler.bind(null, 'exit'));
-process.on('SIGTERM', exitHandler.bind(null, 'SIGTERM'));
-//process.on('SIGINT', exitHandler.bind(null, 'SIGINT'));
-//process.on('uncaughtException', exitHandler.bind(null, 'uncaughtException'));
-
-
+*/
 
 var port = process.env.PORT || 8000;
 
