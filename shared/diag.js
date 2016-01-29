@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var request = require('superagent');
 
-var diagnosticsURL = process.env.DIAGNOSTICS_WEBHOOK;
+var diagnosticsURL = process.env.DIAGNOSTICS_WEBHOOK || '';
 
 
 
@@ -29,10 +29,17 @@ module.exports = {
 
 
 	msg : function(){
-		var args = Array.prototype.slice.call(arguments, 1);
+		var args = Array.prototype.slice.call(arguments, 0);
+
+		console.log('ARGS', args);
+
 		var res = _.map(args, function(arg){
 			return JSON.stringify(arg);
 		}).join(', ');
+
+
+		console.log(res);
+
 		request.post(diagnosticsURL)
 			.send({
 				"text" : res

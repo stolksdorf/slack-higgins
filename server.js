@@ -8,7 +8,7 @@ var diag = require('diag');
 
 
 
-diag.msg("Server restart!");
+diag.msg("Server restart!", { a : 7});
 
 
 
@@ -106,10 +106,10 @@ var exitHandler = function(type){
 }
 
 
-process.on('exit', exitHandler.bind('exit'));
-process.on('SIGTERM', exitHandler.bind('SIGTERM'));
-process.on('SIGINT', exitHandler.bind('SIGINT'));
-process.on('uncaughtException', exitHandler.bind('uncaughtException'));
+process.on('exit', exitHandler.bind(null, 'exit'));
+process.on('SIGTERM', exitHandler.bind(null, 'SIGTERM'));
+process.on('SIGINT', exitHandler.bind(null, 'SIGINT'));
+process.on('uncaughtException', exitHandler.bind(null, 'uncaughtException'));
 
 
 
