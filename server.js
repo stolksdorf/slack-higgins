@@ -11,8 +11,8 @@ var diag = require('diag');
 var SESSION = _.random(0,100)
 
 
-var gitrev = require('git-rev');
-gitrev(function(str){
+var git = require('git-rev');
+git.short(function(str){
 	diag.msg("Server restart! " + str);
 })
 
