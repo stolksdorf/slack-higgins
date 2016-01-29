@@ -41,7 +41,15 @@ module.exports = {
 		request.post(diagnosticsURL)
 			.send({
 				"text" : res
-			});
+			})
+			.end(function(err){
+				if(err){
+					console.log('Error sending diag', err);
+					return
+				}
+				console.log('SENT!');
+
+			})
 	},
 
 }
