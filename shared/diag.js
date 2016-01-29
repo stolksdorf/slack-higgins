@@ -31,14 +31,12 @@ module.exports = {
 	msg : function(){
 		var args = Array.prototype.slice.call(arguments, 0);
 
-		console.log('ARGS', args);
-
 		var res = _.map(args, function(arg){
 			return JSON.stringify(arg);
 		}).join(', ');
 
 
-		console.log(res);
+		console.log('sending', res, diagnosticsURL);
 
 		request.post(diagnosticsURL)
 			.send({
