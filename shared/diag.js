@@ -56,7 +56,7 @@ module.exports = {
 
 /*{
 
-			"text": text,
+			"text": text,cvbcvb
 
 			"color": "#36a64f", // Can either be one of 'good', 'warning', 'danger', or any hex color code
 
