@@ -106,15 +106,17 @@ var rollCmd = {
 var exitHandler = function(type){
 	console.log('reacting to ' + type + SESSION);
 	diag.msg("Shutting down to " + type + SESSION, function(){
+
+		console.log('EXITING');
 		process.exit();
 	});
 }
 
 
-process.on('exit', exitHandler.bind(null, 'exit'));
+//process.on('exit', exitHandler.bind(null, 'exit'));
 process.on('SIGTERM', exitHandler.bind(null, 'SIGTERM'));
-process.on('SIGINT', exitHandler.bind(null, 'SIGINT'));
-process.on('uncaughtException', exitHandler.bind(null, 'uncaughtException'));
+//process.on('SIGINT', exitHandler.bind(null, 'SIGINT'));
+//process.on('uncaughtException', exitHandler.bind(null, 'uncaughtException'));
 
 
 
