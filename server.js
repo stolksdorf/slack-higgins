@@ -99,12 +99,17 @@ var rollCmd = {
 
 
 
-process.on('SIGTERM', function (){
-	console.log('reacting to SIGTERM');
-	diag.msg("Server shutting down for real... goodnight. :moon:", function(){
-		process.exit(0)
-	});
-});
+var exitHandler = function(type){
+	console.log('reacting to ' + type);
+	diag.msg("Shutting down to " + type);
+	process.exit();
+}
+
+
+process.on('exit', exitHandler.bind('exit'));
+process.on('SIGTERM', exitHandler.bind('SIGTERM'));
+process.on('SIGINT', exitHandler.bind('SIGINT'));
+process.on('uncaughtException', exitHandler.bind('uncaughtException'));
 
 
 
