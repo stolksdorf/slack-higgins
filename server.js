@@ -8,7 +8,11 @@ var diag = require('diag');
 
 
 
-diag.msg("Server restart!");
+var SESSION = _.random(0,100)
+
+
+
+diag.msg("Server restart! " + SESSION);
 
 
 
@@ -100,8 +104,8 @@ var rollCmd = {
 
 
 var exitHandler = function(type){
-	console.log('reacting to ' + type);
-	diag.msg("Shutting down to " + type, function(){
+	console.log('reacting to ' + type + SESSION);
+	diag.msg("Shutting down to " + type + SESSION, function(){
 		process.exit();
 	});
 }
