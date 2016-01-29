@@ -28,19 +28,20 @@ module.exports = {
 	},
 
 
-	msg : function(){
+	msg : function(text, cb){
+		/*
 		var args = Array.prototype.slice.call(arguments, 0);
 
 		var res = _.map(args, function(arg){
 			return JSON.stringify(arg);
 		}).join(', ');
 
-
+		*/
 		console.log('sending', res, diagnosticsURL);
 
 		request.post(diagnosticsURL)
 			.send({
-				"text" : res
+				"text" : text
 			})
 			.end(function(err){
 				if(err){
@@ -48,6 +49,8 @@ module.exports = {
 					return
 				}
 				console.log('SENT!');
+
+				cb && cb();
 
 			})
 	},

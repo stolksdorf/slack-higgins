@@ -101,8 +101,9 @@ var rollCmd = {
 
 var exitHandler = function(type){
 	console.log('reacting to ' + type);
-	diag.msg("Shutting down to " + type);
-	process.exit();
+	diag.msg("Shutting down to " + type, function(){
+		process.exit();
+	});
 }
 
 
