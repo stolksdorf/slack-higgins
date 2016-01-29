@@ -11,8 +11,11 @@ var diag = require('diag');
 var SESSION = _.random(0,100)
 
 
+var gitrev = require('gitrev');
+gitrev(function(str){
+	diag.msg("Server restart! " + str);
+})
 
-diag.msg("Server restart! " + SESSION);
 
 
 
