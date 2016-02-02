@@ -12,6 +12,10 @@ var SESSION = _.random(0,100)
 
 
 
+Logbot.info('Server Restart', 'Server restarted and everything looking good!');
+
+
+
 var cmds = require('fs').readdirSync('./commands');
 
 
