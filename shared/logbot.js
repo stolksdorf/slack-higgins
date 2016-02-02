@@ -4,17 +4,14 @@ var request = require('superagent');
 var diagnosticsURL = process.env.DIAGNOSTICS_WEBHOOK || '';
 
 
-var msg = function(msgObj){
+var sendViaLogbot = function(msgObj){
 	if(!diagnosticsURL){
 		console.log(msgObj);
 		return;
 	}
-
 	request.post(diagnosticsURL)
 		.send(msgObj)
-		.end(function(err){
-
-	})
+		.end(function(err){})
 }
 
 
@@ -23,7 +20,7 @@ module.exports = {
 	//blue
 	log : function(){
 		var args = Array.prototype.slice.call(arguments);
-		msg({
+		sendViaLogbot({
 			color : 'good',
 			"fields": [
 				{
@@ -37,7 +34,7 @@ module.exports = {
 
 	//red
 	error : function(title, err){
-		msg({
+		sendViaLogbot({
 			color : 'danger',
 			"fields": [
 				{
@@ -51,7 +48,7 @@ module.exports = {
 
 	//yellow
 	info : function(title, msg){
-		msg({
+		sendViaLogbot({
 			color : 'warning',
 			"fields": [
 				{
@@ -64,7 +61,7 @@ module.exports = {
 	},
 
 	msg : function(text){
-		msg({
+		sendViaLogbot({
 			text : text
 		});
 	},
