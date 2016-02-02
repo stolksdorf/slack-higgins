@@ -1,6 +1,7 @@
 var _ = require('lodash');
-var nest = require('unofficial-nest-api');
+var Logbot = require('logbot');
 
+var nest = require('unofficial-nest-api');
 var NEST_CONFIG = process.env.NEST_CONFIG || {};
 
 
@@ -14,9 +15,11 @@ module.exports = function(msg, info, reply){
 	if(!NEST_CONFIG[sender]){
 		return reply({
 			response_type : 'ephemeral',
-			text : "Looks like you don't have a Nest connected with NestBot :( Contact :scott:"
+			text : "Looks like you don't have a Nest connected with NestBot, contact :scott:"
 		})
 	}
+
+	Logbot.log(NEST_CONFIG[sender]);
 
 	var user = NEST_CONFIG[sender];
 
