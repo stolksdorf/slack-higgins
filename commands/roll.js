@@ -23,10 +23,10 @@ var getCheck = function(msg){
 	});
 
 	var result = rolls[0];
-	if(hasAdvantage(msg)){
-		result = _.max(rolls)
-	}else if(hasDisadvantage(msg)){
-		result = _.min(rolls)
+	if(hasDisadvantage(msg)){
+		result = _.min(rolls);
+	}else if(hasAdvantage(msg)){
+		result = _.max(rolls);
 	}
 
 	if(result == 20) result = 'CRIT!';
