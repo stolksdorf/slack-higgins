@@ -21,7 +21,7 @@ module.exports = {
 	log : function(){
 		var args = Array.prototype.slice.call(arguments);
 		sendViaLogbot({
-			color : 'good',
+			color : 'warning',
 			"fields": [
 				{
 					"title": "Logging",
@@ -49,7 +49,7 @@ module.exports = {
 	//yellow
 	info : function(title, msg){
 		sendViaLogbot({
-			color : 'warning',
+			color : 'good',
 			"fields": [
 				{
 					"title": title,

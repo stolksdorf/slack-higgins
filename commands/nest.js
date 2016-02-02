@@ -8,12 +8,19 @@ module.exports = function(msg, info, reply){
 	var targetTemp = Number(msg);
 
 
-	var sender = info;
+	var sender = info.user_name;
 
 	//check for user
+	if(!NEST_CONFIG[sender]){
+		return reply({
+			response_type : 'ephemeral',
+			text : "Looks like you don't have a Nest connected with NestBot :( Contact :scott:"
+		})
+	}
 
+	var user = NEST_CONFIG[sender];
 
-	nest.login(email, password, function (err, data) {
+	nest.login(user.email, user.password, function (err, data) {
 		if(err){
 			throw err
 		}
