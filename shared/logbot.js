@@ -36,13 +36,13 @@ module.exports = {
 	},
 
 	//red
-	error : function(title, stacktrace){
+	error : function(title, err){
 		msg({
 			color : 'danger',
 			"fields": [
 				{
 					"title": title,
-					"value": JSON.stringify(stacktrace),
+					"value": err.stack,
 					"short": false
 				}
 			]
