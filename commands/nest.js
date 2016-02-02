@@ -6,12 +6,7 @@ var NEST_CONFIG = JSON.parse(process.env.NEST_CONFIG) || {};
 
 
 module.exports = function(msg, info, reply){
-	var targetTemp = Number(msg);
-
-
-
-	console.log(NEST_CONFIG);
-
+	var targetTemp = Number(msg || 'none');
 	var sender = info.user_name;
 
 	//check for user
@@ -21,8 +16,6 @@ module.exports = function(msg, info, reply){
 			text : "Looks like you don't have a Nest connected with NestBot, contact :scott:"
 		})
 	}
-
-	Logbot.log(NEST_CONFIG[sender]);
 
 	var user = NEST_CONFIG[sender];
 
@@ -46,7 +39,6 @@ module.exports = function(msg, info, reply){
 			}
 
 			reply({
-				response_type : 'ephemeral',
 				text : res
 			})
 		});
