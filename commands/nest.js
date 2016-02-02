@@ -9,6 +9,9 @@ module.exports = function(msg, info, reply){
 	var targetTemp = Number(msg);
 
 
+
+	console.log(NEST_CONFIG);
+
 	var sender = info.user_name;
 
 	//check for user
