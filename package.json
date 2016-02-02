@@ -23,6 +23,7 @@
     "app-module-path": "^1.0.5",
     "express": "^4.13.4",
     "lodash": "^4.0.1",
-    "superagent": "^1.7.2"
+    "superagent": "^1.7.2",
+    "unofficial-nest-api": "^0.1.4"
   }
 }
