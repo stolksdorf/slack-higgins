@@ -11,6 +11,14 @@ var hasAdvantage = function(msg){
 var hasDisadvantage = function(msg){
 	return _.includes(msg, 'dis')
 };
+var parseDice = function(msg){
+	var dNotation = msg.match(/([\d]*)d([\d]+)/);
+	if(dNotation === null) throw "Oops, your dice string wasn't formatted properly";
+	return {
+		num : Number(dNotation[1] || 1),
+		type : Number(dNotation[2] || 6),
+	};
+};
 
 var getCheck = function(msg){
 	var numOfDice = 1
@@ -39,12 +47,7 @@ var getCheck = function(msg){
 }
 
 var getRoll = function(msg){
-	if(!_.includes(msg, 'd')) throw "Oops, your dice string wasn't formatted properly";
-
-	var dice = {
-		num : Number(msg.split('d')[0] || 1),
-		type : Number(msg.split('d')[1] || 6),
-	}
+	var dice = parseDice(msg);
 	var rolls = rollDice(dice);
 
 	return {
