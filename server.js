@@ -53,7 +53,7 @@ _.each(cmds, function(cmdPath){
 					}, msgObj));
 				})
 			}catch(err){
-				Logbot.error('Command Run Error : ' + cmdPath, e);
+				Logbot.error('Command Run Error : ' + cmdPath, err);
 			}
 		})
 	}catch(err){
