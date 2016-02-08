@@ -51,7 +51,8 @@ _.each(cmds, function(cmdPath){
 	try{
 		var cmd = require('./commands/' + cmdPath);
 	}catch(err){
-		return Logbot.error('Command Load Error : ' + cmdPath, err);
+		Logbot.error('Command Load Error : ' + cmdPath, err);
+		res.status(200).send();
 	}
 
 	var cmdUrl = '/' + cmdPath.replace('.js', '');
@@ -66,7 +67,8 @@ _.each(cmds, function(cmdPath){
 		try{
 			cmd(req.query.text, req.query, reply_callback, error_callback);
 		}catch(err){
-			return Logbot.error('Command Run Error : ' + cmdPath, err);
+			Logbot.error('Command Run Error : ' + cmdPath, err);
+			return res.status(200).send();
 		}
 	})
 
