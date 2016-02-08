@@ -34,12 +34,15 @@ module.exports = {
 
 	//red
 	error : function(title, err){
+		err = err || {};
+		var stack = err.stack ? err.stack : JSON.stringify(err, null, '  ');
+
 		sendViaLogbot({
 			color : 'danger',
 			"fields": [
 				{
 					"title": title,
-					"value": err.stack,
+					"value": stack,
 					"short": false
 				}
 			]

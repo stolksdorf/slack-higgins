@@ -3,6 +3,16 @@ A Slackbot for my personal slack
 
 
 
+### Local Testing
+
+If you'd like to test your bot locally you can use `node testCmd.js [your_cmd] [msg]`, eg:
+
+`node testCmd.js nest "hey there nest!"`
+
+
+
+
+
 [Command List](https://quadrupledaters.slack.com/apps/manage/A0F82E8CA-slash-commands)
 
 

@@ -1,8 +1,9 @@
 var Logbot = require('logbot');
 
-module.exports = function(msg, info, reply){
+module.exports = function(msg, info, reply, error){
 
-	Logbot.log(info);
+	//Logbot.log(info);
 
-	reply('Just a test!');
+	//error("hey there");
+	reply('yo' + a)
 }
