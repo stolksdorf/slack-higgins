@@ -40,6 +40,9 @@ var error_callback = function(res, err){
 		}, formatResponse(err)));
 	}
 	Logbot.error('Command Dev Error : ' + cmdPath, err);
+	return res.status(200).send({
+		text : 'Looks like there was a dev error! Oops...'
+	});
 }
 
 
@@ -68,7 +71,9 @@ _.each(cmds, function(cmdPath){
 			cmd(req.query.text, req.query, reply_callback.bind(this, res), error_callback.bind(this, res));
 		}catch(err){
 			Logbot.error('Command Run Error : ' + cmdPath, err);
-			return res.status(200).send();
+			return res.status(200).send({
+				text : 'Looks like there was an error! Oops...'
+			});
 		}
 	})
 
