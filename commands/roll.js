@@ -1,5 +1,8 @@
 var _ = require('lodash');
 
+var errorResponse = function(){};
+
+
 var rollDice = function(dice){
 	return _.times(dice.num, function(){
 		return _.random(1, dice.type);
@@ -13,7 +16,7 @@ var hasDisadvantage = function(msg){
 };
 var parseDice = function(msg){
 	var dNotation = msg.match(/([\d]*)d([\d]+)/);
-	if(dNotation === null) throw new Error("Oops, your dice string wasn't formatted properly");
+	if(dNotation === null) throw "Oops, your dice string wasn't formatted properly";
 	return {
 		num : Number(dNotation[1] || 1),
 		type : Number(dNotation[2] || 6),
@@ -56,12 +59,16 @@ var getRoll = function(msg){
 	}
 }
 
-module.exports = function(msg, info, reply){
+module.exports = function(msg, info, reply, error){
 	var res;
-	if(_.includes(msg, 'check') || _.includes(msg, 'throw')){
-		res = getCheck(msg);
-	}else{
-		res = getRoll(msg);
+	try{
+		if(_.includes(msg, 'check') || _.includes(msg, 'throw')){
+			res = getCheck(msg);
+		}else{
+			res = getRoll(msg);
+		}
+	}catch(e){
+		return error(e);
 	}
 
 	var response = {

@@ -5,16 +5,13 @@ var nest = require('unofficial-nest-api');
 var NEST_CONFIG = JSON.parse(process.env.NEST_CONFIG) || {};
 
 
-module.exports = function(msg, info, reply){
+module.exports = function(msg, info, reply, error){
 	var targetTemp = Number(msg || 'none');
 	var sender = info.user_name;
 
 	//check for user
 	if(!NEST_CONFIG[sender]){
-		return reply({
-			response_type : 'ephemeral',
-			text : "Looks like you don't have a Nest connected with NestBot, contact :scott: with your username and password."
-		})
+		return error("Looks like you don't have a Nest connected with NestBot, contact :scott: with your username and password.");
 	}
 	var user = NEST_CONFIG[sender];
 
