@@ -21,7 +21,7 @@ module.exports = function(msg, info, reply){
 				// TODO: couldn't find match
 				return reply({
 					response_type : 'ephemeral',
-					text : 'nawp 2'
+					text : 'nawp 2 -- ' + url
 				});
 			}
 			// TODO: try
