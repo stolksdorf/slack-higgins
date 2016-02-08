@@ -27,10 +27,14 @@ module.exports = function(msg, info, reply){
 					try {
 						// TODO: handle if no comic was found
 						return reply({
-							text: '_*' + data.safe_title + '*_',
 							attachments: [
-								{ image_url : data.img },
-								{ text : '_' + data.alt + '_' }
+								{
+									title : data.safe_title,
+									title_link : link.href,
+									image_url : data.img
+								}, {
+									text : '_' + data.alt + '_'
+								}
 							]
 						});
 					} catch (err) {
