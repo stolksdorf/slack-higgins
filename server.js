@@ -27,13 +27,13 @@ var formatResponse = function(response){
 };
 
 
-var reply_callback = function(response){
+var reply_callback = function(res, response){
 	return res.status(200).send(_.extend({
 		'response_type': 'in_channel',
 	}, formatResponse(response)));
 };
 
-var error_callback = function(err){
+var error_callback = function(res, err){
 	if(_.isString(err)){
 		return res.status(200).send(_.extend({
 			'response_type': 'ephemeral',
@@ -65,7 +65,7 @@ _.each(cmds, function(cmdPath){
 
 	app.get(cmdUrl, function(req, res){
 		try{
-			cmd(req.query.text, req.query, reply_callback, error_callback);
+			cmd(req.query.text, req.query, reply_callback.bind(this, res), error_callback.bind(this, res));
 		}catch(err){
 			Logbot.error('Command Run Error : ' + cmdPath, err);
 			return res.status(200).send();
