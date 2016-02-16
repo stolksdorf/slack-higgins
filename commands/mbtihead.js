@@ -9,7 +9,7 @@ module.exports = function(msg, info, reply, error) {
 	var queryParams = [];
 	var isStressHead = false;
 
-	if (_.includes(msg, 'stress') {
+	if (_.includes(msg, 'stress')) {
 		isStressHead = true;
 		queryParams.push('format=stress');
 		msg = msg.replace('stress', '');
