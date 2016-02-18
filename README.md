@@ -1,6 +1,8 @@
 # butlerbot
 A Slackbot for my personal slack
 
+[List of Custom Integrations](https://quadrupledaters.slack.com/apps/manage/custom-integrations)
+
 
 
 ### Local Testing
