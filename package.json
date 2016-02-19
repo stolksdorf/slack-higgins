@@ -26,6 +26,7 @@
     "lodash": "^4.0.1",
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
-    "xkcd": "^1.1.1"
+    "xkcd": "^1.1.1",
+    "request": "~2.69.0"
   }
 }
