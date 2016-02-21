@@ -52,7 +52,7 @@ _.each(cmds, function(cmdPath){
 		var cmd = require('./commands/' + cmdPath);
 	}catch(err){
 		Logbot.error('Command Load Error : ' + cmdPath, err);
-		res.status(200).send();
+		return;
 	}
 
 	var cmdUrl = '/' + cmdPath.replace('.js', '');
@@ -73,6 +73,44 @@ _.each(cmds, function(cmdPath){
 	})
 
 })
+
+
+var rtm = require('./rtm');
+
+
+var bots = [{
+	icon : ':cat:',
+	name : 'meowbot',
+	//listenFor : ['user_typing'],
+	response : function(msg, info, reply, Higgins){
+		reply('meow');
+	},
+},{
+	listenFor : ['message'],
+	response : function(msg, info, reply, Higgins){
+		if(info.bot_id == 'B0KMN3QK1'){
+			reply('hey rollbot!');
+
+			Higgins._api('reactions.add', {
+				name : 'thumbsup',
+				channel : info.channelId,
+				timestamp : info.ts
+			}).always(function(err, res){
+				console.log(err, res);
+			})
+		}
+
+	}
+}
+
+
+]
+
+
+rtm.addBots(bots)
+
+
+
 
 var port = process.env.PORT || 8000;
 
