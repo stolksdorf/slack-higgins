@@ -8,7 +8,7 @@ module.exports = function(msg, info, reply, error){
 	var question = parts[0]
 	var options = parts[1].split(',');
 
-	reply('*' + question + '*\n\n' +
+	reply('*' + question + '?*\n\n' +
 		_.map(options, (opt, index)=>{
 			return nums[index] + ' ' + _.trim(opt);
 		}).join('\n')
