@@ -9,7 +9,6 @@ var Logbot = require('logbot');
 
 Logbot.info('Server Restart', 'Server restarted and everything looking good!');
 
-
 /* Setup CONFIG */
 var fs = require('fs');
 if(fs.existsSync('./config.json')){
