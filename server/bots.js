@@ -1,5 +1,7 @@
 var _ = require('lodash');
 var SlackBot = require('slackbots');
+var Logbot = require('logbot');
+
 var TOKEN = process.env.SLACK_BOT_TOKEN;
 
 var Channels = {};
@@ -54,29 +56,39 @@ Higgins.on('message', function(data) {
 
 	_.each(Bots, (bot)=>{
 		if(_.includes(bot.listenFor, data.type)){
-			var reply = function(msg){
-				Higgins.postTo(data.channel, msg, _.extend(higginsInfo, {
+			var reply = function(msg, target){
+				Higgins.postTo(target || data.channel, msg, _.extend(higginsInfo, {
 					icon_emoji : bot.icon || higginsInfo.icon_emoji,
 					username : bot.name || higginsInfo.username
 				}))
 			};
-			bot.response(data.text, data, reply, Higgins);
+
+			try{
+				bot.response(data.text, data, reply, Higgins);
+			}catch(err){
+				Logbot.error('Bot Run Error : ' + bot.path, err);
+			}
 		}
 	});
 });
 
 
 
-
 module.exports = {
-	addBots : function(bots){
-
-		//
-
-		Bots = bots;
-	},
 	loadBots : function(){
+		var bots = require('fs').readdirSync('./bots');
+		Bots = _.map(bots, function(botPath){
+			try{
+				var bot = require('../bots/' + botPath);
+				bot.path = botPath;
+				return bot;
+			}catch(err){
+				Logbot.error('Bot Load Error : ' + botPath, err);
+				return;
+			}
+		});
 
+		console.log(Bots);
 	}
 }
 
