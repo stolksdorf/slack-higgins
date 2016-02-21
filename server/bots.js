@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var SlackBot = require('slackbots');
-var TOKEN = "xoxb-21922742181-VVGNm2HHGpSwbYBrmVv3ZoYp"
+var TOKEN = process.env.SLACK_BOT_TOKEN;
 
 var Channels = {};
 var Users = {}
@@ -8,11 +8,9 @@ var Bots = [];
 
 var higginsInfo = {
 	icon_emoji : ':tophat:',
-	'username' : 'higgins'
+	username : 'higgins'
 };
 
-
-// create a bot
 var Higgins = new SlackBot({
 	token: TOKEN,
 	name: 'higgins'
@@ -43,12 +41,8 @@ Higgins.on('start', function() {
 });
 
 
-
-
 Higgins.on('message', function(data) {
 	if(data.username == 'higgins') return;
-
-	//if(data.subtype == 'bot_message') return;
 
 	data.channelId = data.channel;
 	data.userId = data.user;
@@ -62,15 +56,13 @@ Higgins.on('message', function(data) {
 		if(_.includes(bot.listenFor, data.type)){
 			var reply = function(msg){
 				Higgins.postTo(data.channel, msg, _.extend(higginsInfo, {
-					//icon_emoji : bot.icon,
-					//username : bot.name
+					icon_emoji : bot.icon || higginsInfo.icon_emoji,
+					username : bot.name || higginsInfo.username
 				}))
 			};
-
 			bot.response(data.text, data, reply, Higgins);
 		}
 	});
-
 });
 
 
@@ -78,7 +70,13 @@ Higgins.on('message', function(data) {
 
 module.exports = {
 	addBots : function(bots){
+
+		//
+
 		Bots = bots;
+	},
+	loadBots : function(){
+
 	}
 }
 

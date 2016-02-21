@@ -9,5 +9,7 @@ architecture.json
 # Ignore sensitive stuff
 /config/*
 !/config/default.json
+config.json
+
 
 node_modules
