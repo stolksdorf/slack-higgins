@@ -64,15 +64,27 @@ BotRTM.on('message', function(data) {
 	if(!responseMapping[data.type]) return;
 
 	_.each(responseMapping[data.type], (bot)=>{
-		var reply = function(msg, target){
-			BotRTM.postTo(target || data.channel, msg, _.extend(higginsInfo, {
-				icon_emoji : bot.icon || higginsInfo.icon_emoji,
-				username : bot.name || higginsInfo.username
-			}))
-		};
+
+		//Create a wrapper around the botRTM for Higgins
+		var Higgins = {
+			reply : function(msg, target){
+				target = target || data.channel;
+				return BotRTM.postTo(target, msg, {
+					icon_emoji : bot.icon || higginsInfo.icon_emoji,
+					username : bot.name || higginsInfo.username
+				})
+			},
+			react : function(emoji){
+				return BotRTM._api('reactions.add', {
+					name : emoji,
+					channel : data.channelId,
+					timestamp : data.ts
+				});
+			},
+		}
 
 		try{
-			bot.response(data.text, data, reply, BotRTM);
+			bot.response(data.text, data, Higgins, BotRTM);
 		}catch(err){
 			Logbot.error('Bot Run Error : ' + bot.path, err);
 		}

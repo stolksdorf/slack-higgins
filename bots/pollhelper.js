@@ -9,7 +9,7 @@ var pollMaster;
 
 module.exports = {
 	listenFor : ['message'],
-	response : function(msg, info, reply, Higgins){
+	response : function(msg, info, Higgins){
 		if(_.startsWith(msg, '/poll')){
 			pollMaster = info.user;
 		}
@@ -19,11 +19,7 @@ module.exports = {
 				if(_.includes(msg, ':' + num + ':')){
 					//make this syncronous using 'async'
 					return function(cb){
-						Higgins._api('reactions.add', {
-							name : num,
-							channel : info.channelId,
-							timestamp : info.ts
-						}).always(function(){ cb(); });
+						Higgins.react(num).always(function(){ cb(); });
 					};
 				}
 				return function(cb){ return cb() };
@@ -31,11 +27,10 @@ module.exports = {
 			//make sure the reactions happen in order
 			async.series(fns);
 
-			reply(_.sample([
+			Higgins.reply(_.sample([
 				'Smashing poll ' + pollMaster,
 				'Top shelf question ' + pollMaster +'!'
 			]))
-
 		}
 	}
 }

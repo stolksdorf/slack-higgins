@@ -45,11 +45,11 @@ var isScoreboardRequest = function(msg){
 			!_.isEmpty(scores);
 }
 
-var startTimer = function(reply){
+var startTimer = function(Higgins){
 	timer = setTimeout(function(){
-		reply("Times nearly up!");
+		Higgins.reply("Times nearly up!");
 		timer = setTimeout(function(){
-			reply("Times up! The answer is *" + storedClue.answer + "*");
+			Higgins.reply("Times up! The answer is *" + storedClue.answer + "*");
 			cleanup();
 		}, 15000);
 	}, 30000)
@@ -89,7 +89,7 @@ var getScoreboard = function(){
 
 module.exports = {
 	listenFor : ['message'],
-	response  : function(msg, info, reply, Higgins){
+	response  : function(msg, info, Higgins){
 		if(info.channel !== 'trivia-time') return;
 
 		if(isQuestionStart(msg)){
@@ -98,9 +98,9 @@ module.exports = {
 				isActive = true;
 				storedClue = clue;
 				storedClue.answer = storedClue.answer.replace('<i>', '').replace('</i>', '')
-				startTimer(reply);
+				startTimer(Higgins);
 				channel = info.channel;
-				reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
+				Higgins.reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
 		}else if(isScoreboardRequest(msg)){
 			return reply(getScoreboard());
@@ -110,15 +110,11 @@ module.exports = {
 				if(!scores[info.user]) scores[info.user] = {user: info.user, points: 0};
 				scores[info.user].points += storedClue.value;
 
-				reply("Correct! Good job " + info.user + "!\n\n" + getScoreboard());
+				Higgins.reply("Correct! Good job " + info.user + "!\n\n" + getScoreboard());
 
 				cleanup();
 			}else{
-				Higgins._api('reactions.add', {
-					name : 'no_entry_sign',
-					channel : info.channelId,
-					timestamp : info.ts
-				});
+				Higgins.react('no_entry_sign');
 			}
 		}
 	}
