@@ -50,7 +50,7 @@ BotRTM.on('start', function() {
 
 
 BotRTM.on('message', function(data) {
-	if(data.username == 'BotRTM') return;
+	if(data.username == 'higgins' || data.username == 'meowbot') return;
 
 	data.channelId = data.channel;
 	data.userId = data.user;
@@ -58,7 +58,7 @@ BotRTM.on('message', function(data) {
 	if(data.channel) data.channel = Channels[data.channelId];
 	if(data.user) data.user = Users[data.userId];
 
-	console.log(data);
+	//console.log(data);
 
 	_.each(Bots, (bot)=>{
 		if(_.includes(bot.listenFor, data.type)){

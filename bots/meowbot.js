@@ -1,10 +1,14 @@
 module.exports = {
 	icon : ':cat:',
 	name : 'meowbot',
-	listenFor : ['user_typing'],
+	listenFor : ['message'],
 	response : function(msg, info, reply, Higgins){
 		if(info.user == 'meggeroni'){
-			reply('meow');
+			Higgins._api('reactions.add', {
+				name : 'cat',
+				channel : info.channelId,
+				timestamp : info.ts
+			});
 		}
 	},
 };
