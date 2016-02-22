@@ -13,6 +13,8 @@ var questionCache = {
 	water : []
 }
 
+var scores = {}
+
 var isActive = false;
 var storedClue = {};
 var timer, secondTimer;
@@ -30,11 +32,6 @@ var getQuestion = function(category, cb){
 }
 
 var isQuestionStart = function(msg){
-
-	console.log(_.includes(msg.toLowerCase(), 'higgins'),
-			_.includes(msg.toLowerCase(), 'trivia'),
-			!isActive);
-
 	return  _.includes(msg.toLowerCase(), 'higgins') &&
 			_.includes(msg.toLowerCase(), 'trivia') &&
 			!isActive;
@@ -67,6 +64,13 @@ var checkAnswer = function(msg){
 	})
 }
 
+var messageScores = function(reply){
+	reply("*Scores for this round are:*" +
+		_.map(scores, (points, user)=>{
+			return user + ' has ' + points;
+		}).join('\n')
+	);
+};
 
 
 module.exports = {
@@ -84,6 +88,12 @@ module.exports = {
 		}else if(isActive){
 			if(checkAnswer(msg)){
 				reply("Correct! Good job " + info.user + "!");
+
+				//Increase scores
+				if(!scores[info.user]) scores[info.user] = 0;
+				scores[info.user]++;
+				messageScores(reply);
+
 				cleanup();
 			}else{
 				reply("nope");

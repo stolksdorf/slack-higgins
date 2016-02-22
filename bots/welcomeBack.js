@@ -10,7 +10,7 @@ var messageMap = {
 module.exports = {
 	listenFor : ['presence_change'],
 	response : function(msg, info, reply, Higgins){
-		if(_.random(3) !== 1) return;
+		if(_.random(10) !== 1) return;
 		if(info.presence == 'active' && messageMap[info.user]){
 			reply(_.sample(messageMap[info.user]), info.user);
 		}

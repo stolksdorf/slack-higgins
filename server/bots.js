@@ -50,6 +50,7 @@ BotRTM.on('start', function() {
 
 
 BotRTM.on('message', function(data) {
+	//TODO : Add protection for other bot names
 	if(data.username == 'higgins' || data.username == 'meowbot') return;
 
 	data.channelId = data.channel;
