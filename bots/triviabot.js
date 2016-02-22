@@ -39,6 +39,12 @@ var isQuestionStart = function(msg){
 			!isActive;
 }
 
+var isScoreboardRequest = function(msg){
+	return  _.includes(msg.toLowerCase(), 'higgins') &&
+			_.includes(msg.toLowerCase(), 'score') &&
+			!_.isEmpty(scores);
+}
+
 var startTimer = function(reply){
 	timer = setTimeout(function(){
 		reply("Times nearly up!");
@@ -72,9 +78,12 @@ var checkAnswer = function(msg){
 }
 
 var messageScores = function(reply){
+	var sortedScores = _.sortBy(scores, (score)=>{
+		return 999999 - score.points; 
+	});
 	reply(//"*Scores for this round are:*\n" +
-		_.map(scores, (points, user)=>{
-			return ':' + user + ': has ' + points + ' points';
+		_.map(sortedScores, (score)=>{
+			return ':' + score.user + ': has ' + score.points + ' points';
 		}).join('\n')
 	);
 };
@@ -94,13 +103,15 @@ module.exports = {
 				channel = info.channel;
 				reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
+		}else if(isScoreboardRequest(msg)){
+			return messageScores(reply);
 		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
 				reply("Correct! Good job " + info.user + "!");
 
 				//Increase scores
-				if(!scores[info.user]) scores[info.user] = 0;
-				scores[info.user] += storedClue.value;
+				if(!scores[info.user]) scores[info.user] = {user: info.user, points: 0};
+				scores[info.user].points += storedClue.value;
 				messageScores(reply);
 
 				cleanup();
