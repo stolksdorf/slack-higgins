@@ -77,22 +77,21 @@ var checkAnswer = function(msg){
 	})
 }
 
-var messageScores = function(reply){
+var getScoreboard = function(){
 	var sortedScores = _.sortBy(scores, (score)=>{
-		return 999999 - score.points; 
+		return 999999 - score.points;
 	});
-	reply(//"*Scores for this round are:*\n" +
-		_.map(sortedScores, (score)=>{
-			return ':' + score.user + ': has ' + score.points + ' points';
-		}).join('\n')
-	);
+	return _.map(sortedScores, (score)=>{
+		return ':' + score.user + ': has ' + score.points + ' points';
+	}).join('\n');
 };
 
 
 module.exports = {
 	listenFor : ['message'],
 	response  : function(msg, info, reply, Higgins){
-		console.log(info);
+		if(info.channel !== 'trivia-time') return;
+
 		if(isQuestionStart(msg)){
 			var category = _.sample(_.keys(categoryIds));
 			return getQuestion(category, function(clue){
@@ -104,15 +103,14 @@ module.exports = {
 				reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
 		}else if(isScoreboardRequest(msg)){
-			return messageScores(reply);
+			return reply(getScoreboard());
 		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
-				reply("Correct! Good job " + info.user + "!");
-
 				//Increase scores
 				if(!scores[info.user]) scores[info.user] = {user: info.user, points: 0};
 				scores[info.user].points += storedClue.value;
-				messageScores(reply);
+
+				reply("Correct! Good job " + info.user + "!\n\n" + getScoreboard());
 
 				cleanup();
 			}else{
@@ -123,7 +121,5 @@ module.exports = {
 				});
 			}
 		}
-	},
-
-
+	}
 }
