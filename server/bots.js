@@ -8,6 +8,8 @@ var Channels = {};
 var Users = {}
 var Bots = [];
 
+var responseMapping = {}
+
 
 //TODO:
 // - Wrap Higgens and return him alone
@@ -59,22 +61,20 @@ BotRTM.on('message', function(data) {
 	if(data.channel) data.channel = Channels[data.channelId];
 	if(data.user) data.user = Users[data.userId];
 
-	//console.log(data);
+	if(!responseMapping[data.type]) return;
 
-	_.each(Bots, (bot)=>{
-		if(_.includes(bot.listenFor, data.type)){
-			var reply = function(msg, target){
-				BotRTM.postTo(target || data.channel, msg, _.extend(higginsInfo, {
-					icon_emoji : bot.icon || higginsInfo.icon_emoji,
-					username : bot.name || higginsInfo.username
-				}))
-			};
+	_.each(responseMapping[data.type], (bot)=>{
+		var reply = function(msg, target){
+			BotRTM.postTo(target || data.channel, msg, _.extend(higginsInfo, {
+				icon_emoji : bot.icon || higginsInfo.icon_emoji,
+				username : bot.name || higginsInfo.username
+			}))
+		};
 
-			try{
-				bot.response(data.text, data, reply, BotRTM);
-			}catch(err){
-				Logbot.error('Bot Run Error : ' + bot.path, err);
-			}
+		try{
+			bot.response(data.text, data, reply, BotRTM);
+		}catch(err){
+			Logbot.error('Bot Run Error : ' + bot.path, err);
 		}
 	});
 });
@@ -95,7 +95,13 @@ module.exports = {
 			}
 		});
 
-		console.log(Bots);
+		//Create object that maps message types to which bot triggers it
+		_.each(Bots, function(bot){
+			_.each(bot.listenFor, function(trigger){
+				if(!responseMapping[trigger]) responseMapping[trigger] = [];
+				responseMapping[trigger].push(bot);
+			})
+		})
 	}
 }
 
