@@ -58,7 +58,7 @@ var checkAnswer = function(msg){
 	var msgWords = _.words(msg.toLowerCase());
 	var answer = _.words(storedClue.answer.toLowerCase());
 
-	var dumbWords = ['the', 'their', 'sir'];
+	var dumbWords = ['the', 'their', 'sir', "its", "it's"];
 
 	//each answer word must appear in the message
 	return _.every(answer, (answerWord)=>{
@@ -68,9 +68,9 @@ var checkAnswer = function(msg){
 }
 
 var messageScores = function(reply){
-	reply("*Scores for this round are:*\n\n" +
+	reply("*Scores for this round are:*\n" +
 		_.map(scores, (points, user)=>{
-			return user + ' has ' + points;
+			return ':' + user + ': has ' + points + ' points';
 		}).join('\n')
 	);
 };
@@ -86,7 +86,7 @@ module.exports = {
 				isActive = true;
 				storedClue = clue;
 				startTimer(reply);
-				reply("The category is *" + category + "* worth " + clue.value +"\n" + clue.question);
+				reply("The category is *" + category + "* worth " + clue.value +"points!\n" + clue.question);
 			})
 		}else if(isActive){
 			if(checkAnswer(msg)){
