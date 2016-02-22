@@ -10,7 +10,10 @@ var categoryIds = {
 	homophones : 249,
 	food : 49,
 	rhymes : 561,
-	'Word Origins' : 223
+	'Word Origins' : 223,
+	'science AND nature!' : 218,
+	'before & after' : 1800,
+	'familiar phrases' : 705
 };
 
 var questionCache = {}
