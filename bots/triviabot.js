@@ -58,6 +58,7 @@ var cleanup = function(){
 }
 
 var checkAnswer = function(msg){
+	if(!msg) return;
 	var msgWords = _.words(msg.toLowerCase());
 	var answer = _.words(storedClue.answer.toLowerCase());
 
