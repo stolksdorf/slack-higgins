@@ -4,20 +4,29 @@ var request = require('superagent');
 var categoryIds = {
 	science : 25,
 	animals : 21,
-	water : 211
+	water : 211,
+	nature : 267,
+	'4 letter words' : 51,
+	homophones : 249,
+	food : 49
 };
 
 var questionCache = {
 	science : [],
 	animals : [],
-	water : []
+	water : [],
+	nature : [],
+	'4 letter words' : [],
+	homophones : [],
+	food : []
 }
 
 var scores = {}
 
 var isActive = false;
 var storedClue = {};
-var timer, secondTimer;
+var channel;
+var timer;
 
 var getQuestion = function(category, cb){
 	if(questionCache[category].length){
@@ -51,6 +60,7 @@ var startTimer = function(reply){
 var cleanup = function(){
 	storedClue = {};
 	isActive = false;
+	channel = null;
 	clearTimeout(timer);
 }
 
@@ -58,7 +68,7 @@ var checkAnswer = function(msg){
 	var msgWords = _.words(msg.toLowerCase());
 	var answer = _.words(storedClue.answer.toLowerCase());
 
-	var dumbWords = ['the', 'their', 'sir', "its", "it's"];
+	var dumbWords = ['the', 'their', 'sir', "its", "it's", 'a'];
 
 	//each answer word must appear in the message
 	return _.every(answer, (answerWord)=>{
@@ -86,9 +96,10 @@ module.exports = {
 				isActive = true;
 				storedClue = clue;
 				startTimer(reply);
-				reply("The category is *" + category + "* worth " + clue.value +"points!\n" + clue.question);
+				channel = info.channel;
+				reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
-		}else if(isActive){
+		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
 				reply("Correct! Good job " + info.user + "!");
 
