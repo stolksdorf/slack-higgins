@@ -58,8 +58,11 @@ var checkAnswer = function(msg){
 	var msgWords = _.words(msg.toLowerCase());
 	var answer = _.words(storedClue.answer.toLowerCase());
 
+	var dumbWords = ['the', 'their'];
+
 	//each answer word must appear in the message
 	return _.every(answer, (answerWord)=>{
+		if(_.includes(dumbWords, answerWord)) return true;
 		return _.includes(msgWords, answerWord);
 	})
 }
@@ -83,7 +86,7 @@ module.exports = {
 				isActive = true;
 				storedClue = clue;
 				startTimer(reply);
-				reply("The category is *" + category + "*\n" + clue.question);
+				reply("The category is *" + category + "* worth " + clue.value +"\n" + clue.question);
 			})
 		}else if(isActive){
 			if(checkAnswer(msg)){
@@ -91,12 +94,16 @@ module.exports = {
 
 				//Increase scores
 				if(!scores[info.user]) scores[info.user] = 0;
-				scores[info.user]++;
+				scores[info.user] += storedClue.value;
 				messageScores(reply);
 
 				cleanup();
 			}else{
-				reply("nope");
+				Higgins._api('reactions.add', {
+					name : 'no_entry_sign',
+					channel : info.channelId,
+					timestamp : info.ts
+				});
 			}
 		}
 	},

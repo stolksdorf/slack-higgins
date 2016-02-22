@@ -6,7 +6,7 @@ module.exports = {
 	name : 'meowbot',
 	listenFor : ['message'],
 	response : function(msg, info, reply, Higgins){
-		if(info.user == 'meggeroni' && _.random(5) == 3){
+		if(info.user == 'meggeroni' && _.random(15) == 3){
 			Higgins._api('reactions.add', {
 				name : _.sample(cat_emojis),
 				channel : info.channelId,
