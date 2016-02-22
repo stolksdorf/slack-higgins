@@ -8,18 +8,24 @@ var Channels = {};
 var Users = {}
 var Bots = [];
 
+
+//TODO:
+// - Wrap Higgens and return him alone
+// - Add a reaction and reply fucntiosn on him
+// - Map the listenFors to an object
+
 var higginsInfo = {
 	icon_emoji : ':tophat:',
 	username : 'higgins'
 };
 
-var Higgins = new SlackBot({
+var BotRTM = new SlackBot({
 	token: TOKEN,
 	name: 'higgins'
 });
 
 
-Higgins.getChannels().then(function(res){
+BotRTM.getChannels().then(function(res){
 	Channels = _.mapKeys(res.channels, function(channel) {
 		return channel.id;
 	});
@@ -28,7 +34,7 @@ Higgins.getChannels().then(function(res){
 	});
 });
 
-Higgins.getUsers().then(function(res){
+BotRTM.getUsers().then(function(res){
 	Users = _.mapKeys(res.members, function(member) {
 		return member.id;
 	});
@@ -38,13 +44,13 @@ Higgins.getUsers().then(function(res){
 });
 
 
-Higgins.on('start', function() {
-	Higgins.postMessageToChannel('diagnostics', 'Booting up sir', higginsInfo);
+BotRTM.on('start', function() {
+	BotRTM.postMessageToChannel('diagnostics', 'Booting up sir', higginsInfo);
 });
 
 
-Higgins.on('message', function(data) {
-	if(data.username == 'higgins') return;
+BotRTM.on('message', function(data) {
+	if(data.username == 'BotRTM') return;
 
 	data.channelId = data.channel;
 	data.userId = data.user;
@@ -57,14 +63,14 @@ Higgins.on('message', function(data) {
 	_.each(Bots, (bot)=>{
 		if(_.includes(bot.listenFor, data.type)){
 			var reply = function(msg, target){
-				Higgins.postTo(target || data.channel, msg, _.extend(higginsInfo, {
+				BotRTM.postTo(target || data.channel, msg, _.extend(higginsInfo, {
 					icon_emoji : bot.icon || higginsInfo.icon_emoji,
 					username : bot.name || higginsInfo.username
 				}))
 			};
 
 			try{
-				bot.response(data.text, data, reply, Higgins);
+				bot.response(data.text, data, reply, BotRTM);
 			}catch(err){
 				Logbot.error('Bot Run Error : ' + bot.path, err);
 			}
