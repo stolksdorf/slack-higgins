@@ -43,8 +43,8 @@ var startTimer = function(reply){
 		timer = setTimeout(function(){
 			reply("Times up! The answer is *" + storedClue.answer + "*");
 			cleanup();
-		}, 10000);
-	}, 15000)
+		}, 15000);
+	}, 30000)
 
 };
 
@@ -58,7 +58,7 @@ var checkAnswer = function(msg){
 	var msgWords = _.words(msg.toLowerCase());
 	var answer = _.words(storedClue.answer.toLowerCase());
 
-	var dumbWords = ['the', 'their'];
+	var dumbWords = ['the', 'their', 'sir'];
 
 	//each answer word must appear in the message
 	return _.every(answer, (answerWord)=>{
