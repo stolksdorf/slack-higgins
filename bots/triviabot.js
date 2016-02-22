@@ -106,7 +106,7 @@ module.exports = {
 				Higgins.reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
 		}else if(isScoreboardRequest(msg)){
-			return reply(getScoreboard());
+			return Higgins.reply(getScoreboard());
 		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
 				//Increase scores
