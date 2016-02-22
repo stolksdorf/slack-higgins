@@ -65,7 +65,7 @@ var checkAnswer = function(msg){
 }
 
 var messageScores = function(reply){
-	reply("*Scores for this round are:*" +
+	reply("*Scores for this round are:*\n\n" +
 		_.map(scores, (points, user)=>{
 			return user + ' has ' + points;
 		}).join('\n')
