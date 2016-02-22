@@ -89,6 +89,7 @@ module.exports = {
 			return getQuestion(category, function(clue){
 				isActive = true;
 				storedClue = clue;
+				storedClue.answer = storedClue.answer.replace('<i>', '').replace('</i>', '')
 				startTimer(reply);
 				channel = info.channel;
 				reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
