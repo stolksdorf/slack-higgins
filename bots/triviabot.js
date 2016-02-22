@@ -8,19 +8,12 @@ var categoryIds = {
 	nature : 267,
 	'4 letter words' : 51,
 	homophones : 249,
-	food : 49
+	food : 49,
+	rhymes : 561,
+	'Word Origins' : 223
 };
 
-var questionCache = {
-	science : [],
-	animals : [],
-	water : [],
-	nature : [],
-	'4 letter words' : [],
-	homophones : [],
-	food : []
-}
-
+var questionCache = {}
 var scores = {}
 
 var isActive = false;
@@ -29,7 +22,7 @@ var channel;
 var timer;
 
 var getQuestion = function(category, cb){
-	if(questionCache[category].length){
+	if(questionCache[category]){
 		return cb(_.sample(questionCache[category]));
 	}
 	request.get("http://jservice.io/api/clues?category=" + categoryIds[category])
@@ -68,7 +61,7 @@ var checkAnswer = function(msg){
 	var msgWords = _.words(msg.toLowerCase());
 	var answer = _.words(storedClue.answer.toLowerCase());
 
-	var dumbWords = ['the', 'their', 'sir', "its", "it's", 'a'];
+	var dumbWords = ['the', 'their', 'sir', "its", "it's", 'a', 'an'];
 
 	//each answer word must appear in the message
 	return _.every(answer, (answerWord)=>{
