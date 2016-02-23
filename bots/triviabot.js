@@ -10,7 +10,10 @@ var categoryIds = {
 	homophones : 249,
 	food : 49,
 	rhymes : 561,
-	'Word Origins' : 223
+	'Word Origins' : 223,
+	'science AND nature!' : 218,
+	'before & after' : 1800,
+	'familiar phrases' : 705
 };
 
 var questionCache = {}
@@ -103,7 +106,7 @@ module.exports = {
 				Higgins.reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
 		}else if(isScoreboardRequest(msg)){
-			return reply(getScoreboard());
+			return Higgins.reply(getScoreboard());
 		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
 				//Increase scores
