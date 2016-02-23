@@ -52,8 +52,8 @@ Commit your changes and LogBot will tell you when the server has restarted in th
 * `msg` will be a string that is the message from the event (if there is one)
 * `info` will be an object with a bunch of data about the event. `info.channel`, `info.user`, etc.
 * `Higgins` will be your best friend. He has two functiosn you can use `reply` and `react`.
-** `reply` takes a string for a message as your first parameter, and you can optionally give it a seocnd parameter of a channel or user to send the message to. It defaults to the channel the original event came from.
-** `react` takes a single argument of the name of an emoji to react to the event with.
+  * `reply` takes a string for a message as your first parameter, and you can optionally give it a seocnd parameter of a channel or user to send the message to. It defaults to the channel the original event came from.
+  * `react` takes a single argument of the name of an emoji to react to the event with.
 
 
 
