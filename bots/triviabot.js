@@ -66,29 +66,26 @@ var cleanup = function(){
 	clearTimeout(timer);
 }
 
+// takes a string and splits it in to words using ' ', '/', and '-' as delimiters
+// converts to lowercase
+// removes html tags and punctuation
+// removes trailing 's' or 'es'
+var stringToCleanWordArray = function(string) {
+	return _.chain(string)
+		.words(/[^ \/-]/g)
+		.map((word) => {
+			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/e?s$/, '');
+		})
+		.filter()
+		.value();
+};
+
 var checkAnswer = function(msg){
 	if(!msg) return;
 	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and'];
 
-	// take the message and the answer and:
-	// - lowercase them
-	// - remove non-alphanumeric characters
-	// - remove trailing 's' or 'es'
-	// - also remove html tags from the answers
-	var msgWords = _.chain(msg.toLowerCase())
-		.words()
-		.map((word) => {
-			return word.replace(/\W+/g, '').replace(/e?s$/, '');
-		})
-		.filter()
-		.value();
-	var answerWords = _.chain(storedClue.answer.toLowerCase())
-		.words()
-		.map((word) => {
-			return word.replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/e?s$/, '');
-		})
-		.filter()
-		.value();
+	var msgWords = stringToCleanWordArray(msg);
+	var answerWords = stringToCleanWordArray(storedClue.answer);
 
 	//each answer word must appear in the message
 	return _.every(answerWords, (answerWord)=>{
