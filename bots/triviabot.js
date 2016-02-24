@@ -68,16 +68,33 @@ var cleanup = function(){
 
 var checkAnswer = function(msg){
 	if(!msg) return;
-	var msgWords = _.words(msg.toLowerCase());
-	var answer = _.words(storedClue.answer.toLowerCase());
+	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and'];
 
-	var dumbWords = ['the', 'their', 'sir', "its", "it's", 'a', 'an'];
+	// take the message and the answer and:
+	// - lowercase them
+	// - remove non-alphanumeric characters
+	// - remove trailing 's' or 'es'
+	// - also remove html tags from the answers
+	var msgWords = _.chain(msg.toLowerCase())
+		.words()
+		.map((word) => {
+			return word.replace(/\W+/g, '').replace(/e?s$/, '');
+		})
+		.filter()
+		.value();
+	var answerWords = _.chain(storedClue.answer.toLowerCase())
+		.words()
+		.map((word) => {
+			return word.replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/e?s$/, '');
+		})
+		.filter()
+		.value();
 
 	//each answer word must appear in the message
-	return _.every(answer, (answerWord)=>{
+	return _.every(answerWords, (answerWord)=>{
 		if(_.includes(dumbWords, answerWord)) return true;
 		return _.includes(msgWords, answerWord);
-	})
+	});
 }
 
 var getScoreboard = function(){
