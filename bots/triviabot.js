@@ -72,7 +72,7 @@ var cleanup = function(){
 // removes trailing 's' or 'es'
 var stringToCleanWordArray = function(string) {
 	return _.chain(string)
-		.words(/[^ \/-]/g)
+		.words(/[^ \/-]+/g)
 		.map((word) => {
 			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/e?s$/, '');
 		})
