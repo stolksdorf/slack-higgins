@@ -66,18 +66,32 @@ var cleanup = function(){
 	clearTimeout(timer);
 }
 
+// takes a string and splits it in to words using ' ', '/', and '-' as delimiters
+// converts to lowercase
+// removes html tags and punctuation
+// removes trailing 's' or 'es'
+var stringToCleanWordArray = function(string) {
+	return _.chain(string)
+		.words(/[^ \/-]/g)
+		.map((word) => {
+			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/e?s$/, '');
+		})
+		.filter()
+		.value();
+};
+
 var checkAnswer = function(msg){
 	if(!msg) return;
-	var msgWords = _.words(msg.toLowerCase());
-	var answer = _.words(storedClue.answer.toLowerCase());
+	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or'];
 
-	var dumbWords = ['the', 'their', 'sir', "its", "it's", 'a', 'an'];
+	var msgWords = stringToCleanWordArray(msg);
+	var answerWords = stringToCleanWordArray(storedClue.answer);
 
 	//each answer word must appear in the message
-	return _.every(answer, (answerWord)=>{
+	return _.every(answerWords, (answerWord)=>{
 		if(_.includes(dumbWords, answerWord)) return true;
 		return _.includes(msgWords, answerWord);
-	})
+	});
 }
 
 var getScoreboard = function(){
