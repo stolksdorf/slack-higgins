@@ -16,18 +16,20 @@ var categoryIds = {
 	'familiar phrases' : 705
 };
 
-var questionCache = {}
-var scores = {}
+var questionCache = {};
+var scores = {};
 
 var isActive = false;
 var storedClue = {};
 var channel;
 var timer;
 
-var getQuestion = function(category, cb){
+var getQuestion = function(Higgins, category, cb){
 	if(questionCache[category]){
 		return cb(_.sample(questionCache[category]));
 	}
+	Higgins.reply("Refreshing question pool for *" + category + "*...");
+
 	request.get("http://jservice.io/api/clues?category=" + categoryIds[category])
 		.send()
 		.end(function(err, res){
@@ -37,13 +39,13 @@ var getQuestion = function(category, cb){
 }
 
 var isQuestionStart = function(msg){
-	return  _.includes(msg.toLowerCase(), 'higgins') &&
+	return  msg && _.includes(msg.toLowerCase(), 'higgins') &&
 			_.includes(msg.toLowerCase(), 'trivia') &&
 			!isActive;
 }
 
 var isScoreboardRequest = function(msg){
-	return  _.includes(msg.toLowerCase(), 'higgins') &&
+	return  msg && _.includes(msg.toLowerCase(), 'higgins') &&
 			_.includes(msg.toLowerCase(), 'score') &&
 			!_.isEmpty(scores);
 }
@@ -107,11 +109,11 @@ var getScoreboard = function(){
 module.exports = {
 	listenFor : ['message'],
 	response  : function(msg, info, Higgins){
-		if(info.channel !== 'trivia-time') return;
+		//if(info.channel !== 'trivia-time') return;
 
 		if(isQuestionStart(msg)){
 			var category = _.sample(_.keys(categoryIds));
-			return getQuestion(category, function(clue){
+			return getQuestion(Higgins, category, function(clue){
 				isActive = true;
 				storedClue = clue;
 				storedClue.answer = storedClue.answer.replace('<i>', '').replace('</i>', '')
