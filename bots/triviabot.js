@@ -164,7 +164,10 @@ var increaseScore = function(Higgins, user, newPoints){
 }
 
 var printCategories = function(Higgins){
-	Higgins.reply('The categories are: \n' + _.keys(Categories).join('\n'));
+	Higgins.reply('The categories are: \n' +
+		_.map(Categories, (id, name)=>{
+			return name + " - " + questionCache[name].length || '?';
+		}).join('\n'));
 }
 
 var printScoreboard = function(){
