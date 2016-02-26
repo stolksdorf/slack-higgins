@@ -2,7 +2,9 @@ var _ = require('lodash');
 var request = require('superagent');
 var Storage = require('storage');
 
-var categoryIds = {
+var CROWN_THRESHOLD = 25000;
+
+var Categories = {
 	science : 25,
 	animals : 21,
 	water : 211,
@@ -20,14 +22,13 @@ var categoryIds = {
 //Load persistant data
 var questionCache = {};
 Storage.get("trivia_cache", function(cache){
-	questionCache = cache;
+	questionCache = cache || {};
 });
 
-var scores = {};
+var Scores = {};
 Storage.get("trivia_scores", function(scores){
-	scores = scores;
+	Scores = scores || {};
 });
-
 
 var isActive = false;
 var storedClue = {};
@@ -35,7 +36,10 @@ var channel;
 var timer;
 
 var getTrivia = function(Higgins, category, cb){
+
 	var getQuestion = function(){
+		//Higgins.reply("Pool size is " + questionCache[category].length)
+
 		//Remove a random element from the question cache
 		var question = questionCache[category].splice(_.random(questionCache[category].length - 1), 1)[0];
 		Storage.set("trivia_cache", questionCache);
@@ -46,8 +50,7 @@ var getTrivia = function(Higgins, category, cb){
 		return getQuestion();
 	}
 	Higgins.reply("Refreshing question pool for *" + category + "*...");
-
-	request.get("http://jservice.io/api/clues?category=" + categoryIds[category])
+	request.get("http://jservice.io/api/clues?category=" + Categories[category])
 		.send()
 		.end(function(err, res){
 			questionCache[category] = res.body;
@@ -56,15 +59,25 @@ var getTrivia = function(Higgins, category, cb){
 }
 
 var isQuestionStart = function(msg){
-	return  msg && _.includes(msg.toLowerCase(), 'higgins') &&
+	return _.includes(msg.toLowerCase(), 'higgins') &&
 			_.includes(msg.toLowerCase(), 'trivia') &&
 			!isActive;
 }
 
 var isScoreboardRequest = function(msg){
-	return  msg && _.includes(msg.toLowerCase(), 'higgins') &&
-			_.includes(msg.toLowerCase(), 'score') &&
-			!_.isEmpty(scores);
+	return _.includes(msg.toLowerCase(), 'higgins') &&
+			_.includes(msg.toLowerCase(), 'score');
+}
+
+var getCategory = function(msg){
+	var result = _.reduce(Categories, function(r, id, name){
+		if(_.includes(msg.toLowerCase(), name.toLowerCase())) return name;
+		return r;
+	}, false)
+
+	//If no match, get random category
+	if(!result) return _.sample(_.keys(Categories));
+	return result;
 }
 
 var startTimer = function(Higgins){
@@ -100,6 +113,8 @@ var stringToCleanWordArray = function(string) {
 };
 
 var checkAnswer = function(msg){
+	return true;
+
 	if(!msg) return;
 	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or'];
 
@@ -113,12 +128,38 @@ var checkAnswer = function(msg){
 	});
 }
 
+var increaseScore = function(Higgins, user, newPoints){
+	if(!Scores[user]){
+		Scores[user] = {
+			user   : user,
+			points : 0,
+			crowns : 0
+		};
+	}
+	Scores[user].points += storedClue.value || 5001;
+
+	if(Scores[user].points >= CROWN_THRESHOLD){
+		Higgins.reply("Congrats " + user + "! You've been awarded a :crown:! \n" + getScoreboard() +"\n\nScores reset!");
+		Scores[user].crowns += 1;
+		_.each(Scores, (score)=>{
+			score.points = 0;
+		});
+	}else{
+		Higgins.reply("Correct! Good job " + user + "!\n" + getScoreboard());
+	}
+
+	Storage.set('trivia_scores', Scores);
+}
+
+
+
 var getScoreboard = function(){
-	var sortedScores = _.sortBy(scores, (score)=>{
+	var sortedScores = _.sortBy(Scores, (score)=>{
 		return 999999 - score.points;
 	});
 	return _.map(sortedScores, (score)=>{
-		return ':' + score.user + ': has ' + score.points + ' points';
+		return ':' + score.user + ': has ' + score.points + ' points \t' +
+			_.times(score.crowns, ()=>{return ':crown:'}).join(' ');
 	}).join('\n');
 };
 
@@ -126,10 +167,11 @@ var getScoreboard = function(){
 module.exports = {
 	listenFor : ['message'],
 	response  : function(msg, info, Higgins){
-		//if(info.channel !== 'trivia-time') return;
+		if(info.channel !== 'trivia-time') return;
+		if(!msg) return;
 
 		if(isQuestionStart(msg)){
-			var category = _.sample(_.keys(categoryIds));
+			var category = getCategory(msg);
 			return getTrivia(Higgins, category, function(clue){
 				isActive = true;
 				storedClue = clue;
@@ -139,15 +181,10 @@ module.exports = {
 				Higgins.reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
 		}else if(isScoreboardRequest(msg)){
-			return Higgins.reply(getScoreboard());
+			return Higgins.reply(' \n ' + getScoreboard());
 		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
-				//Increase scores
-				if(!scores[info.user]) scores[info.user] = {user: info.user, points: 0};
-				scores[info.user].points += storedClue.value;
-
-				Higgins.reply("Correct! Good job " + info.user + "!\n\n" + getScoreboard());
-
+				increaseScore(Higgins, info.user, storedClue.value);
 				cleanup();
 			}else{
 				Higgins.react('no_entry_sign');

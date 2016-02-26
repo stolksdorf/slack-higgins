@@ -11,10 +11,10 @@ module.exports = {
 	get : function(key, cb){
 		return client.get(key, function(err, res){
 			if(err) return Logbot.error(err);
-			cb(res);
+			cb(JSON.parse(res));
 		})
 	},
-	set : function(key, val){
-		return client.set(key, val);
+	set : function(key, val, cb){
+		return client.set(key, JSON.stringify(val), cb);
 	},
 }
