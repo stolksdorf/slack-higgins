@@ -70,8 +70,8 @@ var getTrivia = function(Higgins, category, cb){
 }
 
 var isTriviaRequest = function(msg){
-	return _contains(msg, ['higgins', 'hizzle', 'h-dawg']) &&
-			_contains(msg, ['trivia', 'another', 'trizzle']) &&
+	return _contains(msg, ['higgins', 'hizzle', 'h-dawg', 'higs']) &&
+			_contains(msg, ['trivia', 'another', 'trizzle', 'question', 'hit me', 'quiz me']) &&
 			!isActive;
 }
 var isScoreboardRequest = function(msg){
