@@ -1,6 +1,6 @@
 var Logbot = require('logbot');
 var redis = require("redis");
-var client = redis.createClient();
+var client = redis.createClient(process.env.REDIS_URL);
 
 client.on("error", function(err){
 	Logbot.error("Storage Error", err);
