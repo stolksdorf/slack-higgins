@@ -47,7 +47,7 @@ BotRTM.getUsers().then(function(res){
 
 
 BotRTM.on('start', function() {
-	BotRTM.postMessageToChannel('diagnostics', 'Booting up sir', higginsInfo);
+	//BotRTM.postMessageToChannel('diagnostics', 'Booting up sir', higginsInfo);
 });
 
 
@@ -60,6 +60,14 @@ BotRTM.on('message', function(data) {
 
 	if(data.channel) data.channel = Channels[data.channelId];
 	if(data.user) data.user = Users[data.userId];
+
+	//If we are locally testing, only received messages from the diagnostics channel
+	if(process.env.LOCAL && data.channel !== 'diagnostics') return;
+
+
+
+	console.log(data + '\n\n');
+
 
 	if(!responseMapping[data.type]) return;
 
