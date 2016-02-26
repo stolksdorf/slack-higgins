@@ -10,13 +10,18 @@ var Categories = {
 	water : 211,
 	nature : 267,
 	'4 letter words' : 51,
+	'5 letter words' : 139,
 	homophones : 249,
 	food : 49,
 	rhymes : 561,
-	'Word Origins' : 223,
-	'science AND nature!' : 218,
+	'word origins' : 223,
+	'science & nature' : 218,
 	'before & after' : 1800,
-	'familiar phrases' : 705
+	'familiar phrases' : 705,
+	'common bonds' : 508,
+	'hodgepodge' : 227,
+	'mythology' : 680,
+
 };
 
 //Load persistant data
@@ -58,15 +63,18 @@ var getTrivia = function(Higgins, category, cb){
 		});
 }
 
-var isQuestionStart = function(msg){
+var isTriviaRequest = function(msg){
 	return _.includes(msg.toLowerCase(), 'higgins') &&
 			_.includes(msg.toLowerCase(), 'trivia') &&
 			!isActive;
 }
-
 var isScoreboardRequest = function(msg){
 	return _.includes(msg.toLowerCase(), 'higgins') &&
 			_.includes(msg.toLowerCase(), 'score');
+}
+var isCategoriesRequest = function(msg){
+	return _.includes(msg.toLowerCase(), 'higgins') &&
+			_.includes(msg.toLowerCase(), 'categories');
 }
 
 var getCategory = function(msg){
@@ -139,21 +147,23 @@ var increaseScore = function(Higgins, user, newPoints){
 	Scores[user].points += storedClue.value || 5001;
 
 	if(Scores[user].points >= CROWN_THRESHOLD){
-		Higgins.reply("Congrats " + user + "! You've been awarded a :crown:! \n" + getScoreboard() +"\n\nScores reset!");
+		Higgins.reply("Congrats " + user + "! You've been awarded a :crown:! \n" + printScoreboard() +"\n\nScores reset!");
 		Scores[user].crowns += 1;
 		_.each(Scores, (score)=>{
 			score.points = 0;
 		});
 	}else{
-		Higgins.reply("Correct! Good job " + user + "!\n" + getScoreboard());
+		Higgins.reply("Correct! Good job " + user + "!\n" + printScoreboard());
 	}
 
 	Storage.set('trivia_scores', Scores);
 }
 
+var printCategories = function(Higgins){
+	Higgins.reply('The categories are: \n' + _.keys(Categories).join('\n'));
+}
 
-
-var getScoreboard = function(){
+var printScoreboard = function(){
 	var sortedScores = _.sortBy(Scores, (score)=>{
 		return 999999 - score.points;
 	});
@@ -167,10 +177,10 @@ var getScoreboard = function(){
 module.exports = {
 	listenFor : ['message'],
 	response  : function(msg, info, Higgins){
-		if(info.channel !== 'trivia-time') return;
+		if(info.channel !== 'trivia-time' && !process.env.LOCAL) return;
 		if(!msg) return;
 
-		if(isQuestionStart(msg)){
+		if(isTriviaRequest(msg)){
 			var category = getCategory(msg);
 			return getTrivia(Higgins, category, function(clue){
 				isActive = true;
@@ -180,8 +190,10 @@ module.exports = {
 				channel = info.channel;
 				Higgins.reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
 			})
+		}else if(isCategoriesRequest(msg)){
+			return printCategories(Higgins);
 		}else if(isScoreboardRequest(msg)){
-			return Higgins.reply(' \n ' + getScoreboard());
+			return Higgins.reply(' \n ' + printScoreboard());
 		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
 				increaseScore(Higgins, info.user, storedClue.value);
