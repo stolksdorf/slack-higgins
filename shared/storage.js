@@ -3,7 +3,7 @@ var redis = require("redis");
 var client = redis.createClient();
 
 client.on("error", function(err){
-	Logbot.error(err);
+	Logbot.error("Storage Error", err);
 });
 
 
