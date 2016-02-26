@@ -145,7 +145,7 @@ var increaseScore = function(Higgins, user, newPoints){
 	Scores[user].points += storedClue.value || 5001;
 
 	if(Scores[user].points >= CROWN_THRESHOLD){
-		Higgins.reply("Congrats " + user + "! You've been awarded a :crown:! \n" + printScoreboard() +"\n\nScores reset!");
+		Higgins.reply("Congrats " + user + "! You've been awarded a :crown: https://media.giphy.com/media/WWrf3mWsicNqM/giphy.gif! \n" + printScoreboard() +"\n\nScores reset!");
 		Scores[user].crowns += 1;
 		_.each(Scores, (score)=>{
 			score.points = 0;
