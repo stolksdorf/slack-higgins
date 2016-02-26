@@ -26,6 +26,9 @@ module.exports = function(msg, info, reply){
 }
 ```
 
+
+
+
 Commit your changes and LogBot will tell you when the server has restarted in the `diagnostics` channel
 
 
