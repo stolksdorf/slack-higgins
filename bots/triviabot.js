@@ -120,7 +120,7 @@ var stringToCleanWordArray = function(string) {
 	return _.chain(string)
 		.words(/[^ \/-]+/g)
 		.map((word) => {
-			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/e?s$/, '');
+			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/s$/, '');
 		})
 		.filter()
 		.value();
