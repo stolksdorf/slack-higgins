@@ -121,8 +121,6 @@ var stringToCleanWordArray = function(string) {
 };
 
 var checkAnswer = function(msg){
-	return true;
-
 	if(!msg) return;
 	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or'];
 
