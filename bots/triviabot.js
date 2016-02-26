@@ -40,6 +40,12 @@ var storedClue = {};
 var channel;
 var timer;
 
+var _contains = function(str, list){
+	return _.some(list, (word)=>{
+		return _.includes(str.toLowerCase(), word.toLowerCase());
+	});
+}
+
 var getTrivia = function(Higgins, category, cb){
 
 	var getQuestion = function(){
@@ -64,8 +70,8 @@ var getTrivia = function(Higgins, category, cb){
 }
 
 var isTriviaRequest = function(msg){
-	return _.includes(msg.toLowerCase(), 'higgins') &&
-			_.includes(msg.toLowerCase(), 'trivia') &&
+	return _contains(msg, ['higgins', 'hizzle', 'h-dawg']) &&
+			_contains(msg, ['trivia', 'another', 'trizzle']) &&
 			!isActive;
 }
 var isScoreboardRequest = function(msg){
@@ -122,7 +128,7 @@ var stringToCleanWordArray = function(string) {
 
 var checkAnswer = function(msg){
 	if(!msg) return;
-	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or'];
+	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to'];
 
 	var msgWords = stringToCleanWordArray(msg);
 	var answerWords = stringToCleanWordArray(storedClue.answer);
