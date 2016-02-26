@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var request = require('superagent');
+var Storage = require('storage');
 
 var categoryIds = {
 	science : 25,
@@ -16,17 +17,33 @@ var categoryIds = {
 	'familiar phrases' : 705
 };
 
+//Load persistant data
 var questionCache = {};
+Storage.get("trivia_cache", function(cache){
+	questionCache = cache;
+});
+
 var scores = {};
+Storage.get("trivia_scores", function(scores){
+	scores = scores;
+});
+
 
 var isActive = false;
 var storedClue = {};
 var channel;
 var timer;
 
-var getQuestion = function(Higgins, category, cb){
+var getTrivia = function(Higgins, category, cb){
+	var getQuestion = function(){
+		//Remove a random element from the question cache
+		var question = questionCache[category].splice(_.random(questionCache[category].length - 1), 1)[0];
+		Storage.set("trivia_cache", questionCache);
+		cb(question);
+	}
+
 	if(questionCache[category]){
-		return cb(_.sample(questionCache[category]));
+		return getQuestion();
 	}
 	Higgins.reply("Refreshing question pool for *" + category + "*...");
 
@@ -34,7 +51,7 @@ var getQuestion = function(Higgins, category, cb){
 		.send()
 		.end(function(err, res){
 			questionCache[category] = res.body;
-			cb(_.sample(questionCache[category]));
+			return getQuestion();
 		});
 }
 
@@ -113,7 +130,7 @@ module.exports = {
 
 		if(isQuestionStart(msg)){
 			var category = _.sample(_.keys(categoryIds));
-			return getQuestion(Higgins, category, function(clue){
+			return getTrivia(Higgins, category, function(clue){
 				isActive = true;
 				storedClue = clue;
 				storedClue.answer = storedClue.answer.replace('<i>', '').replace('</i>', '')

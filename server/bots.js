@@ -65,8 +65,7 @@ BotRTM.on('message', function(data) {
 	if(process.env.LOCAL && data.channel !== 'diagnostics') return;
 
 
-
-	console.log(data + '\n\n');
+	console.log(data);
 
 
 	if(!responseMapping[data.type]) return;
