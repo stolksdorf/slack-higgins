@@ -203,6 +203,7 @@ module.exports = {
 			return Higgins.reply(' \n ' + printScoreboard());
 		}else if(isActive && channel == info.channel){
 			if(checkAnswer(msg)){
+				if(Scores.scott) Scores.scott.points++;
 				increaseScore(Higgins, info.user, storedClue.value);
 				cleanup();
 			}else{
