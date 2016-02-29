@@ -128,7 +128,7 @@ var stringToCleanWordArray = function(string) {
 
 var checkAnswer = function(msg){
 	if(!msg) return;
-	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to'];
+	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to', 'thing', 'things'];
 
 	var msgWords = stringToCleanWordArray(msg);
 	var answerWords = stringToCleanWordArray(storedClue.answer);
