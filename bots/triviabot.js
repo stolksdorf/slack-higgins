@@ -70,8 +70,8 @@ var getTrivia = function(Higgins, category, cb){
 }
 
 var isTriviaRequest = function(msg){
-	return _contains(msg, ['higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'very good', 'well done', 'quite so', 'my good sir', 'higgles', 'higgers']) &&
-			_contains(msg, ['trivia', 'another', 'trizzle', 'question', 'hit me', 'quiz me', 'once more', 'keep em coming', 'keep \’em coming', 'don\'t stop', 'don\’t stop', 'brain buster', 'small potatoes', 'hit it']) &&
+	return _contains(msg, ['higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'very good', 'well done', 'quite so', 'my good sir', 'higgles', 'higgers', 'I say']) &&
+			_contains(msg, ['trivia', 'another', 'trizzle', 'question', 'hit me', 'quiz', 'once more', 'keep em coming', 'keep \’em coming', 'don\'t stop', 'don\’t stop', 'brain buster', 'small potatoes', 'hit it', 'brain teaser', 'yet more', 'even more']) &&
 			!isActive;
 }
 var isScoreboardRequest = function(msg){
