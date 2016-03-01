@@ -70,7 +70,7 @@ var getTrivia = function(Higgins, category, cb){
 }
 
 var isTriviaRequest = function(msg){
-	return _contains(msg, ['higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'very good', 'well done', 'quite so', 'my good sir', 'higgles', 'higgers', 'I say', 'my dear boy', 'old chap', 'old boy']) &&
+	return _contains(msg, ['higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'very good', 'well done', 'quite so', 'good sir', 'higgles', 'higgers', 'I say', 'dear boy', 'old chap', 'old boy', 'higgings']) &&
 			_contains(msg, ['trivia', 'another', 'trizzle', 'question', 'hit me', 'quiz', 'once more', 'keep em coming', 'keep \’em coming', 'don\'t stop', 'don\’t stop', 'brain buster', 'small potatoes', 'hit it', 'brain teaser', 'yet more', 'even more']) &&
 			!isActive;
 }
