@@ -1,9 +1,9 @@
 
-var _ = require('lodash');
-//var shrew_emoji = ['sandshrew'];
+//var _ = require('lodash');
+var shrew_emoji = ['sandshrew'];
 
 var isShrewRequest = function(msg){
-	return _contains(msg, ['Sandshrew I choose you', 'Sandshrew go']);
+	return _contains(msg, ['Sandshrew', 'choose','go','shrewbro']);
 	}
 	
 //var isShrewDismiss = function(msg){
@@ -11,10 +11,11 @@ var isShrewRequest = function(msg){
 
 module.exports = {
 	listenFor : ['message'],	
-
-      if(isShrewRequest(msg)){
-    	  if(info.user == 'meggeroni'){
-			  Higgins.react(sandshrew);
+	response : function(msg, info, Higgins){
+      		if(isShrewRequest(msg)){
+    	  	if(info.user == 'meggeroni'){
+			  Higgins.react(shrew_emoji);
+    	  		}
 			}
 		}	
 	};	
