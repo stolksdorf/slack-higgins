@@ -23,7 +23,7 @@ var _contains = function(str, list){
 
 //do the shit
 module.exports = {
-	listenFor : ['message'],	
+	//listenFor : ['message'],	
 	response : function(msg, info, Higgins){
       		if(isShrewRequest(msg)){
     	  	if(info.user == 'meggeroni'){
