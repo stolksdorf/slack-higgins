@@ -1,6 +1,6 @@
 
 //var _ = require('lodash');
-var shrew_emoji = ['sandshrew'];
+//var shrew_emoji = ['sandshrew'];
 
 var isShrewRequest = function(msg){
 	return _contains(msg, ['Sandshrew', 'choose','go','shrewbro']);
@@ -14,7 +14,7 @@ module.exports = {
 	response : function(msg, info, Higgins){
       		if(isShrewRequest(msg)){
     	  	if(info.user == 'meggeroni'){
-			  Higgins.react(shrew_emoji);
+			  Higgins.react('sandshrew');
     	  		}
 			}
 		}	
