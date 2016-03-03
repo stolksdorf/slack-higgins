@@ -14,7 +14,7 @@ var _contains = function(str, list){
 
 //define shrew messages
 var isShrewRequest = function(msg){
-	return _contains(msg, ['Sandshrew','choose','go','shrewbro']);
+	return _contains(msg, ['choose','go']) && _contains(msg, ['Sandshrew','shrewbro']);
 	};
 
 	
