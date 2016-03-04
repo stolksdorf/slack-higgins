@@ -30,7 +30,7 @@ var isShrewDismiss = function(msg){
 module.exports = {
 	listenFor : ['message'],	
 	response : function(msg, info, Higgins){
-		if(info.channel !== 'tall-grass') return;
+		if(info.channel !== 'tall-grass' && !process.env.LOCAL) return;
 		if(!msg) return;
 		
       		if(info.user == 'meggeroni' && isShrewRequest(msg)){
