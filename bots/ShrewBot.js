@@ -6,7 +6,7 @@ var _ = require('lodash');
 //var shrew_emoji = ['sandshrew'];
 
 var isActive = false;
-var channel;
+//var channel;
 
 
 //words of ancient voodoo provided by scott to whisper gently over my bot
@@ -30,13 +30,13 @@ var isShrewDismiss = function(msg){
 module.exports = {
 	listenFor : ['message'],	
 	response : function(msg, info, Higgins){
-		if(info.channel !== 'tall-grass' && !process.env.LOCAL) return;
-		if(!msg) return;
+		//if(info.channel !== 'tall-grass' && !process.env.LOCAL) return;
 		
       		if(info.user == 'meggeroni' && isShrewRequest(msg)){
-      			  channel = info.channel;
+      			  isActive = true;
+      			  //channel = info.channel;
 			  Higgins.react('sandshrew');
-			  isActive = true;
+
     	  		}
     	  	else if(info.user == 'meggeroni' && isShrewDismiss(msg)){
 			  Higgins.react('pokeball');
