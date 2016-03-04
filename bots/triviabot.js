@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var request = require('superagent');
 var Storage = require('storage');
+var Utils = require('utils');
 
 var CROWN_THRESHOLD = 25000;
 
@@ -40,11 +41,6 @@ var storedClue = {};
 var channel;
 var timer;
 
-var _contains = function(str, list){
-	return _.some(list, (word)=>{
-		return _.includes(str.toLowerCase(), word.toLowerCase());
-	});
-}
 
 var getTrivia = function(Higgins, category, cb){
 
@@ -69,18 +65,23 @@ var getTrivia = function(Higgins, category, cb){
 		});
 }
 
+var higginsNames = [
+	'higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'good sir',
+	'higgles', 'higgers', 'old chap', 'old boy', 'higgings', 'higgidy'
+];
+
 var isTriviaRequest = function(msg){
-	return _contains(msg, ['higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'very good', 'well done', 'quite so', 'good sir', 'higgles', 'higgers', 'I say', 'dear boy', 'old chap', 'old boy', 'higgings', 'higgidy']) &&
-			_contains(msg, ['trivia', 'another', 'trizzle', 'question', 'hit me', 'quiz', 'once more', 'keep em coming', 'keep \’em coming', 'don\'t stop', 'don\’t stop', 'brain buster', 'small potatoes', 'hit it', 'brain teaser', 'yet more', 'even more']) &&
-			!isActive;
+	return !isActive && Utils.messageHas(msg, higginsNames, [
+		'trivia', 'another', 'trizzle', 'question', 'quite so', 'hit me', 'quiz', 'very good', 'well done','once more',
+		'keep em coming', "keep 'em coming", "don't stop", 'brain buster', 'small potatoes', 'hit it',
+		'brain teaser', 'yet more', 'even more'
+	])
 }
 var isScoreboardRequest = function(msg){
-	return _.includes(msg.toLowerCase(), 'higgins') &&
-			_.includes(msg.toLowerCase(), 'score');
+	return utils.messageHas(msg, higginsNames, ['score', 'scoreboard', 'points', 'winning', 'crowns']);
 }
 var isCategoriesRequest = function(msg){
-	return _.includes(msg.toLowerCase(), 'higgins') &&
-			_.includes(msg.toLowerCase(), 'categories');
+	return utils.messageHas(msg, higginsNames, ['categories', 'category']);
 }
 
 var getCategory = function(msg){
