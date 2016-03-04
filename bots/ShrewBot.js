@@ -36,7 +36,7 @@ module.exports = {
 			  Higgins.react('pokeball');
 			  isActive = false;
     	  		}	
-		else if(isActive){
+		else if(info.user == 'meggeroni' && isActive){
 			Higgins.react('sandshrew');	
 			}
 		
