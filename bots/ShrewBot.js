@@ -41,9 +41,9 @@ module.exports = {
     	  	else if(info.user == 'meggeroni' && isShrewDismiss(msg)){
 			  Higgins.react('pokeball');
 			  isActive = false;
-			  channel = null;
+			  //channel = null;
     	  		}	
-		else if(info.user == 'meggeroni' && isActive && channel == info.channel){
+		else if(info.user == 'meggeroni' && isActive){
 			Higgins.react('sandshrew');	
 			}
 		
