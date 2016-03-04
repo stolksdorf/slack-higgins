@@ -21,7 +21,7 @@ var isShrewRequest = function(msg){
 
 //random junk maybe? Will I need it someday, only time will tell.	
 var isShrewDismiss = function(msg){
-	return _contains(msg, ['enough','come back']) && _contains(msg, ['Sandshrew','shrewbro']) && isActive;	
+	return _contains(msg, ['enough','come back','back']) && _contains(msg, ['Sandshrew','shrewbro','asshole']) && isActive;	
 	};
 
 //do the shit
@@ -32,12 +32,13 @@ module.exports = {
 			  Higgins.react('sandshrew');
 			  isActive = true;
     	  		}
-		else if(isActive){
-			Higgins.react('sandshrew');	
-		}
-		else if(info.user == 'meggeroni' && isShrewDismiss(msg)){
+    	  	else if(info.user == 'meggeroni' && isShrewDismiss(msg)){
 			  Higgins.react('pokeball');
 			  isActive = false;
-    	  		}
+    	  		}	
+		else if(isActive){
+			Higgins.react('sandshrew');	
+			}
+		
 		}	
 };	
