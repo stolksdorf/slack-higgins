@@ -71,7 +71,7 @@ var higginsNames = [
 ];
 
 var isTriviaRequest = function(msg){
-	return !isActive && Utils.messageHas(msg, higginsNames, [
+	return !isActive && utils.messageHas(msg, higginsNames, [
 		'trivia', 'another', 'trizzle', 'question', 'quite so', 'hit me', 'quiz', 'very good', 'well done','once more',
 		'keep em coming', "keep 'em coming", "don't stop", 'brain buster', 'small potatoes', 'hit it',
 		'brain teaser', 'yet more', 'even more'
