@@ -1,7 +1,8 @@
 var _ = require('lodash');
 var request = require('superagent');
-var Storage = require('storage');
-var utils = require('utils');
+
+var Storage = require('../helperbot/storage');
+var utils = require('../helperbot/utils');
 
 var CROWN_THRESHOLD = 25000;
 

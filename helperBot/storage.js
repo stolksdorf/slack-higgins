@@ -1,4 +1,4 @@
-var Logbot = require('logbot');
+var Logbot = require('./logbot');
 var redis = require("redis");
 var client = redis.createClient(process.env.REDIS_URL);
 

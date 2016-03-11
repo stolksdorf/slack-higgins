@@ -1,5 +1,6 @@
 require('app-module-path').addPath('./shared');
 
+var fs = require('fs');
 var _ = require('lodash');
 var express = require('express');
 var app = express();
@@ -9,6 +10,7 @@ var fs = require('fs');
 if(fs.existsSync('./config.json')){
 	var config;
 	try{
+		//try loading a local config
 		config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 	}catch(e){
 		console.log('ERROR', e);
@@ -17,18 +19,25 @@ if(fs.existsSync('./config.json')){
 }
 
 
-var Logbot = require('logbot');
-Logbot.info('Server Restart', 'Server restarted and everything looking good!');
+//Boot up helperbot
+require('./helperbot')({
+	expressApp : app,
+	diagnosticsWebhook : process.env.DIAGNOSTICS_WEBHOOK,
+
+	cmdList : fs.readdirSync('./commands'),
+	botList : fs.readdirSync('./bots'),
+
+	botInfo : {
+		icon : ':tophat:',
+		name : 'higgins',
+		token : process.env.SLACK_BOT_TOKEN
+	}
+})
 
 
 
-var Cmds = require('./server/cmds.js')
-var Bots = require('./server/bots.js')
-
-Cmds.loadCmds(app);
-Bots.loadBots();
 
 var port = process.env.PORT || 8000;
 
 app.listen(port);
-console.log('running.');
+console.log('running bot server at localhost:8000');

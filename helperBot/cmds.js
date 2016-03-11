@@ -1,6 +1,5 @@
 var _ = require('lodash');
-var Logbot = require('logbot');
-
+var Logbot = require('./logbot');
 
 var formatResponse = function(response){
 	if(_.isString(response)){
@@ -32,18 +31,25 @@ var error_callback = function(res, err){
 	Logbot.error('Command Dev Error : ' + cmdPath, err);
 }
 
-
-
 module.exports = {
-	loadCmds : function(app){
 
-		var cmds = require('fs').readdirSync('./commands');
+	getCmds : function(){
 
-		_.each(cmds, function(cmdPath){
+	},
+
+	load : function(app, cmdList){
+		var loadResults ={
+			success : [],
+			error : []
+		}
+
+		_.each(cmdList, function(cmdPath){
 			try{
 				var cmd = require('../commands/' + cmdPath);
+				loadResults.success.push(cmdPath);
 			}catch(err){
 				Logbot.error('Command Load Error : ' + cmdPath, err);
+				loadResults.error.push(cmdPath);
 				return;
 			}
 
@@ -65,5 +71,6 @@ module.exports = {
 			})
 		})
 
+		return loadResults;
 	}
 }
