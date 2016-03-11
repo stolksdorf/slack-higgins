@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var Logbot = require('logbot');
+var Logbot = require('../helperbot/logbot');
 
 var nest = require('unofficial-nest-api');
 var NEST_CONFIG = JSON.parse(process.env.NEST_CONFIG || "{}");
