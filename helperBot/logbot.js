@@ -5,7 +5,7 @@ var diagnosticsURL = '';
 
 var sendViaLogbot = function(msgObj){
 	if(!diagnosticsURL){
-		console.log(msgObj);
+		console.log(JSON.stringify(msgObj, null, '  '));
 		return;
 	}
 	request.post(diagnosticsURL)
@@ -19,7 +19,6 @@ module.exports = {
 		diagnosticsURL = url;
 	},
 
-	//blue
 	log : function(){
 		var args = Array.prototype.slice.call(arguments);
 		sendViaLogbot({
@@ -34,7 +33,6 @@ module.exports = {
 		})
 	},
 
-	//red
 	error : function(title, err){
 		err = err || {};
 		var stack = err.stack ? err.stack : JSON.stringify(err, null, '  ');
@@ -51,7 +49,6 @@ module.exports = {
 		})
 	},
 
-	//yellow
 	info : function(title, msg){
 		sendViaLogbot({
 			color : 'good',
