@@ -1,4 +1,4 @@
-var Logbot = require('./logbot');
+var logbot = require('./logbot');
 var redis = require("redis");
 var client = redis.createClient(process.env.REDIS_URL);
 
@@ -6,8 +6,7 @@ var TEMP_STORAGE = {}
 
 
 client.on("error", function(err){
-	Logbot.error("Redis Storage Error", err);
-	Logbot.info("Falling back to temporary storage instance. ")
+	logbot.warn("Redis Storage Error", "Falling back to temporary storage instance.");
 	client.end();
 
 	//Fallback storage

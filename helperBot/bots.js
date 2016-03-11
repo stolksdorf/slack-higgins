@@ -8,7 +8,7 @@ var Channels = {};
 var Users = {}
 var Bots = [];
 
-var responseMapping = {}
+var botResponseMapping = {}
 
 
 var BotInstance = {};
@@ -18,7 +18,7 @@ var BotInfo = {
 }
 
 
-var createBotInContext = function(eventData){
+var getBotInContext = function(eventData){
 	return {
 		reply : function(msg, target){
 			target = target || eventData.channel;
@@ -39,61 +39,50 @@ var createBotInContext = function(eventData){
 
 
 var shouldRespond = function(eventData){
+	//Don't listen to yourself
+	if(eventData.user == BotInfo.username) return false;
 
+	//Don't ever listen to logbot
+	if(eventData.user == 'logbot') return false;
+
+
+	//if locally developing, only listen to #diagnostics
+
+	//if in production, never listen to #diagnostics
+
+
+
+
+	return true;
 }
 
 
+var enhanceEventData = function(eventData){
+	eventData.channelId = eventData.channel;
+	eventData.userId = eventData.user;
+	if(eventData.channel) eventData.channel = Channels[eventData.channelId];
+	if(eventData.user) eventData.user = Users[eventData.userId];
+	if(eventData.username) eventData.user = eventData.username;
+	return eventData;
+}
+
 
 var handleEvent = function(data) {
+	data = enhanceEventData(data);
 
 
-	console.log(data);
-
-	console.log("----------");
-
-	return
+	if(!shouldRespond(data)) return;
 
 
-	//TODO : Add protection for other bot names
-	if(data.username == 'higgins' || data.username == 'LogBot' || data.username == 'meowbot') return;
-
-	data.channelId = data.channel;
-	data.userId = data.user;
-
-	if(data.channel) data.channel = Channels[data.channelId];
-	if(data.user) data.user = Users[data.userId];
-
-	//If we are locally testing, only received messages from the diagnostics channel
-	if(process.env.LOCAL && data.channel !== 'diagnostics') return;
+	//console.log(data);
 
 
-	console.log(data);
 
 
-	if(!responseMapping[data.type]) return;
-
-	_.each(responseMapping[data.type], (bot)=>{
-
-		//Create a wrapper around the BotInstance for Higgins
-		var Higgins = {
-			reply : function(msg, target){
-				target = target || data.channel;
-				return BotInstance.postTo(target, msg, {
-					icon_emoji : bot.icon || higginsInfo.icon_emoji,
-					username : bot.name || higginsInfo.username
-				})
-			},
-			react : function(emoji){
-				return BotInstance._api('reactions.add', {
-					name : emoji,
-					channel : data.channelId,
-					timestamp : data.ts
-				});
-			},
-		}
-
+	if(!botResponseMapping[data.type]) return;
+	_.each(botResponseMapping[data.type], (bot)=>{
 		try{
-			bot.response(data.text, data, Higgins, BotInstance);
+			bot.response(data.text, data, getBotInContext(data), BotInstance);
 		}catch(err){
 			Logbot.error('Bot Run Error : ' + bot.path, err);
 		}
@@ -141,10 +130,9 @@ module.exports = {
 		Bots = _.map(botList, function(botPath){
 			try{
 				var bot = require('../bots/' + botPath);
-				bot.path = botPath;
+				bot.name = botPath;
 				loadResults.success.push(botPath);
-				//Add defaults
-				bot = _.extend({listenFor:[], response:function(){}}, bot)
+				bot = _.extend({listenFor:[], response:function(){}}, bot); //Add defaults
 				return bot;
 			}catch(err){
 				Logbot.error('Bot Load Error : ' + botPath, err);
@@ -155,14 +143,13 @@ module.exports = {
 
 		//Create object that maps message types to which bot triggers it
 		_.each(Bots, function(bot){
-
-
-
 			_.each(bot.listenFor, function(trigger){
-				if(!responseMapping[trigger]) responseMapping[trigger] = [];
-				responseMapping[trigger].push(bot);
+				if(!botResponseMapping[trigger]) botResponseMapping[trigger] = [];
+				botResponseMapping[trigger].push(bot);
 			})
 		});
+
+		console.log(botResponseMapping);
 
 		return loadResults;
 	}
