@@ -11,7 +11,6 @@ var Bots = [];
 
 var botEventMapping = {}
 
-
 var BotInstance = {};
 var BotInfo = {
 	icon : ':robot_face:',

@@ -7,7 +7,7 @@ module.exports = {
 	response : function(msg, info, Higgins){
 
 		if(info.user == 'scott'){
-			Higgins.react('sloth');
+			Higgins.react('scott');
 		}
 
 
