@@ -3,8 +3,9 @@ module.exports = {
 	//name : "scottbot",
 
 	listenIn : 'floofs',
-	listenFor : ['message'],
+	listenFor : ['user_typing'],
 	response : function(msg, info, Higgins){
+		if(_) return;
 
 		if(info.user == 'scott'){
 			Higgins.reply('sloth');
