@@ -1,4 +1,4 @@
-# butlerbot
+# higgins
 A Slackbot for my personal slack. [List of Custom Integrations](https://coolsville.slack.com/apps/manage/custom-integrations)
 
 
@@ -16,7 +16,7 @@ A Slackbot for my personal slack. [List of Custom Integrations](https://coolsvil
 ### Add a new command
 
 1. [Head here](https://coolsville.slack.com/apps/new/A0F82E8CA-slash-commands) and fill out the info
-2. The url is `http://slack-butlerbot.herokuapp.com/[YOUR COMMAND]`, eg. `http://slack-butlerbot.herokuapp.com/coolcmd`
+2. The url is `http://slack-higgins.herokuapp.com/[YOUR COMMAND]`, eg. `http://slack-higgins.herokuapp.com/coolcmd`
 3. Set the **Method** to `GET`
 4. Give it whatever name and Icon you like
 4. Hit "Save Integration"!
