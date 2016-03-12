@@ -38,7 +38,7 @@ var getBotInContext = function(eventData){
 }
 
 
-var shouldRespond = function(eventData){
+var shouldFrameworkRespond = function(eventData){
 	//Don't listen to yourself
 	if(eventData.user == BotInfo.username) return false;
 
@@ -50,13 +50,16 @@ var shouldRespond = function(eventData){
 
 	//if in production, never listen to #diagnostics
 
+	return true;
+}
 
+var shouldBotRespond = function(eventData, bot){
 
 
 	return true;
 }
 
-
+//Cleans up the event object slack gives us
 var enhanceEventData = function(eventData){
 	eventData.channelId = eventData.channel;
 	eventData.userId = eventData.user;
@@ -69,14 +72,9 @@ var enhanceEventData = function(eventData){
 
 var handleEvent = function(data) {
 	data = enhanceEventData(data);
+	if(!shouldFrameworkRespond(data)) return;
 
-
-	if(!shouldRespond(data)) return;
-
-
-	//console.log(data);
-
-
+	if()
 
 
 	if(!botResponseMapping[data.type]) return;

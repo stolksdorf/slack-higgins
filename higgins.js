@@ -24,6 +24,7 @@ require('./helperbot')({
 	expressApp : app,
 	diagnosticsWebhook : process.env.DIAGNOSTICS_WEBHOOK,
 	local : !process.env.PRODUCTION,
+	debug : true,
 
 	cmdList : fs.readdirSync('./commands'),
 	botList : fs.readdirSync('./bots'),

@@ -21,7 +21,6 @@ client.on("error", function(err){
 	}
 });
 
-
 module.exports = {
 	get : function(key, cb){
 		return client.get(key, function(err, res){
