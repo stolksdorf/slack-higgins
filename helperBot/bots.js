@@ -2,27 +2,33 @@ var _ = require('lodash');
 var SlackBot = require('slackbots');
 var Logbot = require('./logbot');
 
-var TOKEN = process.env.SLACK_BOT_TOKEN;
+var DEBUG = false;
+var LOCAL = false;
 
 var Channels = {};
 var Users = {}
 var Bots = [];
 
-var botResponseMapping = {}
+var botEventMapping = {}
 
 
 var BotInstance = {};
 var BotInfo = {
-	icon_emoji : ':robot_face:',
-	username : 'helperbot'
+	icon : ':robot_face:',
+	name : 'helperbot'
 }
 
 
-var getBotInContext = function(eventData){
+var getBotInContext = function(bot, eventData){
+	var botInfo = {
+		icon_emoji : bot.icon || BotInfo.icon,
+		username : bot.name || BotInfo.name
+	}
+
 	return {
 		reply : function(msg, target){
 			target = target || eventData.channel;
-			return BotInstance.postTo(target, msg, BotInfo)
+			return BotInstance.postTo(target, msg, botInfo)
 		},
 		react : function(emoji){
 			return BotInstance._api('reactions.add', {
@@ -38,23 +44,29 @@ var getBotInContext = function(eventData){
 }
 
 
-var shouldFrameworkRespond = function(eventData){
+var shouldHelperRespond = function(eventData){
 	//Don't listen to yourself
 	if(eventData.user == BotInfo.username) return false;
 
 	//Don't ever listen to logbot
 	if(eventData.user == 'logbot') return false;
 
-
 	//if locally developing, only listen to #diagnostics
+	if(LOCAL && eventData.channel != 'diagnostics' && !DEBUG) return false;
 
 	//if in production, never listen to #diagnostics
+	if(!LOCAL && eventData.channel == 'diagnostics') return false;
 
 	return true;
 }
 
 var shouldBotRespond = function(eventData, bot){
 
+	//Unless locally developing, check if the bot is only supposed to listen in one channel
+	if(_.isString(bot.listenIn) && !LOCAL){
+		if(eventData.channel == bot.listenIn) return true;
+		return false;
+	}
 
 	return true;
 }
@@ -63,30 +75,36 @@ var shouldBotRespond = function(eventData, bot){
 var enhanceEventData = function(eventData){
 	eventData.channelId = eventData.channel;
 	eventData.userId = eventData.user;
-	if(eventData.channel) eventData.channel = Channels[eventData.channelId];
+
+	//For reactions
+	if(eventData.item && eventData.item.channel) eventData.channelId = eventData.item.channel;
+
+	if(eventData.channelId) eventData.channel = Channels[eventData.channelId];
 	if(eventData.user) eventData.user = Users[eventData.userId];
 	if(eventData.username) eventData.user = eventData.username;
+	if(eventData.channelId && eventData.channelId[0] == 'D') eventData.isDirect = true;
+
 	return eventData;
 }
 
 
 var handleEvent = function(data) {
 	data = enhanceEventData(data);
-	if(!shouldFrameworkRespond(data)) return;
+	if(!shouldHelperRespond(data)) return;
 
-	if()
+	//if locally developing and you want full debugging, it console logs every event
+	if(LOCAL && DEBUG){console.log(data);console.log('---');}
 
-
-	if(!botResponseMapping[data.type]) return;
-	_.each(botResponseMapping[data.type], (bot)=>{
-		try{
-			bot.response(data.text, data, getBotInContext(data), BotInstance);
-		}catch(err){
-			Logbot.error('Bot Run Error : ' + bot.path, err);
+	_.each(botEventMapping[data.type], (bot)=>{
+		if(shouldBotRespond(data, bot)){
+			try{
+				bot.response(data.text, data, getBotInContext(bot, data), BotInstance);
+			}catch(err){
+				Logbot.error('Bot Run Error : ' + bot.path, err);
+			}
 		}
 	});
 };
-
 
 
 module.exports = {
@@ -94,15 +112,15 @@ module.exports = {
 		return Bots;
 	},
 
-	start : function(botInfo){
+	start : function(botInfo, isLocal, isDebug){
+		LOCAL = isLocal;
+		DEBUG = isDebug;
+
 		BotInstance = new SlackBot({
-			token: botInfo.token,
-			name: botInfo.name
+			token : botInfo.token,
+			name  : botInfo.name
 		});
-		BotInfo = _.extend(BotInfo, {
-			icon_emoji : botInfo.icon,
-			username : botInfo.name
-		});
+		BotInfo = _.extend(BotInfo, botInfo);
 
 		//Populate channels and users
 		BotInstance.getChannels().then(function(res){
@@ -125,29 +143,29 @@ module.exports = {
 			error : []
 		};
 
+		var dummyBot = ()=>{return {listenFor:[], response:function(){}}};
+
 		Bots = _.map(botList, function(botPath){
 			try{
 				var bot = require('../bots/' + botPath);
-				bot.name = botPath;
+				bot.path = botPath;
 				loadResults.success.push(botPath);
-				bot = _.extend({listenFor:[], response:function(){}}, bot); //Add defaults
+				bot = _.extend(dummyBot(), bot); //Add defaults
 				return bot;
 			}catch(err){
 				Logbot.error('Bot Load Error : ' + botPath, err);
 				loadResults.error.push(botPath);
-				return;
+				return dummyBot();
 			}
 		});
 
 		//Create object that maps message types to which bot triggers it
 		_.each(Bots, function(bot){
 			_.each(bot.listenFor, function(trigger){
-				if(!botResponseMapping[trigger]) botResponseMapping[trigger] = [];
-				botResponseMapping[trigger].push(bot);
+				if(!botEventMapping[trigger]) botEventMapping[trigger] = [];
+				botEventMapping[trigger].push(bot);
 			})
 		});
-
-		console.log(botResponseMapping);
 
 		return loadResults;
 	}

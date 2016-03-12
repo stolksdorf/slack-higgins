@@ -4,6 +4,9 @@ A Slackbot for my personal slack. [List of Custom Integrations](https://coolsvil
 
 
 
+*Protip:* When developing locally, using `nodemon` will auto-restart the slack server whnever the project changes. Very useful
+
+
 
 
 

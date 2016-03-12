@@ -13,7 +13,7 @@ module.exports = function(configObj){
 
 
 
-	bots.start(configObj.botInfo);
+	bots.start(configObj.botInfo, configObj.local, configObj.debug);
 
 	var botLoadResult = bots.load(configObj.botList);
 
