@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var Logbot = require('./logbot');
 
+var Cmds = [];
+
 var formatResponse = function(response){
 	if(_.isString(response)){
 		return {
@@ -34,7 +36,7 @@ var error_callback = function(res, err){
 module.exports = {
 
 	getCmds : function(){
-
+		return Cmds;
 	},
 
 	load : function(app, cmdList){
@@ -47,6 +49,10 @@ module.exports = {
 			try{
 				var cmd = require('../commands/' + cmdPath);
 				loadResults.success.push(cmdPath);
+				Cmds.push({
+					name : cmdPath,
+					cmd : cmd
+				});
 			}catch(err){
 				Logbot.error('Command Load Error : ' + cmdPath, err);
 				loadResults.error.push(cmdPath);

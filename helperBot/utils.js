@@ -17,6 +17,16 @@ module.exports = {
 				return _.includes(msg.toLowerCase(), opt.toLowerCase());
 			});
 		});
-	}
+	},
+
+	// Given a weighted message map, will return a random message based on the weights
+	// {
+	//  'hey!' : 40,
+	//  'Cool guy' : 60
+	// }
+	getResponse : function(msgMap){
+
+
+	},
 
 }

@@ -37,8 +37,9 @@ var getBotInContext = function(bot, eventData){
 				timestamp : eventData.ts
 			});
 		},
-		whipser : function(msg, target){
-			//Create ephemeral message to user
+		whisper : function(msg, target){
+			target = target || eventData.user;
+			BotInstance.postTo(target, msg, botInfo);
 		}
 	}
 }

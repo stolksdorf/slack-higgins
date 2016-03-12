@@ -1,14 +1,13 @@
 module.exports = {
-	//icon : ':scott:',
-	//name : "scottbot",
+	icon : ':scott:',
+	name : "scottbot",
 
 	listenIn : 'floofs',
-	listenFor : ['user_typing'],
+	listenFor : ['message'],
 	response : function(msg, info, Higgins){
-		if(_) return;
 
 		if(info.user == 'scott'){
-			Higgins.reply('sloth');
+			Higgins.whisper('sloth');
 		}
 
 	}
