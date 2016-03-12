@@ -23,11 +23,18 @@ module.exports = function(configObj){
 
 	//TODO: Separate message for local testing
 
+	/*
 	if(configObj.local){
 		return logbot.info('Local Development Connected',
 			'Local version of ' + configObj.botInfo.name + ' has successfully connected to slack.');
 	}
+	*/
 
-	logbot.info('Server Restart', 'Server restarted and everything looking good!');
+	if(cmdLoadResult.error.length || botLoadResult.error.length){
+		console.log('WHAT');
+		return logbot.error('Server Failed Restart', 'There were some issues restarting the server, check logbot.');
+	}
+
+	logbot.info('Server Restart', 'Successfully loaded:\n > *Bots:* `woo.js` \n > *Cmds:* `neato.js`');
 
 }

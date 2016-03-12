@@ -6,7 +6,7 @@ var TEMP_STORAGE = {}
 
 
 client.on("error", function(err){
-	logbot.warn("Redis Storage Error", "Falling back to temporary storage instance.");
+	if(process.env.PRODUCTION) logbot.warn("Redis Storage Error", "Falling back to temporary storage instance.");
 	client.end();
 
 	//Fallback storage

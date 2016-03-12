@@ -52,7 +52,7 @@ var shouldHelperRespond = function(eventData){
 	if(eventData.user == 'logbot') return false;
 
 	//if locally developing, only listen to #diagnostics
-	if(LOCAL && eventData.channel != 'diagnostics' && !DEBUG) return false;
+	if(LOCAL && eventData.channel != 'diagnostics') return false;
 
 	//if in production, never listen to #diagnostics
 	if(!LOCAL && eventData.channel == 'diagnostics') return false;
