@@ -7,8 +7,9 @@ module.exports = {
 	response : function(msg, info, Higgins){
 
 		if(info.user == 'scott'){
-			Higgins.whisper('sloth');
+			Higgins.reply('sloth');
 		}
+
 
 	}
 }

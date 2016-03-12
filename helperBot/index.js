@@ -7,9 +7,9 @@ var bots = require('./bots');
 module.exports = function(configObj){
 	logbot.setUrl(configObj.diagnosticsWebhook);
 
-	//var cmdLoadResult = cmds.load(configObj.expressApp, configObj.cmdList)
+	var cmdLoadResult = cmds.load(configObj.expressApp, configObj.cmdList)
 
-	//console.log(cmdLoadResult);
+	console.log(cmdLoadResult);
 
 
 

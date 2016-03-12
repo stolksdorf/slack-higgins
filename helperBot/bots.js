@@ -27,7 +27,7 @@ var getBotInContext = function(bot, eventData){
 
 	return {
 		reply : function(msg, target){
-			target = target || eventData.channel;
+			target = target || eventData.channel || eventData.user;
 			return BotInstance.postTo(target, msg, botInfo)
 		},
 		react : function(emoji){
@@ -47,7 +47,7 @@ var getBotInContext = function(bot, eventData){
 
 var shouldHelperRespond = function(eventData){
 	//Don't listen to yourself
-	if(eventData.user == BotInfo.username) return false;
+	if(eventData.user == BotInfo.name) return false;
 
 	//Don't ever listen to logbot
 	if(eventData.user == 'logbot') return false;
@@ -62,6 +62,8 @@ var shouldHelperRespond = function(eventData){
 }
 
 var shouldBotRespond = function(eventData, bot){
+	//Don't listen to yourself
+	if(eventData.user == bot.name) return false;
 
 	//Unless locally developing, check if the bot is only supposed to listen in one channel
 	if(_.isString(bot.listenIn) && !LOCAL){
@@ -81,7 +83,7 @@ var enhanceEventData = function(eventData){
 	if(eventData.item && eventData.item.channel) eventData.channelId = eventData.item.channel;
 
 	if(eventData.channelId) eventData.channel = Channels[eventData.channelId];
-	if(eventData.user) eventData.user = Users[eventData.userId];
+	if(eventData.userId) eventData.user = Users[eventData.userId];
 	if(eventData.username) eventData.user = eventData.username;
 	if(eventData.channelId && eventData.channelId[0] == 'D') eventData.isDirect = true;
 
