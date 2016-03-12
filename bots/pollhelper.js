@@ -10,6 +10,7 @@ var pollMaster;
 module.exports = {
 	listenFor : ['message'],
 	response : function(msg, info, Higgins){
+
 		if(_.startsWith(msg, '/poll')){
 			pollMaster = info.user;
 		}

@@ -62,7 +62,7 @@ var shouldHelperRespond = function(eventData){
 
 var shouldBotRespond = function(eventData, bot){
 	//Don't listen to yourself
-	if(eventData.user == bot.name) return false;
+	if(eventData.user && eventData.user == bot.name) return false;
 
 	//Unless locally developing, check if the bot is only supposed to listen in one channel
 	if(_.isString(bot.listenIn) && !LOCAL){
@@ -147,7 +147,7 @@ module.exports = {
 			error : []
 		};
 
-		var dummyBot = ()=>{return {listenFor:[], response:function(){}}};
+		var dummyBot = ()=>{return {name:BotInfo.name,listenFor:[], response:function(){}}};
 
 		Bots = _.map(botList, function(botPath){
 			try{
