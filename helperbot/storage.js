@@ -9,14 +9,17 @@ client.on("error", function(err){
 	if(process.env.PRODUCTION) logbot.warn("Redis Storage Error", "Falling back to temporary storage instance.");
 	client.end();
 
+	console.log('REDIS ERROR: Falling back to node in-memory storage');
+
 	//Fallback storage
 	client = {
 		get : function(key, cb){
-			cb(null, TEMP_STORAGE[key]);
+			console.log(TEMP_STORAGE, TEMP_STORAGE[key]);
+			cb && cb(null, TEMP_STORAGE[key]);
 		},
 		set : function(key, val, cb){
 			TEMP_STORAGE[key] = val;
-			cb();
+			cb && cb();
 		}
 	}
 });
@@ -24,7 +27,8 @@ client.on("error", function(err){
 module.exports = {
 	get : function(key, cb){
 		return client.get(key, function(err, res){
-			if(!err) cb(JSON.parse(res));
+			if(!res) return cb();
+			if(!err) return cb(JSON.parse(res));
 		})
 	},
 	set : function(key, val, cb){

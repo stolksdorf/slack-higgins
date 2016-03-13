@@ -103,7 +103,7 @@ var handleEvent = function(data) {
 				bot.response(data.text, data, getBotInContext(bot, data), BotInstance);
 			}catch(err){
 				//Truncate the stack to just the bot file
-				err.stack = err.stack.substring(0, err.stack.indexOf(')')+1);
+				//err.stack = err.stack.substring(0, err.stack.indexOf(')')+1);
 				Logbot.error('Bot Run Error : ' + bot.path, err);
 			}
 		}

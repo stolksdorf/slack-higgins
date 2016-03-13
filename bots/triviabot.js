@@ -4,6 +4,9 @@ var request = require('superagent');
 var Storage = require('../helperbot/storage');
 var utils = require('../helperbot/utils');
 
+var TriviaApi = require('trivia.api.js');
+
+
 var CROWN_THRESHOLD = 25000;
 
 var Categories = {
@@ -26,11 +29,6 @@ var Categories = {
 
 };
 
-//Load persistant data
-var questionCache = {};
-Storage.get("trivia_cache", function(cache){
-	questionCache = cache || {};
-});
 
 var Scores = {};
 Storage.get("trivia_scores", function(scores){
@@ -39,32 +37,10 @@ Storage.get("trivia_scores", function(scores){
 
 var isActive = false;
 var storedClue = {};
-var channel;
+var Higs = {};
 var timer;
 
 
-var getTrivia = function(Higgins, category, cb){
-
-	var getQuestion = function(){
-		//Higgins.reply("Pool size is " + questionCache[category].length)
-
-		//Remove a random element from the question cache
-		var question = questionCache[category].splice(_.random(questionCache[category].length - 1), 1)[0];
-		Storage.set("trivia_cache", questionCache);
-		cb(question);
-	}
-
-	if(questionCache[category]){
-		return getQuestion();
-	}
-	Higgins.reply("Refreshing question pool for *" + category + "*...");
-	request.get("http://jservice.io/api/clues?category=" + Categories[category])
-		.send()
-		.end(function(err, res){
-			questionCache[category] = res.body;
-			return getQuestion();
-		});
-}
 
 var higginsNames = [
 	'higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'good sir',
@@ -85,22 +61,23 @@ var isCategoriesRequest = function(msg){
 	return utils.messageHas(msg, higginsNames, ['categories', 'category']);
 }
 
-var getCategory = function(msg){
+
+var getCategoryId = function(msg){
 	var result = _.reduce(Categories, function(r, id, name){
-		if(_.includes(msg.toLowerCase(), name.toLowerCase())) return name;
+		if(_.includes(msg.toLowerCase(), name.toLowerCase())) return id;
 		return r;
 	}, false)
 
 	//If no match, get random category
-	if(!result) return _.sample(_.keys(Categories));
+	if(!result) return _.sample(_.values(Categories));
 	return result;
 }
 
-var startTimer = function(Higgins){
+var startTimer = function(){
 	timer = setTimeout(function(){
-		Higgins.reply("Times nearly up!");
+		Higs.reply("Times nearly up!");
 		timer = setTimeout(function(){
-			Higgins.reply("Times up! The answer is *" + storedClue.answer + "*");
+			Higs.reply("Times up! The answer is *" + storedClue.answer + "*");
 			cleanup();
 		}, 15000);
 	}, 30000)
@@ -110,103 +87,89 @@ var startTimer = function(Higgins){
 var cleanup = function(){
 	storedClue = {};
 	isActive = false;
-	channel = null;
 	clearTimeout(timer);
 }
 
-// takes a string and splits it in to words using ' ', '/', and '-' as delimiters
-// converts to lowercase
-// removes html tags and punctuation
-// removes trailing 's' or 'es'
-var stringToCleanWordArray = function(string) {
-	return _.chain(string)
-		.words(/[^ \/-]+/g)
-		.map((word) => {
-			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/s$/, '');
-		})
-		.filter()
-		.value();
-};
 
-var checkAnswer = function(msg){
-	if(!msg) return;
-	var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to', 'thing', 'things'];
-
-	var msgWords = stringToCleanWordArray(msg);
-	var answerWords = stringToCleanWordArray(storedClue.answer);
-
-	//each answer word must appear in the message
-	return _.every(answerWords, (answerWord)=>{
-		if(_.includes(dumbWords, answerWord)) return true;
-		return _.includes(msgWords, answerWord);
-	});
-}
-
-var increaseScore = function(Higgins, user, newPoints){
-	if(!Scores[user]){
-		Scores[user] = {
-			user   : user,
+var increaseScore = function(username, points){
+	if(!Scores[username]){
+		Scores[username] = {
+			user   : username,
 			points : 0,
 			crowns : 0
 		};
 	}
-	Scores[user].points += storedClue.value || 5001;
+	Scores[username].points += points;
 
-	if(Scores[user].points >= CROWN_THRESHOLD){
-		Higgins.reply("Congrats " + user + "! You've been awarded a :crown: https://media.giphy.com/media/WWrf3mWsicNqM/giphy.gif! \n" + printScoreboard() +"\n\nScores reset!");
-		Scores[user].crowns += 1;
-		_.each(Scores, (score)=>{
-			score.points = 0;
-		});
+	if(Scores[username].points >= CROWN_THRESHOLD){
+		awardCrown(username);
 	}else{
-		Higgins.reply("Correct! Good job " + user + "!\n" + printScoreboard());
+		Higs.reply("Correct! Good job " + username + "!\n" + printScoreboard());
 	}
 
 	Storage.set('trivia_scores', Scores);
 }
 
-var printCategories = function(Higgins){
-	Higgins.reply('The categories are: \n' +
-		_.map(Categories, (id, name)=>{
-			return name + " - " + (questionCache[name] ? questionCache[name].length : '?');
-		}).join('\n'));
+
+var awardCrown = function(username){
+	Scores[username].crowns += 1;
+	_.each(Scores, (score)=>{
+		score.points = 0;
+	});
+	Higs.reply("Congrats " + username +
+		"! You've been awarded a :crown: ! https://media.giphy.com/media/WWrf3mWsicNqM/giphy.gif \n"
+		+ printScoreboard() +"\n\nScores reset!");
+};
+
+//Add pool size
+var printCategories = function(){
+
+	console.log(TriviaApi.getCategories(Categories));
+
+
+	Storage.get("trivia_cluecache", function(cache){
+		cache = cache || {};
+		Higs.reply('The categories are: \n' +
+			_.map(Categories, (id, name)=>{
+				return name + " - " + (cache[id] ? cache[id].length : '???');
+			}).join('\n'));
+	});
+
 }
 
 var printScoreboard = function(){
 	var sortedScores = _.sortBy(Scores, (score)=>{
 		return 999999 - score.points;
 	});
-	return _.map(sortedScores, (score)=>{
+	Higs.reply('\n' + _.map(sortedScores, (score)=>{
 		return ':' + score.user + ': has ' + score.points + ' points \t' +
 			_.times(score.crowns, ()=>{return ':crown:'}).join(' ');
-	}).join('\n');
+	}).join('\n'));
 };
 
 
 module.exports = {
+	listenIn : 'trivia-time',
 	listenFor : ['message'],
 	response  : function(msg, info, Higgins){
-		if(info.channel !== 'trivia-time' && !process.env.LOCAL) return;
 		if(!msg) return;
 
+		Higs = Higgins;
+
 		if(isTriviaRequest(msg)){
-			var category = getCategory(msg);
-			return getTrivia(Higgins, category, function(clue){
+			return TriviaApi.getClue(getCategoryId(msg), function(clue){
 				isActive = true;
 				storedClue = clue;
-				storedClue.answer = storedClue.answer.replace('<i>', '').replace('</i>', '')
-				startTimer(Higgins);
-				channel = info.channel;
-				Higgins.reply("The category is *" + category + "* worth " + clue.value +" points!\n" + clue.question);
+				startTimer();
+				Higgins.reply("The category is *" + clue.category.title + "* worth " + clue.value +" points!\n" + clue.question);
 			})
 		}else if(isCategoriesRequest(msg)){
-			return printCategories(Higgins);
+			return printCategories();
 		}else if(isScoreboardRequest(msg)){
-			return Higgins.reply(' \n ' + printScoreboard());
-		}else if(isActive && channel == info.channel){
-			if(checkAnswer(msg)){
-				if(Scores.scott && info.user != 'scott') Scores.scott.points++;
-				increaseScore(Higgins, info.user, storedClue.value);
+			return printScoreboard();
+		}else if(isActive){
+			if(TriviaApi.checkAnswer(storedClue, msg)){
+				increaseScore(info.user, storedClue.value);
 				cleanup();
 			}else{
 				Higgins.react('no_entry_sign');
