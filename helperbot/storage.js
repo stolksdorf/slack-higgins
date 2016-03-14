@@ -14,7 +14,6 @@ client.on("error", function(err){
 	//Fallback storage
 	client = {
 		get : function(key, cb){
-			console.log(TEMP_STORAGE, TEMP_STORAGE[key]);
 			cb && cb(null, TEMP_STORAGE[key]);
 		},
 		set : function(key, val, cb){

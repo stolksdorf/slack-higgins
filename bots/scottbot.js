@@ -8,7 +8,7 @@ var scottChain;
 
 var filterMessages = function(obj){
 	return _.reduce(obj.messages.matches, (r, msg)=>{
-		if(msg.channel && msg.channel.name != 'diagnostics'){
+		if(msg.channel && msg.channel.name != 'diagnostics' && msg.channel.id[0] == 'C'){
 			r.push(msg.text)
 		}
 		return r;
@@ -20,7 +20,7 @@ var getScottMessagesFromSlack = function(cb){
 		.query({
 			token : 'xoxp-19237672322-19237672338-22373161312-288780caec',//BotInstance.token,
 			query : 'from:scott',
-			count : 500
+			count : 750
 		})
 		.send()
 		.end(function(err, res){
@@ -30,7 +30,7 @@ var getScottMessagesFromSlack = function(cb){
 }
 
 var buildChain = function(){
-	scottChain = markov(4);
+	scottChain = markov(3);
 	Storage.get('scottbot_msgs', function(msgs){
 		_.each(msgs, (m)=>{
 			scottChain.seed(m);
@@ -51,7 +51,7 @@ module.exports = {
 			getScottMessagesFromSlack(function(msgs){
 				Storage.set('scottbot_msgs', msgs);
 				buildChain();
-				Higgins.reply('Built!');
+				Higgins.reply('Built with ' + msgs.length + ' scott messages!');
 			});
 
 		}else if(utils.messageHas(msg, 'scottbot')){

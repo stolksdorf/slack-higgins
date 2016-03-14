@@ -9,6 +9,7 @@ module.exports = {
 	//
 	//example: utils.messageHas(msg, ['higgins', 'higs', 'higbro'], 'pokedex')
 	messageHas : function(msg){
+		if(!msg) return false;
 		var words = Array.prototype.slice.call(arguments, 1);
 		return _.every(words, (options)=>{
 			if(_.isString(options)) return _.includes(msg.toLowerCase(), options.toLowerCase());
