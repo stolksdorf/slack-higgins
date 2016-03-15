@@ -79,7 +79,7 @@ var TriviaApi = {
 		var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to', 'thing', 'things'];
 
 		var msgWords = stringToCleanWordArray(msg);
-		var answerWords = stringToCleanWordArray(clue);
+		var answerWords = stringToCleanWordArray(clueAnswer);
 
 		//each answer word must appear in the message
 		return _.every(answerWords, (answerWord)=>{
