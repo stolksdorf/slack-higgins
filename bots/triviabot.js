@@ -119,7 +119,7 @@ var awardCrown = function(username){
 		+ printScoreboard() +"\n\nScores reset!");
 };
 
-//Add pool size
+
 var printCategories = function(){
 	var categories = _.map(TriviaApi.getCategories(Categories), (cat)=>{
 		return cat.name + ' - _' + cat.size + '_'
@@ -137,6 +137,12 @@ var printScoreboard = function(){
 			_.times(score.crowns, ()=>{return ':crown:'}).join(' ');
 	}).join('\n'));
 };
+
+var refreshCategoryPool = function(categoryId){
+	TriviaApi.refreshCategoryPool(categoryId, function(){
+		Higs.reply('Refreshed category pool!');
+	})
+}
 
 
 module.exports = {
@@ -157,6 +163,9 @@ module.exports = {
 			return printCategories();
 		}else if(isScoreboardRequest(msg)){
 			return printScoreboard();
+
+		}else if (utils.messageHas(msg, higginsNames, 'refresh')){
+			return refreshCategoryPool(getCategoryId(msg));
 		}else if(isActive){
 			if(TriviaApi.checkAnswer(storedClue.answer, msg)){
 				increaseScore(info.user, storedClue.value);

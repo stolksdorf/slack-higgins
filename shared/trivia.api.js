@@ -9,7 +9,6 @@ Storage.get("trivia_cluecache", function(cache){
 });
 
 
-
 // takes a string and splits it in to words using ' ', '/', and '-' as delimiters
 // converts to lowercase
 // removes html tags and punctuation
@@ -45,8 +44,6 @@ var TriviaApi = {
 		//If we don't have questions in that category, refresh the pool
 		if(!ClueCache[categoryId] || !ClueCache[categoryId].length){
 			return TriviaApi.refreshCategoryPool(categoryId, function(questions){
-				ClueCache[categoryId] = questions;
-				Storage.set("trivia_cluecache", ClueCache);
 				getQuestion();
 			})
 		}
@@ -55,8 +52,8 @@ var TriviaApi = {
 	},
 
 	refreshCategoryPool : function(categoryId, cb){
-		var result = [];
-		var offset = 0;
+		var questions = [];
+		var offset = 100;
 
 		var callCategories = function(){
 			request.get("http://jservice.io/api/clues?category=" + categoryId + '&offset=' + offset)
@@ -64,11 +61,13 @@ var TriviaApi = {
 				.end(function(err, res){
 					if(res.body.length){
 						offset += res.body.length;
-						result = _.union(result, res.body);
+						questions = _.union(questions, res.body);
 						callCategories();
 					}else{
 						//when we run out of questions, finish the callback
-						cb(result);
+						ClueCache[categoryId] = questions;
+						Storage.set("trivia_cluecache", ClueCache);
+						cb(questions);
 					}
 				});
 		}
