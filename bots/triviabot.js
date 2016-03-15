@@ -1,11 +1,9 @@
 var _ = require('lodash');
 var request = require('superagent');
-
+var moment = require('moment');
 var Storage = require('../helperbot/storage');
 var utils = require('../helperbot/utils');
-
 var TriviaApi = require('trivia.api.js');
-
 
 var CROWN_THRESHOLD = 25000;
 
@@ -39,7 +37,6 @@ var isActive = false;
 var storedClue = {};
 var Higs = {};
 var timer;
-
 
 
 var higginsNames = [
@@ -123,18 +120,11 @@ var awardCrown = function(username){
 
 //Add pool size
 var printCategories = function(){
+	var categories = _.map(TriviaApi.getCategories(Categories), (cat)=>{
+		return cat.name + ' - _' + cat.size + '_'
+	}).join('\n');
 
-	console.log(TriviaApi.getCategories(Categories));
-
-
-	Storage.get("trivia_cluecache", function(cache){
-		cache = cache || {};
-		Higs.reply('The categories are: \n' +
-			_.map(Categories, (id, name)=>{
-				return name + " - " + (cache[id] ? cache[id].length : '???');
-			}).join('\n'));
-	});
-
+	Higs.reply('The categories are: \n' + categories);
 }
 
 var printScoreboard = function(){
@@ -153,7 +143,6 @@ module.exports = {
 	listenFor : ['message'],
 	response  : function(msg, info, Higgins){
 		if(!msg) return;
-
 		Higs = Higgins;
 
 		if(isTriviaRequest(msg)){

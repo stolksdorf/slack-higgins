@@ -25,8 +25,6 @@ var stringToCleanWordArray = function(string) {
 };
 
 
-
-
 var TriviaApi = {
 	getClue : function(categoryId, cb){
 		var getQuestion = function(){
@@ -36,11 +34,10 @@ var TriviaApi = {
 
 			//Check for invalid questions
 			if(!clue.answer || !clue.question){
+				console.log('invalid question');
 				return getQuestion();
 			}
 			if(!clue.value) clue.value = 400;
-
-			console.log(ClueCache);
 
 			cb(clue);
 		}
@@ -103,8 +100,6 @@ var TriviaApi = {
 			};
 		});
 	},
-
-
 
 };
 
