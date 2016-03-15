@@ -75,7 +75,7 @@ var TriviaApi = {
 		callCategories();
 	},
 
-	checkAnswer : function(clue, msg){
+	checkAnswer : function(clueAnswer, msg){
 		if(!msg) return false;
 		var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to', 'thing', 'things'];
 

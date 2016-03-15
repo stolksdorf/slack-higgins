@@ -101,7 +101,8 @@ var increaseScore = function(username, points){
 	if(Scores[username].points >= CROWN_THRESHOLD){
 		awardCrown(username);
 	}else{
-		Higs.reply("Correct! Good job " + username + "!\n" + printScoreboard());
+		Higs.reply("Correct! Good job " + username + "! You been awarded " + points + " points");
+		printScoreboard();
 	}
 
 	Storage.set('trivia_scores', Scores);
@@ -157,7 +158,7 @@ module.exports = {
 		}else if(isScoreboardRequest(msg)){
 			return printScoreboard();
 		}else if(isActive){
-			if(TriviaApi.checkAnswer(storedClue, msg)){
+			if(TriviaApi.checkAnswer(storedClue.answer, msg)){
 				increaseScore(info.user, storedClue.value);
 				cleanup();
 			}else{
