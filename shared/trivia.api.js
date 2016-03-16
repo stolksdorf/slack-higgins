@@ -53,7 +53,7 @@ var TriviaApi = {
 
 	refreshCategoryPool : function(categoryId, cb){
 		var questions = [];
-		var offset = 100;
+		var offset = 0;
 
 		var callCategories = function(){
 			request.get("http://jservice.io/api/clues?category=" + categoryId + '&offset=' + offset)
