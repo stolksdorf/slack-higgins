@@ -19,14 +19,13 @@ var isShrewDismiss = function(msg){
 	return isActive && utils.messageHas(msg, ['Sandshrew','shrewbro','asshole'], ['enough','come back','back']);
 };
 
+/* This code has been replaced, will delete when tested
 //words of ancient voodoo provided by scott to whisper gently over my bot
 var _contains = function(str, list){
 	return _.some(list, (word)=>{
 		return _.includes(str.toLowerCase(), word.toLowerCase());
 	});
 };
-
-/* This code has been replaced, will delete when tested
 //define shrew messages
 var isShrewRequest = function(msg){
 	return _contains(msg, ['choose','go']) && _contains(msg, ['Sandshrew','shrewbro']) && !isActive;
