@@ -6,10 +6,9 @@ var _ = require('lodash');
 //var shrew_emoji = ['sandshrew'];
 
 var isActive = false;
-//var channel;
 
 
-/* Try using this meg, it's new!
+// Try using this meg, it's new!
 var utils = require('../helperbot/utils');
 
 var isShrewRequest = function(msg){
@@ -20,10 +19,6 @@ var isShrewDismiss = function(msg){
 	return isActive && utils.messageHas(msg, ['Sandshrew','shrewbro','asshole'], ['enough','come back','back']);
 };
 
-*/
-
-
-
 //words of ancient voodoo provided by scott to whisper gently over my bot
 var _contains = function(str, list){
 	return _.some(list, (word)=>{
@@ -31,6 +26,7 @@ var _contains = function(str, list){
 	});
 };
 
+/* This code has been replaced, will delete when tested
 //define shrew messages
 var isShrewRequest = function(msg){
 	return _contains(msg, ['choose','go']) && _contains(msg, ['Sandshrew','shrewbro']) && !isActive;
@@ -40,23 +36,21 @@ var isShrewRequest = function(msg){
 var isShrewDismiss = function(msg){
 	return _contains(msg, ['enough','come back','back']) && _contains(msg, ['Sandshrew','shrewbro','asshole']) && isActive;
 	};
+*/
 
 //do the shit
 module.exports = {
+	listenIn : 'tall-grass',
 	listenFor : ['message'],
 	response : function(msg, info, Higgins){
-		//if(info.channel !== 'tall-grass' && !process.env.LOCAL) return;
-
       		if(info.user == 'meggeroni' && isShrewRequest(msg)){
       			  isActive = true;
-      			  //channel = info.channel;
 			  Higgins.react('sandshrew');
 
     	  		}
     	  	else if(info.user == 'meggeroni' && isShrewDismiss(msg)){
 			  Higgins.react('pokeball');
 			  isActive = false;
-			  //channel = null;
     	  		}
 		else if(info.user == 'meggeroni' && isActive){
 			Higgins.react('sandshrew');
