@@ -32,7 +32,7 @@ var TriviaApi = {
 			Storage.set("trivia_cluecache", ClueCache);
 
 			//Check for invalid questions
-			if(!clue.answer || !clue.question){
+			if(!clue || !clue.answer || !clue.question){
 				console.log('invalid question');
 				return getQuestion();
 			}
