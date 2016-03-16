@@ -6,7 +6,7 @@ var markov = require('markov');
 
 var MSG_THRESHOLD = 1200;
 
-var scottChain;
+var megChain;
 
 var filterMessages = function(obj){
 	return _.reduce(obj.messages.matches, (r, msg)=>{
@@ -26,7 +26,7 @@ var getScottMessagesFromSlack = function(cb){
 		request.get('https://slack.com/api/search.messages')
 			.query({
 				token : 'xoxp-19237672322-19237672338-22373161312-288780caec',//BotInstance.token,
-				query : 'from:scott',
+				query : 'from:meggeroni',
 				sort : 'timestamp',
 				page : page,
 				count : 800
@@ -51,10 +51,10 @@ var getScottMessagesFromSlack = function(cb){
 }
 
 var buildChain = function(){
-	scottChain = markov(3);
-	Storage.get('scottbot_msgs', function(msgs){
+	megChain = markov(3);
+	Storage.get('megbot_msgs', function(msgs){
 		_.each(msgs, (m)=>{
-			scottChain.seed(m);
+			megChain.seed(m);
 		});
 	});
 }
@@ -63,23 +63,23 @@ var buildChain = function(){
 buildChain();
 
 module.exports = {
-	icon : ':scott:',
-	name : "scottbot",
+	icon : ':meg:',
+	name : "megbot",
 
 	listenFor : ['message'],
 	response : function(msg, info, Higgins, BotInstance){
-		if(utils.messageHas(msg, 'scottbot', 'rebuild') && info.user == 'scott'){
+		if(utils.messageHas(msg, 'megbot', 'rebuild') && info.user == 'scott'){
 			getScottMessagesFromSlack(function(msgs){
-				Storage.set('scottbot_msgs', msgs);
+				Storage.set('megbot_msgs', msgs);
 				buildChain();
-				Higgins.reply('Built with ' + msgs.length + ' scott messages!');
+				Higgins.reply('Built with ' + msgs.length + ' meg messages!');
 			});
-		}else if(utils.messageHas(msg, 'scottbot')){
-			if(!scottChain){
+		}else if(utils.messageHas(msg, 'megbot')){
+			if(!megChain){
 				buildChain();
 				return Higgins.reply('Recalibrating... sorry try again!');
 			}
-			Higgins.reply(scottChain.respond(msg).join(' '));
+			Higgins.reply(megChain.respond(msg).join(' '));
 		}
 	}
 }
