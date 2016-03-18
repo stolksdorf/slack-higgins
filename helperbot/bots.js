@@ -52,7 +52,7 @@ var shouldHelperRespond = function(eventData){
 	if(eventData.user == 'logbot') return false;
 
 	//if locally developing, only listen to #diagnostics
-	if(LOCAL && eventData.channel != 'diagnostics') return false;
+	if(LOCAL && eventData.channel != 'diagnostics' && !DEBUG) return false;
 
 	//if in production, never listen to #diagnostics
 	if(!LOCAL && eventData.channel == 'diagnostics') return false;
@@ -84,7 +84,10 @@ var enhanceEventData = function(eventData){
 	if(eventData.channelId) eventData.channel = Channels[eventData.channelId];
 	if(eventData.userId) eventData.user = Users[eventData.userId];
 	if(eventData.username) eventData.user = eventData.username;
-	if(eventData.channelId && eventData.channelId[0] == 'D') eventData.isDirect = true;
+	if(eventData.channelId && eventData.channelId[0] == 'D'){
+		eventData.isDirect = true;
+		eventData.channel = BotInfo.name;
+	}
 
 	return eventData;
 }
@@ -110,6 +113,23 @@ var handleEvent = function(data) {
 	});
 };
 
+var handleStart = function(){
+	//Populate public Channels
+	_.each(BotInstance.channels, (channel)=>{
+		Channels[channel.id] = channel.name;
+	});
+
+	//Populate private Channels
+	_.each(BotInstance.groups, (channel)=>{
+		Channels[channel.id] = channel.name;
+	});
+
+	//Popualte Users
+	_.each(BotInstance.users, (user)=>{
+		Users[user.id] = user.name;
+	});
+}
+
 
 module.exports = {
 	getBots : function(){
@@ -126,18 +146,7 @@ module.exports = {
 		});
 		BotInfo = _.extend(BotInfo, botInfo);
 
-		//Populate channels and users
-		BotInstance.getChannels().then(function(res){
-			Channels = _.chain(res.channels)
-				.map((channel)=>{ return [channel.id, channel.name] })
-				.fromPairs().value();
-		});
-		BotInstance.getUsers().then(function(res){
-			Users = _.chain(res.members)
-				.map((member)=>{ return [member.id, member.name] })
-				.fromPairs().value();
-		});
-
+		BotInstance.on('start', handleStart);
 		BotInstance.on('message', handleEvent);
 	},
 
@@ -147,19 +156,19 @@ module.exports = {
 			error : []
 		};
 
-		var dummyBot = ()=>{return {name:BotInfo.name,listenFor:[], response:function(){}}};
+		var createDummyBot = ()=>{return {name:BotInfo.name,listenFor:[], response:function(){}}};
 
 		Bots = _.map(botList, function(botPath){
 			try{
 				var bot = require('../bots/' + botPath);
 				bot.path = botPath;
 				loadResults.success.push(botPath);
-				bot = _.extend(dummyBot(), bot); //Add defaults
+				bot = _.extend(createDummyBot(), bot); //Add defaults
 				return bot;
 			}catch(err){
 				Logbot.error('Bot Load Error : ' + botPath, err);
 				loadResults.error.push(botPath);
-				return dummyBot();
+				return createDummyBot();
 			}
 		});
 
