@@ -27,7 +27,18 @@ module.exports = {
 	// }
 	getResponse : function(msgMap){
 
-
 	},
 
+	getDay : function(ts){
+
+	},
+	getMonth : function(ts){
+
+	},
+	getDate : function(ts){
+
+	},
+	getTime : function(ts){
+
+	}
 }

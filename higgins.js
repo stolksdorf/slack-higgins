@@ -18,16 +18,15 @@ if(fs.existsSync('./config.json')){
 	process.env = _.extend(config, process.env);
 }
 
-
 //Boot up helperbot
-require('./helperbot')({
+require('slack-helperbot')({
 	expressApp : app,
 	diagnosticsWebhook : process.env.DIAGNOSTICS_WEBHOOK,
 	local : !process.env.PRODUCTION,
 	debug : true,
 
-	cmdList : fs.readdirSync('./commands'),
-	botList : fs.readdirSync('./bots'),
+	cmdList : _.map(fs.readdirSync('./commands'), (path)=>{return './commands/' + path}),
+	botList : _.map(fs.readdirSync('./bots'),     (path)=>{return './bots/' + path}),
 
 	botInfo : {
 		icon : ':tophat:',

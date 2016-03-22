@@ -1,8 +1,8 @@
 var _ = require('lodash');
 var request = require('superagent');
 var moment = require('moment');
-var Storage = require('../helperbot/storage');
-var utils = require('../helperbot/utils');
+var Storage = require('slack-helperbot/storage');
+var utils = require('slack-helperbot/utils');
 var TriviaApi = require('trivia.api.js');
 
 var CROWN_THRESHOLD = 25000;
@@ -29,7 +29,7 @@ var Categories = {
 
 
 var Scores = {};
-Storage.get("trivia_scores", function(scores){
+Storage.getAsync("trivia_scores", function(scores){
 	Scores = scores || {};
 });
 

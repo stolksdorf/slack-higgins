@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var path = require('path');
 var Logbot = require('./logbot');
 
 var Cmds = [];
@@ -40,26 +41,29 @@ module.exports = {
 	},
 
 	load : function(app, cmdList){
+		var rootDir = path.dirname(Object.keys(require.cache)[0]);
 		var loadResults ={
 			success : [],
 			error : []
-		}
+		};
+
 
 		_.each(cmdList, function(cmdPath){
 			try{
-				var cmd = require('../commands/' + cmdPath);
+				var cmd = require(path.join(rootDir, cmdPath));
 				loadResults.success.push(cmdPath);
 				Cmds.push({
 					name : cmdPath,
 					cmd : cmd
 				});
 			}catch(err){
+				console.log('load error', err);
 				Logbot.error('Command Load Error : ' + cmdPath, err);
 				loadResults.error.push(cmdPath);
 				return;
 			}
 
-			var cmdUrl = '/' + cmdPath.replace('.js', '');
+			var cmdUrl = '/' + path.basename(cmdPath, '.js');
 
 			app.post(cmdUrl, function(req, res){
 				res.status(200).send({

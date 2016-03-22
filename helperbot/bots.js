@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var path = require('path');
 var SlackBot = require('slackbots');
 var Logbot = require('./logbot');
 
@@ -107,7 +108,7 @@ var handleEvent = function(data) {
 			}catch(err){
 				//Truncate the stack to just the bot file
 				//err.stack = err.stack.substring(0, err.stack.indexOf(')')+1);
-				Logbot.error('Bot Run Error : ' + bot.path, err);
+				Logbot.error('Bot Run Error : ' + bot.file, err);
 			}
 		}
 	});
@@ -151,6 +152,7 @@ module.exports = {
 	},
 
 	load : function(botList){
+		var rootDir = path.dirname(Object.keys(require.cache)[0]);
 		var loadResults ={
 			success : [],
 			error : []
@@ -160,8 +162,9 @@ module.exports = {
 
 		Bots = _.map(botList, function(botPath){
 			try{
-				var bot = require('../bots/' + botPath);
+				var bot = require(path.join(rootDir, botPath));
 				bot.path = botPath;
+				bot.file = path.basename(botPath);
 				loadResults.success.push(botPath);
 				bot = _.extend(createDummyBot(), bot); //Add defaults
 				return bot;

@@ -1,10 +1,10 @@
 var _ = require('lodash');
 var request = require('superagent');
 
-var Storage = require('../helperbot/storage');
+var Storage = require('slack-helperbot/storage');
 
 var ClueCache = {};
-Storage.get("trivia_cluecache", function(cache){
+Storage.getAsync("trivia_cluecache", function(cache){
 	ClueCache = cache || {};
 });
 
