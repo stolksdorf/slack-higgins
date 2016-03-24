@@ -1,7 +1,7 @@
 var _ = require('lodash');
-
 var moment = require('moment');
 var Storage = require('slack-helperbot/storage');
+
 
 
 console.log(Storage.get('test'));

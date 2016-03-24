@@ -6,6 +6,7 @@ var utils = require('slack-helperbot/utils.js');
 
 module.export = {
 	listenIn : ['diplomacy'],
+	listenFor : ['messages'],
 	response : function(msg, info, Higgins){
 
 		//Debug Commands
@@ -18,6 +19,15 @@ module.export = {
 		if(utils.messageHas(msg, 'diplomacybot', 'end game')){
 
 		}
+
+
+		if(info.isDirect){
+
+			Higgins.reply('yo');
+
+
+		}
+
 
 //////////////////////
 

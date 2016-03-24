@@ -1,12 +1,22 @@
 var fs = require('fs');
 var _ = require('lodash');
+var Storage = require('slack-helperbot/storage');
+
+const KEY = 'diplomacy_game';
+const ACTIONS = ['defend', 'attack', 'support', 'invest'];
+const STARTING_POINTS = 100;
 
 
+//Use to easily retrieve and modify game state
+var Game = function(args){
+	if(args){
+		Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
+	}
+	return Storage.get(KEY)
+};
 
-var actions = ['defend', 'attack', 'support', 'invest'];
-var STARTING_POINTS = 100;
 
-
+/*
 var players = [];
 var scores = {}
 var submittedMoves = {};
@@ -14,40 +24,59 @@ var submittedMoves = {};
 var investEarnings = {};
 
 var investPool = 25;
-
+*/
 
 var dip = {
+	gameState : Game,
+
 	startGame : function(roundLength, roundCount){
-		game = {
+		Game({
 			players : [],
-			investPool : 0,
+			investPool : 25,
 			scores : {},
 			submittedMoves : {},
 
-
 			investEarnings : [],
 
-		}
+			config : {
+				roundLength : 0,
+				investIncrement : 10
+			}
 
+		});
+
+	},
+	endGame : function(){
+		Storage.set(KEY, null);
+	},
+	isRunning : function(){
+		return !!Storage.get(KEY);
 	},
 
 	startRound : function(){
 		//increase pool
 		//start timer
 	},
+	endRound : function(){
 
+	},
 
 
 	addPlayer : function(name){
-		players.push(name);
-		scores[name] = STARTING_POINTS
+		var temp = Game();
+		temp.players.push(name);
+		temp.scores[name] = STARTING_POINTS;
+		Game(temp);
 	},
 	submitMove : function(name, action, target){
-		submittedMoves[name] = {
+		var temp = Game();
+		temp.submittedMoves[name] = {
 			action : action,
 			target : target
 		};
+		Game(temp);
 	},
+
 
 
 
@@ -162,7 +191,7 @@ var dip = {
 
 }
 
-
+/*
 dip.addPlayer('Agatha');
 dip.addPlayer('Bathalsar');
 dip.addPlayer('Cain');
@@ -184,3 +213,4 @@ console.log(investEarnings);
 
 //console.log('Defense', dip.calculateDefenses());
 //console.log('Attack', dip.calculateAttack());
+*/

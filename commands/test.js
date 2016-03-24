@@ -1,4 +1,3 @@
-var Logbot = require('../helperbot/logbot');
 
 module.exports = function(msg, info, reply, error){
 
