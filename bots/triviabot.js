@@ -28,10 +28,7 @@ var Categories = {
 };
 
 
-var Scores = {};
-Storage.getAsync("trivia_scores", function(scores){
-	Scores = scores || {};
-});
+var Scores = Storage.get("trivia_scores") || {};
 
 var isActive = false;
 var storedClue = {};

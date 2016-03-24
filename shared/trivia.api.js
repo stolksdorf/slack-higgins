@@ -3,10 +3,7 @@ var request = require('superagent');
 
 var Storage = require('slack-helperbot/storage');
 
-var ClueCache = {};
-Storage.getAsync("trivia_cluecache", function(cache){
-	ClueCache = cache || {};
-});
+var ClueCache = Storage.get("trivia_cluecache") || {};
 
 
 // takes a string and splits it in to words using ' ', '/', and '-' as delimiters
