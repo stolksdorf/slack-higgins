@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var request = require('superagent');
-var Storage = require('../helperbot/storage');
-var utils = require('../helperbot/utils');
+var Storage = require('slack-helperbot/storage');
+var utils = require('slack-helperbot/utils');
 var markov = require('markov');
 
 var MSG_THRESHOLD = 1200;

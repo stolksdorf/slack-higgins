@@ -9,7 +9,7 @@ var isActive = false;
 
 
 // Try using this meg, it's new!
-var utils = require('../helperbot/utils');
+var utils = require('slack-helperbot/utils');
 
 var isShrewRequest = function(msg){
 	return !isActive && utils.messageHas(msg, ['Sandshrew','shrewbro'], ['choose','go']);

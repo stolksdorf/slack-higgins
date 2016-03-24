@@ -8,6 +8,7 @@ module.export = {
 	listenIn : ['diplomacy'],
 	listenFor : ['messages'],
 	response : function(msg, info, Higgins){
+		console.log('RUNNING');
 
 		//Debug Commands
 		if(utils.messageHas(msg, 'diplomacybot', 'start game')){
