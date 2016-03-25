@@ -26,7 +26,7 @@ var investEarnings = {};
 var investPool = 25;
 */
 
-var dip = {
+var DiplomacyEngine = {
 	gameState : Game,
 
 	startGame : function(roundLength, roundCount){
@@ -91,7 +91,7 @@ var dip = {
 	},
 
 	getSupporterCount : function(player){
-		return dip.getSupporters(player).length;
+		return DiplomacyEngine.getSupporters(player).length;
 	},
 	getSupporters : function(player){
 		return _.reduce(submittedMoves, (r, move, supportingPlayer)=>{
@@ -104,14 +104,14 @@ var dip = {
 		if(move.action == 'invest') return 0;
 		if(move.action == 'attack') return 1;
 		if(move.action == 'support') return 1;
-		if(move.action == 'defend') return dip.getSupporterCount(player) + 1;
+		if(move.action == 'defend') return DiplomacyEngine.getSupporterCount(player) + 1;
 	},
 	getAttack : function(player){
 		var move = submittedMoves[player];
 		if(move.action == 'invest') return 0;
 		if(move.action == 'defend') return 0;
 		if(move.action == 'support') return 0;
-		if(move.action == 'attack') return dip.getSupporterCount(player) + 1;
+		if(move.action == 'attack') return DiplomacyEngine.getSupporterCount(player) + 1;
 	},
 
 
@@ -119,8 +119,8 @@ var dip = {
 
 
 	calculateRound : function(){
-		dip.calculateInvests();
-		dip.calculateAttacks();
+		DiplomacyEngine.calculateInvests();
+		DiplomacyEngine.calculateAttacks();
 
 		//clean up invests
 		_.each(investEarnings, (value, player)=>{
@@ -137,7 +137,7 @@ var dip = {
 	/////
 
 	calculateInvests : function(){
-		var investPlayers = dip.getPlayersByAction('invest');
+		var investPlayers = DiplomacyEngine.getPlayersByAction('invest');
 
 		//Split pool evenly
 		_.each(investPlayers, (player)=>{
@@ -151,11 +151,11 @@ var dip = {
 	},
 
 	calculateAttacks : function(){
-		var attackPlayers = dip.getPlayersByAction('attack');
+		var attackPlayers = DiplomacyEngine.getPlayersByAction('attack');
 
 		var successfulAttacks = _.reduce(attackPlayers, (r, atkPlayer)=>{
 			var target = submittedMoves[atkPlayer].target;
-			if(dip.getAttack(atkPlayer) > dip.getDefense(target)){
+			if(DiplomacyEngine.getAttack(atkPlayer) > DiplomacyEngine.getDefense(target)){
 				if(!r[target]) r[target] = [];
 				r[target].push(atkPlayer);
 			}
@@ -190,6 +190,9 @@ var dip = {
 
 
 }
+
+module.exports = DiplomacyEngine;
+
 
 /*
 dip.addPlayer('Agatha');
