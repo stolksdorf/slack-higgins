@@ -81,7 +81,7 @@ module.exports = {
 	name : 'diplomacybot',
 	icon : 'passport_control',
 	//listenIn : ['diplomacy'],
-	listenFor : ['message'],
+	//listenFor : ['message'],
 	response : function(msg, info, Higgins){
 
 		if(utils.messageHas(msg, 'db')){
