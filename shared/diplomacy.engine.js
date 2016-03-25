@@ -19,7 +19,7 @@ var Game = function(args){
 /*
 var players = [];
 var scores = {}
-var submittedMoves = {};
+var moves = {};
 
 var investEarnings = {};
 
@@ -34,15 +34,15 @@ var DiplomacyEngine = {
 			players : [],
 			investPool : 25,
 			scores : {},
-			submittedMoves : {},
-
-			investEarnings : [],
+			moves : {},
+			currentRound : 1,
+			roundResults : {},
 
 			config : {
 				roundLength : 0,
-				investIncrement : 10
+				investIncrement : 10,
+				totalRounds : 6
 			}
-
 		});
 
 	},
@@ -70,7 +70,7 @@ var DiplomacyEngine = {
 	},
 	submitMove : function(name, action, target){
 		var temp = Game();
-		temp.submittedMoves[name] = {
+		temp.moves[name] = {
 			action : action,
 			target : target
 		};
@@ -79,12 +79,10 @@ var DiplomacyEngine = {
 
 
 
-
-
 	///////
 
 	getPlayersByAction : function(actionType){
-		return _.reduce(submittedMoves, (r, move, player)=>{
+		return _.reduce(Game().moves, (r, move, player)=>{
 			if(move.action == actionType) r.push(player);
 			return r;
 		}, []);
@@ -94,97 +92,119 @@ var DiplomacyEngine = {
 		return DiplomacyEngine.getSupporters(player).length;
 	},
 	getSupporters : function(player){
-		return _.reduce(submittedMoves, (r, move, supportingPlayer)=>{
+		return _.reduce(Game().moves, (r, move, supportingPlayer)=>{
 			if(move.action == 'support' && move.target == player) r.push(supportingPlayer);
 			return r;
 		}, []);
 	},
-	getDefense : function(player){
-		var move = submittedMoves[player];
+	getDefenseValue : function(player){
+		var move = Game().moves[player];
 		if(move.action == 'invest') return 0;
 		if(move.action == 'attack') return 1;
 		if(move.action == 'support') return 1;
 		if(move.action == 'defend') return DiplomacyEngine.getSupporterCount(player) + 1;
 	},
-	getAttack : function(player){
-		var move = submittedMoves[player];
+	getAttackValue : function(player){
+		var move = Game().moves[player];
 		if(move.action == 'invest') return 0;
 		if(move.action == 'defend') return 0;
 		if(move.action == 'support') return 0;
 		if(move.action == 'attack') return DiplomacyEngine.getSupporterCount(player) + 1;
 	},
 
-
-/**/
+	setDefaultActions : function(){
+		_.each(Game().players, (player)=>{
+			if(!Game().moves[player].action) Game().moves[player].action = 'defend';
+		})
+		Game({ moves : Game().moves });
+	},
 
 
 	calculateRound : function(){
-		DiplomacyEngine.calculateInvests();
-		DiplomacyEngine.calculateAttacks();
+		DiplomacyEngine.setDefaultActions();
+		var state = {};
 
-		//clean up invests
-		_.each(investEarnings, (value, player)=>{
-			console.log('invest', player, value);
-			scores[player] += value;
+		//Build initial state
+		_.each(Game().players, (player)=>{
+			state[player] = {
+				action     : Game().moves[player].action,
+				target     : Game().moves[player].target,
+				supporters : DiplomacyEngine.getSupporters(player)
+			}
 		});
 
+		state = DiplomacyEngine.calculateInvests(state);
+		state = DiplomacyEngine.calculateAttacks(state);
 
-		console.log(scores);
+		DiplomacyEngine.updateScores(state);
 
+		Game({ roundResults : state });
+
+		return state;
 	},
 
 
-	/////
-
-	calculateInvests : function(){
+	calculateInvests : function(state){
 		var investPlayers = DiplomacyEngine.getPlayersByAction('invest');
-
 		//Split pool evenly
 		_.each(investPlayers, (player)=>{
-			investEarnings[player] = Math.floor(investPool/investPlayers.length);
+			state[player].invest = Math.floor(Game().investPool/investPlayers.length);
 		});
-
-		//reset the pool
-		investPool = 0;
-
-		return investEarnings;
+		//Reset the pool if anyone took investment
+		if(investPlayers.length){
+			Game({investPool : 0 })
+		}
+		return state;
 	},
 
-	calculateAttacks : function(){
+	calculateAttacks : function(state){
 		var attackPlayers = DiplomacyEngine.getPlayersByAction('attack');
+		//Calculate successes/failures
+		var atkList = {};
+		_.each(attackPlayers, (atkPlayer)=>{
+			var target = state[atkPlayer].target;
+			if(DiplomacyEngine.getAttackValue(atkPlayer) > DiplomacyEngine.getDefenseValue(target)){
+				state[atkPlayer].isSuccessful = true;
+				state[target].isSuccessful = false;
 
-		var successfulAttacks = _.reduce(attackPlayers, (r, atkPlayer)=>{
-			var target = submittedMoves[atkPlayer].target;
-			if(DiplomacyEngine.getAttack(atkPlayer) > DiplomacyEngine.getDefense(target)){
-				if(!r[target]) r[target] = [];
-				r[target].push(atkPlayer);
+				//Make a list of successful attacks keyed by target
+				if(!atkList[target]) atkList[target] = [];
+				atkList[target].push(atkPlayer);
+			}else{
+				state[atkPlayer].isSuccessful = false;
+				state[target].isSuccessful = true;
 			}
-			return r;
-		}, {})
+		});
 
-
-		console.log('sa', successfulAttacks);
-
-		_.each(successfulAttacks, (attackers, target)=>{
-			var val = Math.floor(scores[target]/2);
-
-			//reduce target's points
-			scores[target] -= val;
-
-			//Split the reward for each successful attacker
+		//Update gains and loses
+		_.each(atkList, (attackers, target)=>{
+			var lossValue = Math.floor(Game().scores[target]/2);
+			state[target].loss = lossValue;
+			//Split gain evenly between attackers
 			_.each(attackers, (attacker)=>{
-				scores[attacker] += Math.floor(val/attackers.length);
+				state[attacker].gain = Math.floor(lossValue/attackers.length);
 			});
-
-			//If the target was investing, split up there investment
-			if(submittedMoves[target].action == 'invest'){
-				console.log('stole the invest!');
+			//Steal investment if they were investing
+			if(state[target].action == 'invest'){
+				var investValue = state[target].invest;
+				state[target].invest = 0;
+				//Split invest evenly between attackers
 				_.each(attackers, (attacker)=>{
-					scores[attacker] += Math.floor(investEarnings[target]/attackers.length);
+					state[attacker].stole = Math.floor(investValue/attackers.length);
 				});
-				investEarnings[target] = 0;
 			}
+		});
+
+		return state;
+	},
+
+	updateScores : function(state){
+		var scores = Game().scores;
+		_.each(state, (res, player)=>{
+			scores[player] += (res.gain || 0) + (res.stole || 0) + (res.invest || 0);
+			scores[player] -= (res.loss || 0);
 		})
+		Game({ scores : scores });
 	},
 
 
