@@ -5,7 +5,8 @@ var Storage = require('slack-helperbot/storage');
 const KEY = 'diplomacy_game';
 const ACTIONS = ['defend', 'attack', 'support', 'invest'];
 const STARTING_POINTS = 100;
-
+const TICK_RATE = 1000; //1 sec for now
+const ATTACK_RATIO = 0.5;
 
 //Use to easily retrieve and modify game state
 var Game = function(args){
@@ -16,18 +17,18 @@ var Game = function(args){
 };
 
 
-/*
-var players = [];
-var scores = {}
-var moves = {};
+var tickTimer;
 
-var investEarnings = {};
 
-var investPool = 25;
-*/
+
+
+
+
 
 var DiplomacyEngine = {
 	gameState : Game,
+
+	newRoundHandler : function(){},
 
 	startGame : function(roundLength, roundCount){
 		Game({
@@ -36,29 +37,70 @@ var DiplomacyEngine = {
 			scores : {},
 			moves : {},
 			currentRound : 1,
+			currentTick : 0,
+
 			roundResults : {},
 
 			config : {
-				roundLength : 0,
-				investIncrement : 10,
-				totalRounds : 6
+				roundTickLength : 5,
+				investIncrement : 25,
+				totalRounds : 3
 			}
 		});
 
+		//DiplomacyEngine.startTimer();
+
 	},
 	endGame : function(){
+		console.log('END GAME');
+		clearInterval(tickTimer);
+		tickTimer = null;
+
 		Storage.set(KEY, null);
+
 	},
 	isRunning : function(){
 		return !!Storage.get(KEY);
 	},
 
-	startRound : function(){
-		//increase pool
-		//start timer
-	},
-	endRound : function(){
 
+	newRound : function(){
+		var roundState = DiplomacyEngine.calculateRound();
+
+		Game({
+			currentTick : 0,
+			moves : {},
+
+			currentRound : Game().currentRound + 1,
+			investPool : Game().investPool + Game().config.investIncrement,
+
+		});
+
+		console.log('NEW ROUND', Game().currentRound);
+
+
+		DiplomacyEngine.newRoundHandler(roundState);
+
+		//check for end of game
+		if(Game().currentRound > Game().config.totalRounds){
+			DiplomacyEngine.endGame();
+		}
+	},
+
+	startTimer : function(){
+		if(!tickTimer){
+			tickTimer = setInterval(function(){
+				if(!DiplomacyEngine.isRunning()) return;
+				Game({currentTick : Game().currentTick + 1});
+
+
+				console.log('TICK', Game().currentTick);
+
+				if(Game().currentTick >= Game().config.roundTickLength){
+					DiplomacyEngine.newRound();
+				}
+			}, TICK_RATE);
+		}
 	},
 
 
@@ -114,9 +156,12 @@ var DiplomacyEngine = {
 
 	setDefaultActions : function(){
 		_.each(Game().players, (player)=>{
+			if(!Game().moves[player]) Game().moves[player] = {};
 			if(!Game().moves[player].action) Game().moves[player].action = 'defend';
 		})
 		Game({ moves : Game().moves });
+
+		console.log('DEFAULT', Game().moves);
 	},
 
 
@@ -178,7 +223,7 @@ var DiplomacyEngine = {
 
 		//Update gains and loses
 		_.each(atkList, (attackers, target)=>{
-			var lossValue = Math.floor(Game().scores[target]/2);
+			var lossValue = Math.floor(Game().scores[target] * ATTACK_RATIO);
 			state[target].loss = lossValue;
 			//Split gain evenly between attackers
 			_.each(attackers, (attacker)=>{
@@ -210,6 +255,16 @@ var DiplomacyEngine = {
 
 
 }
+
+
+
+//Server restart timer code
+if(DiplomacyEngine.isRunning()){
+	DiplomacyEngine.startTimer();
+}
+
+
+
 
 module.exports = DiplomacyEngine;
 
