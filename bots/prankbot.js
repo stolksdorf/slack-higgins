@@ -3,9 +3,10 @@ var jared_pester = ['HEY JARED', 'WHATCHYA THINKING ABOUT JARED','WHAT ARE YOUR 
 
 module.exports = {
   listenFor : ['user_typing'],
-  response : function(msg, info, Higgins){
+  response : setInterval(function(msg, info, Higgins){
     if(info.user == 'jared'){
       Higgins.reply(_.sample(jared_pester));
     }
-  }
+  },
+  500)
 }
