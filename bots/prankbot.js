@@ -8,5 +8,5 @@ module.exports = {
       Higgins.reply(_.sample(jared_pester));
     }
   },
-  500)
+  100)
 }
