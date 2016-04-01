@@ -1,4 +1,5 @@
-var jared_pester = ['HER JARED', 'WHATS UP JARED'];
+var _ = require('lodash');
+var jared_pester = ['HEY JARED', 'WHATS UP JARED'];
 
 module.exports = {
   listenFor : ['user_typing'],
