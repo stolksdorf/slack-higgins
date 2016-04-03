@@ -23,7 +23,6 @@ require('slack-helperbot')({
 	expressApp : app,
 	diagnosticsWebhook : process.env.DIAGNOSTICS_WEBHOOK,
 	local : !process.env.PRODUCTION,
-	debug : true,
 
 	cmdList : _.map(fs.readdirSync('./commands'), (path)=>{return './commands/' + path}),
 	botList : _.map(fs.readdirSync('./bots'),     (path)=>{return './bots/' + path}),

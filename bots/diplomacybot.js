@@ -18,6 +18,15 @@ var Higs ={
 //TODO: Add end game message
 //TODO: Add messaging for when the next action needs to be in by
 
+// Add start game processing, Round length and round cpount
+// ONly person who started game can end it
+// Get bot context from lib (should be working now)
+// Make invest go up by multiples? mayve 2x?
+// make an external constant file, for things like higgins names
+//
+
+//Look into cutting out the slackbot framework
+
 
 
 DiplomacyEngine.newRoundHandler = function(roundResults){

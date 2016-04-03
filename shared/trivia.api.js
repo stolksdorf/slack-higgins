@@ -6,6 +6,7 @@ var Storage = require('slack-helperbot/storage');
 var ClueCache = Storage.get("trivia_cluecache") || {};
 
 
+
 // takes a string and splits it in to words using ' ', '/', and '-' as delimiters
 // converts to lowercase
 // removes html tags and punctuation
