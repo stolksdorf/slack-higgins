@@ -30,10 +30,15 @@ var Higs ={
 
 
 DiplomacyEngine.newRoundHandler = function(roundResults){
-	console.log('ROUND HANDLER');
+	console.log('ROUND HANDLER', roundResults);
 
-	Higs.reply(printEndRound(roundResults))
-
+	if(roundResults.round === 0){
+		return Higs.reply('START GAME');
+	}else if(roundResults.round == DiplomacyEngine.Game().config.totalRounds){
+		return Higs.reply('END GAME');
+	}else{
+		Higs.reply(printEndRound(roundResults))
+	}
 }
 
 
@@ -202,15 +207,19 @@ var testMoves = function(){
 }
 
 
+
+
 module.exports = {
 	name : 'diplomacybot',
 	icon : ':passport_control:',
 
-	listenIn : ['diplomacy'],
+	listenIn : ['diplomacy', 'direct'],
 	listenFor : ['message'],
 	response : function(msg, info, Higgins){
 
-		if(info.channel === 'diagnostics' || info.channel === 'diplomacy' || info.isDirect){
+		console.log(info.channel);
+
+		//if(info.channel === 'diplomacy' || info.isDirect){
 
 
 
@@ -222,25 +231,25 @@ module.exports = {
 			}
 
 
-	//////////////////////
+		//////////////////////
 
-
-			if(!DiplomacyEngine.isRunning()){
-				return Higs.reply('No game is currently running.');
-			}
-
-
-			if(utils.messageHas(msg, BOT_NAMES, ['score', 'points', 'players'])){
-				return Higs.reply('The current scores are: \n' + printScoreboard());
-			}
-
-
-			if(info.isDirect && utils.messageHas(msg, ACTIONS)){
-				return parseMove(msg, info.user)
-			}
-
-
+		if(utils.messageHas(msg, ['start game'])){
+			DiplomacyEngine.startGame(info.user, 5*60*60, 3);
 		}
+
+
+
+		if(utils.messageHas(msg, BOT_NAMES, ['score', 'points', 'players'])){
+			return Higs.reply('The current scores are: \n' + printScoreboard());
+		}
+
+
+		if(info.isDirect && utils.messageHas(msg, ACTIONS)){
+			return parseMove(msg, info.user)
+		}
+
+
+		//}
 
 
 

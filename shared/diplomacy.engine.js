@@ -8,6 +8,9 @@ const STARTING_POINTS = 100;
 const TICK_RATE = 1000; //1 sec for now
 const ATTACK_RATIO = 0.5;
 
+const INVEST_START = 10;
+const INVEST_RATE = 2;
+
 //Use to easily retrieve and modify game state
 var Game = function(args){
 	if(args){
@@ -30,10 +33,11 @@ var DiplomacyEngine = {
 
 	newRoundHandler : function(){},
 
-	startGame : function(roundLength, roundCount){
+	startGame : function(initiator, roundLength, roundCount){
 		Game({
+			initiator : initiator,
 			players : [],
-			investPool : 25,
+			investPool : INVEST_START,
 			scores : {},
 			moves : {},
 			currentRound : 1,
@@ -43,21 +47,25 @@ var DiplomacyEngine = {
 
 			config : {
 				roundTickLength : 5,
-				investIncrement : 25,
+				investRate : INVEST_RATE,
 				totalRounds : 3
 			}
 		});
 
-		//DiplomacyEngine.startTimer();
+		DiplomacyEngine.newRoundHandler({round : 0});
 
+		//DiplomacyEngine.startTimer();
 	},
 	endGame : function(){
 		console.log('END GAME');
+
+		var roundState = DiplomacyEngine.calculateRound();
+		roundState.round = Game().config.totalRounds;
+		DiplomacyEngine.newRoundHandler(roundState);
+
 		clearInterval(tickTimer);
 		tickTimer = null;
-
 		Storage.set(KEY, null);
-
 	},
 	isRunning : function(){
 		return !!Storage.get(KEY);
@@ -76,15 +84,17 @@ var DiplomacyEngine = {
 
 		});
 
+		if(Game().currentRound > Game().config.totalRounds){
+			return DiplomacyEngine.endGame();
+		}
+
 		console.log('NEW ROUND', Game().currentRound);
 
 
 		DiplomacyEngine.newRoundHandler(roundState);
 
 		//check for end of game
-		if(Game().currentRound > Game().config.totalRounds){
-			DiplomacyEngine.endGame();
-		}
+
 	},
 
 	startTimer : function(){
@@ -92,7 +102,6 @@ var DiplomacyEngine = {
 			tickTimer = setInterval(function(){
 				if(!DiplomacyEngine.isRunning()) return;
 				Game({currentTick : Game().currentTick + 1});
-
 
 				console.log('TICK', Game().currentTick);
 
@@ -167,7 +176,9 @@ var DiplomacyEngine = {
 
 	calculateRound : function(){
 		DiplomacyEngine.setDefaultActions();
-		var state = {};
+		var state = {
+			round : Game().currentRound
+		};
 
 		//Build initial state
 		_.each(Game().players, (player)=>{
