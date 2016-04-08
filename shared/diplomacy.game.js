@@ -1,113 +1,102 @@
-var fs = require('fs');
 var _ = require('lodash');
 var Storage = require('slack-helperbot/storage');
+var Engine = require('./diplomacy.engine.js');
 
 const KEY = 'diplomacy_game';
 const ACTIONS = ['defend', 'attack', 'support', 'invest'];
-const STARTING_POINTS = 100;
-const TICK_RATE = 1000; //1 sec for now
 
-const INVEST_START = 10;
+//const TICK_RATE = 1000 * 60 * 5; //Checks if the round ends every 5min
+const TICK_RATE = 1000;
 
-/*
-var ATTACK_FN = function(){
+var timer;
 
-}
-var INVEST_FN = function(currentAmount){
-	return currentAmount + 1;
-}
-*/
 
 //Use to easily retrieve and modify game state
 var Game = function(args){
-	if(args) Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
+	if(args){
+		Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
+	}
 	return Storage.get(KEY)
 };
 
 
-var tickTimer;
-
-
+var config = {
+	startingPoints : 3,
+	investStart : 0,
+	investFn : function(state){
+		return state.investPool + 1
+	}
+}
 
 
 var Diplomacy = {
-	gameState : Game, //Possibly remove?
+	getState : function(){
+		return Game()
+	},
 
+	newRoundHandler : function(){},
 	endRoundHandler : function(){},
 	endGameHandler : function(){},
 
 	isRunning : function(){
 		return !!Storage.get(KEY);
 	},
-
 	startGame : function(initiator, roundLength, roundCount){
-		Game({
-			initiator : initiator,
-			players : [],
-			mercs : [],
-			investPool : INVEST_START,
-			scores : {},
-			moves : {},
+		var state = {
+			investPool : config.investStart,
 			currentRound : 0,
-			currentTick : 0,
 
-			//roundResults : {},
+			initiator : initiator,
+			roundLengthMs : roundLength,
+			totalRounds : roundCount,
+			roundEndTime : 0,
 
-			config : {
-				roundTickLength : 5,
-				investRate : INVEST_RATE, //Maybe remove
-				totalRounds : 3
-			}
-		});
+			players : {},
+		};
 
+		Game(state);
 		Diplomacy.startTimer();
 		Diplomacy.startRound();
 	},
-	endGame : function(){
-		Diplomacy.endGameHandler();
-		clearInterval(tickTimer);
-		tickTimer = null;
-		Storage.set(KEY, null);
-	},
+
 	startRound : function(){
-		Game({
-			currentRound : Game().currentRound + 1,
-			currentTick : 0,
-			moves : {},
-			investPool : INVEST_FN(Game().investPool)
+		var state = Game();
+
+		//Reset past results and moves
+		_.each(state.players, (player)=>{
+			delete player.result;
+			delete player.move;
 		});
+		state.currentRound++;
+		state.roundEndTime = (new Date().getTime()) + state.roundLengthMs;
+		Diplomacy.newRoundHandler(state);
+
+		Game(state);
 	},
 	endRound : function(){
-		//calc game state
-		var roundState = Diplomacy.calculateRound();
-		//var roundState = Engine.getRoundState(Game());
-
-		Diplomacy.updateScores(roundState);
-
-		//if investers clear invest pool
-		if(roundState.hasInvestors){
-			Game({investPool : INVEST_START})
-		}
-
-		Diplomacy.endRoundHandler(roundState);
-
-		//if last round, call end game
-		if(Game().currentRound == Game().config.totalRounds){
+		var state = Game();
+		state = Engine.calculateRound(state, config);
+		Diplomacy.endRoundHandler(state);
+		Game(state);
+		if(state.currentRound == state.totalRounds){
 			Diplomacy.endGame();
 		}else{
 			Diplomacy.startRound();
 		}
 	},
 
+	endGame : function(initiator){
+		if(initiator && Game().initiator !== initiator) throw "Only " + Game().initiator + " can end the game early.";
+		Diplomacy.endGameHandler(Game());
+		clearInterval(timer);
+		timer = null;
+		Storage.set(KEY, null);
+	},
+
 	startTimer : function(){
-		if(!tickTimer){
-			tickTimer = setInterval(function(){
-				if(!Diplomacy.isRunning()) return;
-				Game({currentTick : Game().currentTick + 1});
-
-				console.log('TICK', Game().currentTick);
-
-				if(Game().currentTick >= Game().config.roundTickLength){
+		if(!timer){
+			timer = setInterval(function(){
+				if(new Date().getTime() >= Game().roundEndTime){
 					Diplomacy.endRound();
 				}
 			}, TICK_RATE);
@@ -115,38 +104,35 @@ var Diplomacy = {
 	},
 
 	addPlayer : function(name){
-		var temp = Game();
-		temp.players.push(name);
-		temp.scores[name] = STARTING_POINTS;
-		//temp.moves[name] = {action : 'defend'}
-		Game(temp);
+		var state = Game();
+		state.players[name] = {
+			name : name,
+			isMerc : false,
+			score : config.startingPoints
+		};
+		Game(state);
 	},
 	submitMove : function(name, action, target){
+		var state = Game();
+		var player = state.players[name];
 
-		//check if target is a merc, if so throw error
-		//check if action is not support
+		if(!player) throw 'There is no player with that name playing';
+		if(target && !state.players[target]) throw "That player isn't playing the game";
+		if(player.isMerc && action !== 'support') throw "As a mercenary, you can only do the 'support' action";
+		if(!_.includes(ACTIONS, action)) throw "That's not a valid action. Options are: " + ACTIONS.join(', ');
 
-
-		var temp = Game();
-		temp.moves[name] = {
+		player.move = {
 			action : action,
 			target : target
 		};
-		Game(temp);
+		Game(state);
 	},
-
-
 }
-
-
 
 //Server restart timer code
 if(Diplomacy.isRunning()){
 	Diplomacy.startTimer();
 }
-
-
-
 
 module.exports = Diplomacy;
 
@@ -154,26 +140,26 @@ module.exports = Diplomacy;
 
 
 
-/*
-dip.addPlayer('Agatha');
-dip.addPlayer('Bathalsar');
-dip.addPlayer('Cain');
-dip.addPlayer('Dahlia');
 
-dip.submitMove('Bathalsar', 'support', 'Agatha');
-dip.submitMove('Agatha', 'attack', 'Dahlia');
-dip.submitMove('Cain', 'attack', 'Dahlia');
-dip.submitMove('Dahlia', 'invest');
+//////////////////////////////
 
 
-//dip.submitMove('Cain', 'invest');
-//dip.submitMove('Dahlia', 'support', 'Cain');
+var Moment = require('moment');
+Storage.init(function(){
+	console.log(Game());
 
 
-console.log(dip.calculateRound());
+	Diplomacy.newRoundHandler = function(state){
+		var temp = Moment(state.roundEndTime);
+		console.log('New round', state.currentRound, 'Ending at ' + temp.format('ddd Do HH:mm'));
+	}
 
-console.log(investEarnings);
+	if(!Diplomacy.isRunning()){
+		Diplomacy.startGame('scott', 10000, 6);
+	}else{
+		Diplomacy.startTimer();
+	}
 
-//console.log('Defense', dip.calculateDefenses());
-//console.log('Attack', dip.calculateAttack());
-*/
+})
+
+
