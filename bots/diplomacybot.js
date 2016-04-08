@@ -25,20 +25,14 @@ var Higs ={
 // make an external constant file, for things like higgins names
 //
 
-//Look into cutting out the slackbot framework
 
 
 
-DiplomacyEngine.newRoundHandler = function(roundResults){
-	console.log('ROUND HANDLER', roundResults);
-
-	if(roundResults.round === 0){
-		return Higs.reply('START GAME');
-	}else if(roundResults.round == DiplomacyEngine.Game().config.totalRounds){
-		return Higs.reply('END GAME');
-	}else{
-		Higs.reply(printEndRound(roundResults))
-	}
+DiplomacyEngine.endRoundHandler = function(roundResults){
+	Higs.reply(printEndRound(roundResults))
+}
+DiplomacyEngine.endGameHandler = function(){
+	console.log('END GAME');
 }
 
 

@@ -6,16 +6,22 @@ const KEY = 'diplomacy_game';
 const ACTIONS = ['defend', 'attack', 'support', 'invest'];
 const STARTING_POINTS = 100;
 const TICK_RATE = 1000; //1 sec for now
-const ATTACK_RATIO = 0.5;
 
 const INVEST_START = 10;
-const INVEST_RATE = 2;
+
+
+var ATTACK_FN = function(){
+
+}
+var INVEST_FN = function(currentAmount){
+	return currentAmount + 1;
+}
+
+
 
 //Use to easily retrieve and modify game state
 var Game = function(args){
-	if(args){
-		Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
-	}
+	if(args) Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
 	return Storage.get(KEY)
 };
 
@@ -25,55 +31,86 @@ var tickTimer;
 
 
 
+//TODO : Move engine components here
+var Engine = {
+
+}
 
 
 
-var DiplomacyEngine = {
-	gameState : Game,
 
-	newRoundHandler : function(){},
+var Diplomacy = {
+	gameState : Game, //Possibly remove?
+
+	endRoundHandler : function(){},
+	endGameHandler : function(){},
+
+	isRunning : function(){
+		return !!Storage.get(KEY);
+	},
 
 	startGame : function(initiator, roundLength, roundCount){
 		Game({
 			initiator : initiator,
 			players : [],
+			mercs : [],
 			investPool : INVEST_START,
 			scores : {},
 			moves : {},
-			currentRound : 1,
+			currentRound : 0,
 			currentTick : 0,
 
-			roundResults : {},
+			//roundResults : {},
 
 			config : {
 				roundTickLength : 5,
-				investRate : INVEST_RATE,
+				investRate : INVEST_RATE, //Maybe remove
 				totalRounds : 3
 			}
 		});
 
-		DiplomacyEngine.newRoundHandler({round : 0});
-
-		//DiplomacyEngine.startTimer();
+		Diplomacy.startTimer();
+		Diplomacy.startRound();
 	},
 	endGame : function(){
-		console.log('END GAME');
-
-		var roundState = DiplomacyEngine.calculateRound();
-		roundState.round = Game().config.totalRounds;
-		DiplomacyEngine.newRoundHandler(roundState);
-
+		Diplomacy.endGameHandler();
 		clearInterval(tickTimer);
 		tickTimer = null;
 		Storage.set(KEY, null);
 	},
-	isRunning : function(){
-		return !!Storage.get(KEY);
+	startRound : function(){
+		Game({
+			currentRound : Game().currentRound + 1,
+			currentTick : 0,
+			moves : {},
+			investPool : INVEST_FN(Game().investPool)
+		});
+	},
+	endRound : function(){
+		//calc game state
+		var roundState = Diplomacy.calculateRound();
+		//var roundState = Engine.getRoundState(Game());
+
+		Diplomacy.updateScores(roundState);
+
+		//if investers clear invest pool
+		if(roundState.hasInvestors){
+			Game({investPool : INVEST_START})
+		}
+
+		Diplomacy.endRoundHandler(roundState);
+
+		//if last round, call end game
+		if(Game().currentRound == Game().config.totalRounds){
+			Diplomacy.endGame();
+		}else{
+			Diplomacy.startRound();
+		}
 	},
 
-
+/*
 	newRound : function(){
-		var roundState = DiplomacyEngine.calculateRound();
+
 
 		Game({
 			currentTick : 0,
@@ -85,41 +122,46 @@ var DiplomacyEngine = {
 		});
 
 		if(Game().currentRound > Game().config.totalRounds){
-			return DiplomacyEngine.endGame();
+			return Diplomacy.endGame();
 		}
 
 		console.log('NEW ROUND', Game().currentRound);
 
 
-		DiplomacyEngine.newRoundHandler(roundState);
+		Diplomacy.newRoundHandler(roundState);
 
 		//check for end of game
 
 	},
-
+*/
 	startTimer : function(){
 		if(!tickTimer){
 			tickTimer = setInterval(function(){
-				if(!DiplomacyEngine.isRunning()) return;
+				if(!Diplomacy.isRunning()) return;
 				Game({currentTick : Game().currentTick + 1});
 
 				console.log('TICK', Game().currentTick);
 
 				if(Game().currentTick >= Game().config.roundTickLength){
-					DiplomacyEngine.newRound();
+					Diplomacy.endRound();
 				}
 			}, TICK_RATE);
 		}
 	},
 
-
 	addPlayer : function(name){
 		var temp = Game();
 		temp.players.push(name);
 		temp.scores[name] = STARTING_POINTS;
+		//temp.moves[name] = {action : 'defend'}
 		Game(temp);
 	},
 	submitMove : function(name, action, target){
+
+		//check if target is a merc, if so throw error
+		//check if action is not support
+
+
 		var temp = Game();
 		temp.moves[name] = {
 			action : action,
@@ -130,7 +172,7 @@ var DiplomacyEngine = {
 
 
 
-	///////
+	/////// Move to the engine
 
 	getPlayersByAction : function(actionType){
 		return _.reduce(Game().moves, (r, move, player)=>{
@@ -140,7 +182,7 @@ var DiplomacyEngine = {
 	},
 
 	getSupporterCount : function(player){
-		return DiplomacyEngine.getSupporters(player).length;
+		return Diplomacy.getSupporters(player).length;
 	},
 	getSupporters : function(player){
 		return _.reduce(Game().moves, (r, move, supportingPlayer)=>{
@@ -153,14 +195,14 @@ var DiplomacyEngine = {
 		if(move.action == 'invest') return 0;
 		if(move.action == 'attack') return 1;
 		if(move.action == 'support') return 1;
-		if(move.action == 'defend') return DiplomacyEngine.getSupporterCount(player) + 1;
+		if(move.action == 'defend') return Diplomacy.getSupporterCount(player) + 1;
 	},
 	getAttackValue : function(player){
 		var move = Game().moves[player];
 		if(move.action == 'invest') return 0;
 		if(move.action == 'defend') return 0;
 		if(move.action == 'support') return 0;
-		if(move.action == 'attack') return DiplomacyEngine.getSupporterCount(player) + 1;
+		if(move.action == 'attack') return Diplomacy.getSupporterCount(player) + 1;
 	},
 
 	setDefaultActions : function(){
@@ -175,7 +217,7 @@ var DiplomacyEngine = {
 
 
 	calculateRound : function(){
-		DiplomacyEngine.setDefaultActions();
+		Diplomacy.setDefaultActions();
 		var state = {
 			round : Game().currentRound
 		};
@@ -185,41 +227,40 @@ var DiplomacyEngine = {
 			state[player] = {
 				action     : Game().moves[player].action,
 				target     : Game().moves[player].target,
-				supporters : DiplomacyEngine.getSupporters(player)
+				supporters : Diplomacy.getSupporters(player)
 			}
 		});
 
-		state = DiplomacyEngine.calculateInvests(state);
-		state = DiplomacyEngine.calculateAttacks(state);
+		state = Diplomacy.calculateInvests(state);
+		state = Diplomacy.calculateAttacks(state);
 
-		DiplomacyEngine.updateScores(state);
-
-		Game({ roundResults : state });
 
 		return state;
 	},
 
 
 	calculateInvests : function(state){
-		var investPlayers = DiplomacyEngine.getPlayersByAction('invest');
+		var investPlayers = Diplomacy.getPlayersByAction('invest');
 		//Split pool evenly
 		_.each(investPlayers, (player)=>{
 			state[player].invest = Math.floor(Game().investPool/investPlayers.length);
 		});
 		//Reset the pool if anyone took investment
+		//TODO: move to end round
 		if(investPlayers.length){
-			Game({investPool : 0 })
+			//Game({investPool : -1 })
+			state.hasInvestors = true;
 		}
 		return state;
 	},
 
 	calculateAttacks : function(state){
-		var attackPlayers = DiplomacyEngine.getPlayersByAction('attack');
+		var attackPlayers = Diplomacy.getPlayersByAction('attack');
 		//Calculate successes/failures
 		var atkList = {};
 		_.each(attackPlayers, (atkPlayer)=>{
 			var target = state[atkPlayer].target;
-			if(DiplomacyEngine.getAttackValue(atkPlayer) > DiplomacyEngine.getDefenseValue(target)){
+			if(Diplomacy.getAttackValue(atkPlayer) > Diplomacy.getDefenseValue(target)){
 				state[atkPlayer].isSuccessful = true;
 				state[target].isSuccessful = false;
 
@@ -270,14 +311,14 @@ var DiplomacyEngine = {
 
 
 //Server restart timer code
-if(DiplomacyEngine.isRunning()){
-	DiplomacyEngine.startTimer();
+if(Diplomacy.isRunning()){
+	Diplomacy.startTimer();
 }
 
 
 
 
-module.exports = DiplomacyEngine;
+module.exports = Diplomacy;
 
 
 /*
