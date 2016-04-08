@@ -1,0 +1,179 @@
+var fs = require('fs');
+var _ = require('lodash');
+var Storage = require('slack-helperbot/storage');
+
+const KEY = 'diplomacy_game';
+const ACTIONS = ['defend', 'attack', 'support', 'invest'];
+const STARTING_POINTS = 100;
+const TICK_RATE = 1000; //1 sec for now
+
+const INVEST_START = 10;
+
+/*
+var ATTACK_FN = function(){
+
+}
+var INVEST_FN = function(currentAmount){
+	return currentAmount + 1;
+}
+*/
+
+//Use to easily retrieve and modify game state
+var Game = function(args){
+	if(args) Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
+	return Storage.get(KEY)
+};
+
+
+var tickTimer;
+
+
+
+
+var Diplomacy = {
+	gameState : Game, //Possibly remove?
+
+	endRoundHandler : function(){},
+	endGameHandler : function(){},
+
+	isRunning : function(){
+		return !!Storage.get(KEY);
+	},
+
+	startGame : function(initiator, roundLength, roundCount){
+		Game({
+			initiator : initiator,
+			players : [],
+			mercs : [],
+			investPool : INVEST_START,
+			scores : {},
+			moves : {},
+			currentRound : 0,
+			currentTick : 0,
+
+			//roundResults : {},
+
+			config : {
+				roundTickLength : 5,
+				investRate : INVEST_RATE, //Maybe remove
+				totalRounds : 3
+			}
+		});
+
+		Diplomacy.startTimer();
+		Diplomacy.startRound();
+	},
+	endGame : function(){
+		Diplomacy.endGameHandler();
+		clearInterval(tickTimer);
+		tickTimer = null;
+		Storage.set(KEY, null);
+	},
+	startRound : function(){
+		Game({
+			currentRound : Game().currentRound + 1,
+			currentTick : 0,
+			moves : {},
+			investPool : INVEST_FN(Game().investPool)
+		});
+	},
+	endRound : function(){
+		//calc game state
+		var roundState = Diplomacy.calculateRound();
+		//var roundState = Engine.getRoundState(Game());
+
+		Diplomacy.updateScores(roundState);
+
+		//if investers clear invest pool
+		if(roundState.hasInvestors){
+			Game({investPool : INVEST_START})
+		}
+
+		Diplomacy.endRoundHandler(roundState);
+
+		//if last round, call end game
+		if(Game().currentRound == Game().config.totalRounds){
+			Diplomacy.endGame();
+		}else{
+			Diplomacy.startRound();
+		}
+	},
+
+	startTimer : function(){
+		if(!tickTimer){
+			tickTimer = setInterval(function(){
+				if(!Diplomacy.isRunning()) return;
+				Game({currentTick : Game().currentTick + 1});
+
+				console.log('TICK', Game().currentTick);
+
+				if(Game().currentTick >= Game().config.roundTickLength){
+					Diplomacy.endRound();
+				}
+			}, TICK_RATE);
+		}
+	},
+
+	addPlayer : function(name){
+		var temp = Game();
+		temp.players.push(name);
+		temp.scores[name] = STARTING_POINTS;
+		//temp.moves[name] = {action : 'defend'}
+		Game(temp);
+	},
+	submitMove : function(name, action, target){
+
+		//check if target is a merc, if so throw error
+		//check if action is not support
+
+
+		var temp = Game();
+		temp.moves[name] = {
+			action : action,
+			target : target
+		};
+		Game(temp);
+	},
+
+
+}
+
+
+
+//Server restart timer code
+if(Diplomacy.isRunning()){
+	Diplomacy.startTimer();
+}
+
+
+
+
+module.exports = Diplomacy;
+
+
+
+
+
+/*
+dip.addPlayer('Agatha');
+dip.addPlayer('Bathalsar');
+dip.addPlayer('Cain');
+dip.addPlayer('Dahlia');
+
+dip.submitMove('Bathalsar', 'support', 'Agatha');
+dip.submitMove('Agatha', 'attack', 'Dahlia');
+dip.submitMove('Cain', 'attack', 'Dahlia');
+dip.submitMove('Dahlia', 'invest');
+
+
+//dip.submitMove('Cain', 'invest');
+//dip.submitMove('Dahlia', 'support', 'Cain');
+
+
+console.log(dip.calculateRound());
+
+console.log(investEarnings);
+
+//console.log('Defense', dip.calculateDefenses());
+//console.log('Attack', dip.calculateAttack());
+*/

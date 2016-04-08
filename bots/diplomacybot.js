@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var utils = require('slack-helperbot/utils.js');
 
-var DiplomacyEngine = require('diplomacy.engine.js');
+var Diplomacy = require('diplomacy.game.js');
 
 const ACTIONS = ['defend', 'attack', 'support', 'invest'];
 const BOT_NAMES = ['higgins', 'higs', 'diplomacybot'];
@@ -28,10 +28,10 @@ var Higs ={
 
 
 
-DiplomacyEngine.endRoundHandler = function(roundResults){
+Diplomacy.endRoundHandler = function(roundResults){
 	Higs.reply(printEndRound(roundResults))
 }
-DiplomacyEngine.endGameHandler = function(){
+Diplomacy.endGameHandler = function(){
 	console.log('END GAME');
 }
 
@@ -55,12 +55,12 @@ var parseMove = function(msg, player){
 	Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.');
 
 	//check if new player
-	if(!_.includes(DiplomacyEngine.gameState().players, player)){
-		DiplomacyEngine.addPlayer(player);
+	if(!_.includes(Diplomacy.gameState().players, player)){
+		Diplomacy.addPlayer(player);
 		Higs.reply(player + ' has joined the game!', 'diagnostics'); //'diplomacy')
 	}
 
-	DiplomacyEngine.submitMove(player, action, target);
+	Diplomacy.submitMove(player, action, target);
 }
 
 
@@ -74,27 +74,27 @@ var HandleDebugCommands = function(msg, info){
 	//Debug Commands
 	if(utils.messageHas(msg, 'start')){
 
-		DiplomacyEngine.startGame();
+		Diplomacy.startGame();
 
 		testMoves();
 
-		//DiplomacyEngine.addPlayer('scott');
-		//DiplomacyEngine.addPlayer('lp');
+		//Diplomacy.addPlayer('scott');
+		//Diplomacy.addPlayer('lp');
 
-		var roundResults = DiplomacyEngine.calculateRound()
+		var roundResults = Diplomacy.calculateRound()
 
 		Higs.reply(JSON.stringify(roundResults, null, '  '));
 		Higs.reply(printEndRound(roundResults));
 
 
-		DiplomacyEngine.endGame();
+		Diplomacy.endGame();
 
 
 
 	}
 
 	if(utils.messageHas(msg, 'actions')){
-		Higs.reply(JSON.stringify(DiplomacyEngine.gameState().submittedMoves, null, '  '));
+		Higs.reply(JSON.stringify(Diplomacy.gameState().submittedMoves, null, '  '));
 	}
 	if(utils.messageHas(msg, 'end round')){
 
@@ -110,12 +110,12 @@ var HandleDebugCommands = function(msg, info){
 			return msg.indexOf(action) !== -1;
 		})
 
-		if(!_.includes(DiplomacyEngine.gameState().players, player)){
-			DiplomacyEngine.addPlayer(player);
+		if(!_.includes(Diplomacy.gameState().players, player)){
+			Diplomacy.addPlayer(player);
 			Higs.reply(player + ' has joined the game!', 'diagnostics'); //'diplomacy')
 		}
 
-		DiplomacyEngine.submitMove(player, action, target);
+		Diplomacy.submitMove(player, action, target);
 		Higs.reply('got it!')
 	}
 
@@ -124,7 +124,7 @@ var HandleDebugCommands = function(msg, info){
 
 //Provide a state to get deltas
 var printScoreboard = function(state){
-	var sortedScores = _.fromPairs(_.sortBy(_.toPairs(DiplomacyEngine.gameState().scores), (pair)=>{
+	var sortedScores = _.fromPairs(_.sortBy(_.toPairs(Diplomacy.gameState().scores), (pair)=>{
 		return 999999 - pair[1];
 	}));
 
@@ -175,7 +175,7 @@ var printMoveResults = function(state){
 
 var printEndRound = function(state){
 	var msg = 'End of round ' +
-		DiplomacyEngine.gameState().currentRound + '/' + DiplomacyEngine.gameState().config.totalRounds + '!!\n';
+		Diplomacy.gameState().currentRound + '/' + Diplomacy.gameState().config.totalRounds + '!!\n';
 
 	msg += '\n' + printMoveResults(state) + '\n\n The new scores are: \n' + printScoreboard(state);
 
@@ -187,15 +187,15 @@ var printEndRound = function(state){
 
 var testMoves = function(){
 
-	DiplomacyEngine.addPlayer('scott');
-	DiplomacyEngine.addPlayer('lp');
-	DiplomacyEngine.addPlayer('meg');
-	DiplomacyEngine.addPlayer('jared');
+	Diplomacy.addPlayer('scott');
+	Diplomacy.addPlayer('lp');
+	Diplomacy.addPlayer('meg');
+	Diplomacy.addPlayer('jared');
 
-	DiplomacyEngine.submitMove('scott', 'invest');
-	DiplomacyEngine.submitMove('lp', 'support', 'meg');
-	DiplomacyEngine.submitMove('meg', 'attack', 'jared');
-	DiplomacyEngine.submitMove('jared', 'attack', 'lp');
+	Diplomacy.submitMove('scott', 'invest');
+	Diplomacy.submitMove('lp', 'support', 'meg');
+	Diplomacy.submitMove('meg', 'attack', 'jared');
+	Diplomacy.submitMove('jared', 'attack', 'lp');
 
 
 }
@@ -228,7 +228,7 @@ module.exports = {
 		//////////////////////
 
 		if(utils.messageHas(msg, ['start game'])){
-			DiplomacyEngine.startGame(info.user, 5*60*60, 3);
+			Diplomacy.startGame(info.user, 5*60*60, 3);
 		}
 
 
