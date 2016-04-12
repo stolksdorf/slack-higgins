@@ -7,10 +7,11 @@ const ACTIONS = ['defend', 'attack', 'support', 'invest'];
 const BOT_NAMES = ['higgins', 'higs', 'diplomacybot'];
 
 
-//TODO : Don't stub out get bot context from slack-helper
-var Higs ={
-	reply : function(){}
-};
+var Higs = require('slack-helperbot/botLoader.js').getBotContext({
+	name : 'diplomacybot',
+	icon : ':passport_control:'
+});
+
 
 
 //TODO: Add start game message
@@ -26,17 +27,19 @@ var Higs ={
 //
 
 
-
-
-Diplomacy.endRoundHandler = function(roundResults){
-	Higs.reply(printEndRound(roundResults))
+Diplomacy.newRoundHandler = function(state){
+	console.log('new round');
 }
-Diplomacy.endGameHandler = function(){
+
+Diplomacy.endRoundHandler = function(state){
+	Higs.reply(printEndRound(state))
+}
+Diplomacy.endGameHandler = function(state){
 	console.log('END GAME');
 }
 
 
-var parseMove = function(msg, player){
+var parseMove = function(msg, playerName){
 	var target;
 	var action = _.find(ACTIONS, (action)=>{
 		return msg.indexOf(action) !== -1;
@@ -46,24 +49,22 @@ var parseMove = function(msg, player){
 			if(_.includes(part, action)) r = i + 1;
 			return r;
 		}, null);
-
 		target = msg.split(' ')[index];
 	}
 
-	//Confirm action
-
-	Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.');
-
 	//check if new player
-	if(!_.includes(Diplomacy.gameState().players, player)){
-		Diplomacy.addPlayer(player);
-		Higs.reply(player + ' has joined the game!', 'diagnostics'); //'diplomacy')
+	if(!Diplomacy.getState().players[playerName]){
+		Diplomacy.addPlayer(playerName);
+		Higs.reply(playername + ' has joined the game!', 'diplomacy');
 	}
 
-	Diplomacy.submitMove(player, action, target);
+	try{
+		Diplomacy.submitMove(playerName, action, target);
+		Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.');
+	}catch(e){
+		Higs.reply(e.toString());
+	}
 }
-
-
 
 
 
@@ -112,7 +113,7 @@ var HandleDebugCommands = function(msg, info){
 
 		if(!_.includes(Diplomacy.gameState().players, player)){
 			Diplomacy.addPlayer(player);
-			Higs.reply(player + ' has joined the game!', 'diagnostics'); //'diplomacy')
+			Higs.reply(player + ' has joined the game!', 'diplomacy');
 		}
 
 		Diplomacy.submitMove(player, action, target);

@@ -138,6 +138,7 @@ module.exports = Diplomacy;
 
 
 
+/*
 
 
 
@@ -161,5 +162,5 @@ Storage.init(function(){
 	}
 
 })
-
+*/
 
