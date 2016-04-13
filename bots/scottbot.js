@@ -66,7 +66,7 @@ module.exports = {
 	icon : ':scott:',
 	name : "scottbot",
 
-	listenFor : ['message'],
+	//listenFor : ['message'],
 	response : function(msg, info, Higgins, BotInstance){
 		if(utils.messageHas(msg, 'scottbot', 'rebuild') && info.user == 'scott'){
 			getScottMessagesFromSlack(function(msgs){
