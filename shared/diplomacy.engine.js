@@ -1,305 +1,185 @@
-var fs = require('fs');
 var _ = require('lodash');
-var Storage = require('slack-helperbot/storage');
 
-const KEY = 'diplomacy_game';
-const ACTIONS = ['defend', 'attack', 'support', 'invest'];
-const STARTING_POINTS = 100;
-const TICK_RATE = 1000; //1 sec for now
-const ATTACK_RATIO = 0.5;
-
-const INVEST_START = 10;
-const INVEST_RATE = 2;
-
-//Use to easily retrieve and modify game state
-var Game = function(args){
-	if(args){
-		Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
+/*
+var exampleState = {
+	currentRound : 2,
+	investPool : 3,
+	players : {
+		bob : {
+			name : 'bob',
+			isMerc : false,
+			score : 1,
+			move : {
+				action : 'attack',
+				target : 'agatha'
+			},
+		},
+		agatha : {
+			name : 'agatha',
+			isMerc : false,
+			score : 2,
+			move : {
+				action : 'support',
+				target : 'bob'
+			}
+		}
+		...
 	}
-	return Storage.get(KEY)
+}
+*/
+
+
+var getPlayersByAction = function(state, actionType){
+	return _.reduce(state.players, (r, player, playerName)=>{
+		if(player.move.action == actionType) r.push(player);
+		return r;
+	}, []);
+};
+var getSupportersFor = function(state, targetName){
+	return _.reduce(state.players, (r, player)=>{
+		if(player.move.action == 'support' && player.move.target == targetName) r.push(player.name);
+		return r;
+	}, []);
+};
+var getDefenseValue = function(state, playerName){
+	var player = state.players[playerName];
+	if(player.move.action == 'invest') return 0;
+	if(player.move.action == 'attack') return 1;
+	if(player.move.action == 'support') return 1;
+	if(player.move.action == 'defend') return player.result.supporters.length + 1;
+};
+var getAttackValue = function(state, playerName){
+	var player = state.players[playerName];
+	if(player.move.action == 'invest') return 0;
+	if(player.move.action == 'defend') return 0;
+	if(player.move.action == 'support') return 0;
+	if(player.move.action == 'attack') return player.result.supporters.length + 1;
 };
 
 
-var tickTimer;
 
 
+var Engine = {
+	calculateRound : function(state, config){
+		var newState = _.cloneDeep(state);
+		//Setup a default config object
+		var newConfig = _.assign({
+			investFn : function(state){ return state.investPool;},
+			investStart : 0
+		}, config);
 
+		newState = _.flow(
+			Engine.initPlayers,
+			Engine.calculateInvests,
+			Engine.calculateAttacks,
+			Engine.calculateScoreDeltas,
+			Engine.updateScores,
+			Engine.assignMercs
+		)(newState);
 
+		newState = Engine.updateInvestPool(newState, newConfig);
+		return newState;
+	},
 
-
-
-var DiplomacyEngine = {
-	gameState : Game,
-
-	newRoundHandler : function(){},
-
-	startGame : function(initiator, roundLength, roundCount){
-		Game({
-			initiator : initiator,
-			players : [],
-			investPool : INVEST_START,
-			scores : {},
-			moves : {},
-			currentRound : 1,
-			currentTick : 0,
-
-			roundResults : {},
-
-			config : {
-				roundTickLength : 5,
-				investRate : INVEST_RATE,
-				totalRounds : 3
-			}
+	initPlayers : function(state){
+		_.each(state.players, (player)=>{
+			player.result = {};
+			if(!player.move) player.move = {};
+			if(!player.isMerc && !player.move.action) player.move.action = 'defend'
 		});
-
-		DiplomacyEngine.newRoundHandler({round : 0});
-
-		//DiplomacyEngine.startTimer();
-	},
-	endGame : function(){
-		console.log('END GAME');
-
-		var roundState = DiplomacyEngine.calculateRound();
-		roundState.round = Game().config.totalRounds;
-		DiplomacyEngine.newRoundHandler(roundState);
-
-		clearInterval(tickTimer);
-		tickTimer = null;
-		Storage.set(KEY, null);
-	},
-	isRunning : function(){
-		return !!Storage.get(KEY);
-	},
-
-
-	newRound : function(){
-		var roundState = DiplomacyEngine.calculateRound();
-
-		Game({
-			currentTick : 0,
-			moves : {},
-
-			currentRound : Game().currentRound + 1,
-			investPool : Game().investPool + Game().config.investIncrement,
-
-		});
-
-		if(Game().currentRound > Game().config.totalRounds){
-			return DiplomacyEngine.endGame();
-		}
-
-		console.log('NEW ROUND', Game().currentRound);
-
-
-		DiplomacyEngine.newRoundHandler(roundState);
-
-		//check for end of game
-
-	},
-
-	startTimer : function(){
-		if(!tickTimer){
-			tickTimer = setInterval(function(){
-				if(!DiplomacyEngine.isRunning()) return;
-				Game({currentTick : Game().currentTick + 1});
-
-				console.log('TICK', Game().currentTick);
-
-				if(Game().currentTick >= Game().config.roundTickLength){
-					DiplomacyEngine.newRound();
-				}
-			}, TICK_RATE);
-		}
-	},
-
-
-	addPlayer : function(name){
-		var temp = Game();
-		temp.players.push(name);
-		temp.scores[name] = STARTING_POINTS;
-		Game(temp);
-	},
-	submitMove : function(name, action, target){
-		var temp = Game();
-		temp.moves[name] = {
-			action : action,
-			target : target
-		};
-		Game(temp);
-	},
-
-
-
-	///////
-
-	getPlayersByAction : function(actionType){
-		return _.reduce(Game().moves, (r, move, player)=>{
-			if(move.action == actionType) r.push(player);
-			return r;
-		}, []);
-	},
-
-	getSupporterCount : function(player){
-		return DiplomacyEngine.getSupporters(player).length;
-	},
-	getSupporters : function(player){
-		return _.reduce(Game().moves, (r, move, supportingPlayer)=>{
-			if(move.action == 'support' && move.target == player) r.push(supportingPlayer);
-			return r;
-		}, []);
-	},
-	getDefenseValue : function(player){
-		var move = Game().moves[player];
-		if(move.action == 'invest') return 0;
-		if(move.action == 'attack') return 1;
-		if(move.action == 'support') return 1;
-		if(move.action == 'defend') return DiplomacyEngine.getSupporterCount(player) + 1;
-	},
-	getAttackValue : function(player){
-		var move = Game().moves[player];
-		if(move.action == 'invest') return 0;
-		if(move.action == 'defend') return 0;
-		if(move.action == 'support') return 0;
-		if(move.action == 'attack') return DiplomacyEngine.getSupporterCount(player) + 1;
-	},
-
-	setDefaultActions : function(){
-		_.each(Game().players, (player)=>{
-			if(!Game().moves[player]) Game().moves[player] = {};
-			if(!Game().moves[player].action) Game().moves[player].action = 'defend';
+		//figure out the supporters after default actiosn have been set
+		_.each(state.players, (player)=>{
+			player.result.supporters = getSupportersFor(state, player.name);
 		})
-		Game({ moves : Game().moves });
-
-		console.log('DEFAULT', Game().moves);
-	},
-
-
-	calculateRound : function(){
-		DiplomacyEngine.setDefaultActions();
-		var state = {
-			round : Game().currentRound
-		};
-
-		//Build initial state
-		_.each(Game().players, (player)=>{
-			state[player] = {
-				action     : Game().moves[player].action,
-				target     : Game().moves[player].target,
-				supporters : DiplomacyEngine.getSupporters(player)
-			}
-		});
-
-		state = DiplomacyEngine.calculateInvests(state);
-		state = DiplomacyEngine.calculateAttacks(state);
-
-		DiplomacyEngine.updateScores(state);
-
-		Game({ roundResults : state });
-
 		return state;
 	},
 
-
 	calculateInvests : function(state){
-		var investPlayers = DiplomacyEngine.getPlayersByAction('invest');
-		//Split pool evenly
+		var investPlayers = getPlayersByAction(state, 'invest');
 		_.each(investPlayers, (player)=>{
-			state[player].invest = Math.floor(Game().investPool/investPlayers.length);
+			player.result.invest = Math.floor(state.investPool/investPlayers.length);
+			player.result.isSuccessful = true;
 		});
-		//Reset the pool if anyone took investment
-		if(investPlayers.length){
-			Game({investPool : 0 })
-		}
 		return state;
 	},
 
 	calculateAttacks : function(state){
-		var attackPlayers = DiplomacyEngine.getPlayersByAction('attack');
-		//Calculate successes/failures
-		var atkList = {};
+		var attackPlayers = getPlayersByAction(state, 'attack');
 		_.each(attackPlayers, (atkPlayer)=>{
-			var target = state[atkPlayer].target;
-			if(DiplomacyEngine.getAttackValue(atkPlayer) > DiplomacyEngine.getDefenseValue(target)){
-				state[atkPlayer].isSuccessful = true;
-				state[target].isSuccessful = false;
+			var targetName = atkPlayer.move.target;
+			var attackerWins = (getAttackValue(state, atkPlayer.name) > getDefenseValue(state, targetName));
 
-				//Make a list of successful attacks keyed by target
-				if(!atkList[target]) atkList[target] = [];
-				atkList[target].push(atkPlayer);
-			}else{
-				state[atkPlayer].isSuccessful = false;
-				state[target].isSuccessful = true;
-			}
+			atkPlayer.result.isSuccessful = attackerWins;
+			state.players[targetName].result.isSuccessful = !attackerWins;
 		});
+		return state;
+	},
 
-		//Update gains and loses
-		_.each(atkList, (attackers, target)=>{
-			var lossValue = Math.floor(Game().scores[target] * ATTACK_RATIO);
-			state[target].loss = lossValue;
-			//Split gain evenly between attackers
+	calculateScoreDeltas : function(state){
+		//Make a list of successful attackers keyed by target
+		var atkList = _.reduce(getPlayersByAction(state, 'attack'), (r, attacker)=>{
+			if(attacker.result.isSuccessful){
+				if(!r[attacker.move.target]) r[attacker.move.target] = [];
+				r[attacker.move.target].push(attacker)
+			}
+			return r;
+		}, {});
+
+		_.each(atkList, (attackers, targetName)=>{
+			var lossValue = attackers.length;
+			var target = state.players[targetName];
+
+			target.result.loss = lossValue;
 			_.each(attackers, (attacker)=>{
-				state[attacker].gain = Math.floor(lossValue/attackers.length);
+				attacker.result.spoils = 1;
 			});
+
 			//Steal investment if they were investing
-			if(state[target].action == 'invest'){
-				var investValue = state[target].invest;
-				state[target].invest = 0;
-				//Split invest evenly between attackers
+			if(target.move.action == 'invest'){
+				var investValue = target.result.invest;
+				target.result.invest = 0;
+				target.result.isSuccessful = false;
+
+				//Split invest evenly between attackerNames
 				_.each(attackers, (attacker)=>{
-					state[attacker].stole = Math.floor(investValue/attackers.length);
+					attacker.result.stole = Math.floor(investValue/attackers.length);
 				});
 			}
 		});
+		return state;
+	},
 
+	assignMercs : function(state){
+		_.each(state.players, (player)=>{
+			if(player.score <= 0){
+				player.score = 0;
+				player.isMerc = true;
+				player.result.becameMerc = true;
+			}
+		})
 		return state;
 	},
 
 	updateScores : function(state){
-		var scores = Game().scores;
-		_.each(state, (res, player)=>{
-			scores[player] += (res.gain || 0) + (res.stole || 0) + (res.invest || 0);
-			scores[player] -= (res.loss || 0);
+		_.each(state.players, (player)=>{
+			var res = player.result
+			player.result.delta = 0;
+			player.result.delta += (res.spoils || 0) + (res.stole || 0) + (res.invest || 0);
+			player.result.delta -= (res.loss || 0);
+			player.score += player.result.delta;
 		})
-		Game({ scores : scores });
+		return state
 	},
 
+	updateInvestPool : function(state, config){
+		var investPlayers = getPlayersByAction(state, 'invest');
+		if(investPlayers.length){
+			state.investPool = config.investStart; //Reset the pool
+		}else{
+			state.investPool = config.investFn(state);
+		}
+		return state;
+	},
+};
 
-
-}
-
-
-
-//Server restart timer code
-if(DiplomacyEngine.isRunning()){
-	DiplomacyEngine.startTimer();
-}
-
-
-
-
-module.exports = DiplomacyEngine;
-
-
-/*
-dip.addPlayer('Agatha');
-dip.addPlayer('Bathalsar');
-dip.addPlayer('Cain');
-dip.addPlayer('Dahlia');
-
-dip.submitMove('Bathalsar', 'support', 'Agatha');
-dip.submitMove('Agatha', 'attack', 'Dahlia');
-dip.submitMove('Cain', 'attack', 'Dahlia');
-dip.submitMove('Dahlia', 'invest');
-
-
-//dip.submitMove('Cain', 'invest');
-//dip.submitMove('Dahlia', 'support', 'Cain');
-
-
-console.log(dip.calculateRound());
-
-console.log(investEarnings);
-
-//console.log('Defense', dip.calculateDefenses());
-//console.log('Attack', dip.calculateAttack());
-*/
+module.exports = Engine;
