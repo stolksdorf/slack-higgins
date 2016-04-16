@@ -91,9 +91,12 @@ var parseMove = function(msg, playerName){
 	if(!Diplomacy.isRunning()) throw "A game isn't currently running.";
 	if(!Diplomacy.getState().players[playerName]) addPlayer(playerName);
 
+	submitMove(playerName, action, target);
+};
+var submitMove = function(playerName, action, target){
 	Diplomacy.submitMove(playerName, action, target);
 	Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.', playerName);
-};
+}
 var addPlayer = function(playerName){
 	Diplomacy.addPlayer(playerName)
 	Higs.reply(playerName + ' has joined the game!', 'diplomacy');
@@ -132,7 +135,8 @@ Diplomacy.newRoundHandler = function(state){
 		Higs.reply([
 			"> *Round " + state.currentRound + "* (of " + state.totalRounds + ")",
 			"> Submit your actions by directly messaging Higgins. This round will end at *" + roundEnd + "*",
-			"",
+			"> ",
+			"> The invest pool is currently at *" + state.investPool + " points*"
 		].join('\n'),
 		'diplomacy');
 	}, 500);
@@ -167,6 +171,21 @@ module.exports = {
 	response : function(msg, info, Higgins){
 
 		try{
+			if(_.startsWith(msg, 'debug')){
+				if(utils.messageHas(msg, 'end round')){
+					Diplomacy.endRound()
+				}else if(utils.messageHas(msg, 'add')){
+					addPlayer(_.words(msg)[2]);
+				}else{
+					var parts = _.words(msg);
+					Diplomacy.submitMove(parts[1], parts[2], parts[3])
+					Higs.reply(parts[1] + ' ' + parts[2] + ' ' + parts[3])
+				}
+				return;
+			}
+
+
+
 			if(info.isDirect){
 				if(utils.messageHas(msg, ACTIONS)){
 					return parseMove(msg, info.user)
@@ -197,4 +216,4 @@ module.exports = {
 			Higs.reply(':warning: ' + e.toString())
 		}
 	},
-}
+};
