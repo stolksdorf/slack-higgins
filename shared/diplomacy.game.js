@@ -2,34 +2,20 @@ var _ = require('lodash');
 var Storage = require('slack-helperbot/storage');
 var Engine = require('./diplomacy.engine.js');
 
+const TICK_RATE = 500; //1000 * 60 * 5
+
 const KEY = 'diplomacy_game';
 const ACTIONS = ['defend', 'attack', 'support', 'invest'];
-
-//const TICK_RATE = 1000 * 60 * 5; //Checks if the round ends every 5min
-const TICK_RATE = 1000;
-
 var timer;
 
 
 //Use to easily retrieve and modify game state
-
 var Game = function(args){
 	if(args){
 		Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
 	}
 	return Storage.get(KEY)
 };
-
-/*
-var temp = {};
-var Game = function(args){
-	if(args){
-		temp = _.extend({}, temp, args);
-	}
-	return temp
-};
-*/
-
 
 var config = {
 	startingPoints : 3,
@@ -43,12 +29,12 @@ var noGameCheck = function(){
 	if(!Diplomacy.isRunning()) throw "A game isn't currently running.";
 }
 
-
 var Diplomacy = {
 	getState : function(){
 		return Game()
 	},
 
+	startGameHandler : function(){},
 	newRoundHandler : function(){},
 	endRoundHandler : function(){},
 	endGameHandler : function(){},
@@ -56,11 +42,6 @@ var Diplomacy = {
 	isRunning : function(){
 		return !!Storage.get(KEY);
 	},
-	/*
-	isRunning : function(){
-		return !_.isEmpty(temp)
-	},
-	*/
 
 	startGame : function(initiator, roundLength, roundCount){
 		if(Diplomacy.isRunning()) throw "A game is currently running.";
@@ -78,6 +59,7 @@ var Diplomacy = {
 		};
 
 		Game(state);
+		Diplomacy.startGameHandler(state);
 		Diplomacy.startTimer();
 		Diplomacy.startRound();
 	},
@@ -146,7 +128,7 @@ var Diplomacy = {
 
 		if(!player) throw 'There is no player with that name playing';
 		if(target && !state.players[target]) throw "That player isn't playing the game";
-		if(player.isMerc && action !== 'support') throw "As a mercenary, you can only do the 'support' action";
+		if(player.isMerc && action !== 'support') throw "When you have 0 points, you can only do the 'support' action";
 		if(!_.includes(ACTIONS, action)) throw "That's not a valid action. Options are: " + ACTIONS.join(', ');
 
 		player.move = {
@@ -164,78 +146,3 @@ if(Diplomacy.isRunning()){
 
 
 module.exports = Diplomacy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-Diplomacy.newRoundHandler = function(state){
-	console.log('new round', state);
-}
-Diplomacy.endRoundHandler = function(state){
-	console.log('end round', state);
-}
-Diplomacy.endGameHandler = function(state){
-	console.log('end game', state);
-}
-
-
-
-Diplomacy.startGame('scott', 15000, 6);
-Diplomacy.addPlayer('scott');
-Diplomacy.addPlayer('dave');
-Diplomacy.submitMove('scott', 'defend');
-Diplomacy.submitMove('dave', 'attack', 'scott');
-Diplomacy.endRound();
-Diplomacy.submitMove('scott', 'defend');
-Diplomacy.endGame();
-
-
-
-
-
-/*
-
-
-
-//////////////////////////////
-
-
-var Moment = require('moment');
-Storage.init(function(){
-	console.log(Game());
-
-
-	Diplomacy.newRoundHandler = function(state){
-		var temp = Moment(state.roundEndTime);
-		console.log('New round', state.currentRound, 'Ending at ' + temp.format('ddd Do HH:mm'));
-	}
-
-	if(!Diplomacy.isRunning()){
-		Diplomacy.startGame('scott', 10000, 6);
-	}else{
-		Diplomacy.startTimer();
-	}
-
-})
-*/
-

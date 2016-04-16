@@ -2,7 +2,7 @@ var _ = require('lodash');
 var utils = require('slack-helperbot/utils.js');
 var Moment = require('moment');
 
-var Diplomacy = require('diplomacy.game.js');
+var Diplomacy = require('../shared/diplomacy.game.js');
 
 const ACTIONS = ['defend', 'attack', 'support', 'invest'];
 const BOT_NAMES = ['higgins', 'higs', 'diplomacybot'];
@@ -16,69 +16,59 @@ var Higs = require('slack-helperbot/botLoader.js').getBotContext({
 
 
 var print = {
-	endGame : function(state){
-
+	rules  : function(){
+		return "PUT RULES HERE"
 	},
-	endRound : function(state){
-
-	},
-
-	//TODO: Double check that diplomacy.interface can still load as a bot
-
-	//TODO : Fix for new state structure, add in Merc section
 	scoreboard : function(state){
-
-		console.log(state);
-
-
 		var sortedScores = _.sortBy(state.players, (player)=>{
-			return 999999 - player.score
+			return -player.score;
 		});
-
-		console.log(sortedScores);
-
-
-		return _.map(sortedScores, (score, player)=>{
+		return _.map(sortedScores, (player)=>{
 			var delta = '';
-			if(state){
-				var res = state[player];
-				var val = (res.gain || 0) + (res.stole || 0) + (res.invest || 0) - (res.loss || 0)
-				if(val >= 0){
-					delta = ' _(+' + val + ')_'
+			if(player.result){
+				if(player.result.delta < 0 ){
+					delta = ' _(' + player.result.delta + ')_'
 				}else{
-					delta = ' _(' + val + ')_'
+					delta = ' _(+' + player.result.delta + ')_'
 				}
 			}
-
-			return ':' + player + ': has ' + score + ' points' + delta;
+			if(player.score < 1){
+				return '~:' + player.name + ': has ' + player.score + ' points' + delta + "~";
+			}
+			return ':' + player.name + ': has ' + player.score + ' points' + delta;
 		}).join('\n');
 	},
 
-	//TODO : Handle with new state structure
 	actions : function(state){
-		return _.map(state, (res, player)=>{
-			if(res.action == 'invest'){
-				return ':moneybag: *' + player + '* invests, earning ' + res.invest;
-			}else if(res.action == 'support'){
-				return ':heart: *' + player + '* supports *' + res.target + '*';
-			}else if(res.action == 'attack'){
+		return _.map(state.players, (player)=>{
+			var res = player.result;
+			var move = player.move;
+			if(move.action == 'invest'){
 				if(res.isSuccessful){
-					return ':crossed_swords: *' + player + '* sucessfully attacks *' + res.target + '*' +
+					return ':moneybag: *' + player.name + '* invests, earning ' + res.invest;
+				}else{
+					return ':money_with_wings: *' + player.name + "* invests, but it's stolen!";
+				}
+			}else if(move.action == 'support'){
+				return ':heart: *' + player.name + '* supports *' + move.target + '*';
+			}else if(move.action == 'attack'){
+				if(res.isSuccessful){
+					return ':crossed_swords: *' + player.name + '* sucessfully attacks *' + move.target + '*' +
 						(res.supporters.length ? ' _(with support from ' + res.supporters.join(', ') + ')_' : '') +
-						', gaining ' + res.gain +
+						', gaining ' + res.spoils +
 						(res.stole ? ' and stealing ' + res.stole :'');
 				}else{
-					return ':grimacing: *' + player + '* fails to attack *' + res.target + '*';
+					return ':grimacing: *' + player.name + '* fails to attack *' + move.target + '*';
 				}
-			}else if(res.action == 'defend'){
+			}else if(move.action == 'defend'){
 				if(res.isSuccessful === true){
-					return ':shield: *' + player + '* sucessfully defends attack from *' + res.target + '*' +
+					return ':shield: *' + player.name + '* sucessfully defends attack from *' + move.target + '*' +
 						(res.supporters.length ? ' _(with support from ' + res.supporters.join(', ') +')_' : '');
 				}else if(res.isSuccessful === false){
-					return ':waving_white_flag: *' + player + '* fails to defend from *' + res.target + '*' +
+					return ':waving_white_flag: *' + player.name + '* fails to defend from *' + move.target + '*' +
 						(res.loss ? ' losing ' + res.loss : '');
 				}else{
-					return ':shield: *' + player + '* defended';
+					return ':shield: *' + player.name + '* defended';
 				}
 			}
 		}).join('\n');
@@ -86,14 +76,11 @@ var print = {
 }
 
 
-///
 var parseMove = function(msg, playerName){
 	var target;
-	var action = _.find(ACTIONS, (action)=>{
-		return msg.indexOf(action) !== -1;
-	});
+	var action = _.find(ACTIONS, (action)=>{return msg.indexOf(action) !== -1;});
 	if(action == 'attack' || action == 'support'){
-		var index = _.reduce(msg.split(' '), (r, part, i)=>{
+		var index = _.reduce(_.words(msg), (r, part, i)=>{
 			if(_.includes(part, action)) r = i + 1;
 			return r;
 		}, null);
@@ -101,44 +88,70 @@ var parseMove = function(msg, playerName){
 	}
 
 	//check if new player
-	//TODO: Check if game is running
+	if(!Diplomacy.isRunning()) throw "A game isn't currently running.";
 	if(!Diplomacy.getState().players[playerName]) addPlayer(playerName);
 
-	//try{
-		Diplomacy.submitMove(playerName, action, target);
-		Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.', playerName);
-	//}catch(e){
-	//	Higs.reply(':warning: ' + e.toString(), playerName);
-	//}
-
+	Diplomacy.submitMove(playerName, action, target);
+	Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.', playerName);
 };
 var addPlayer = function(playerName){
 	Diplomacy.addPlayer(playerName)
 	Higs.reply(playerName + ' has joined the game!', 'diplomacy');
 };
-var triggerStart = function(username){
-	Diplomacy.startGame(username, 1000, 6);
-	Higs.reply('Start Game!');
+var triggerStart = function(username, message){
+	var rounds = 6;
+	var roundLengthMs = 1000 * 60 * 60 * 24;
+
+	//Extract out is the user passed game params
+	var params = utils.extractNumberUnits(message);
+	_.each(params, (param)=>{
+		if(utils.messageHas(param.unit, ['round', 'turn'])) rounds = param.val;
+
+		if(utils.messageHas(param.unit, ['min'])) roundLengthMs = param.val * 1000 * 60;
+		if(utils.messageHas(param.unit, ['hour', 'hr'])) roundLengthMs = param.val * 1000 * 60 * 60;
+		if(utils.messageHas(param.unit, ['day'])) roundLengthMs = param.val * 1000 * 60 * 60 * 24;
+	});
+
+	Diplomacy.startGame(username, roundLengthMs, rounds);
 };
-var triggerEnd  = function(username){
-	Diplomacy.endGame(username)
+
+
+
+/* GAME EVENT HANDLERS */
+Diplomacy.startGameHandler = function(state){
+	Higs.reply('A new game of Diplomacy has started!\n It will run for ' +
+			state.totalRounds + ' rounds, each lasting ' +
+			Moment.duration(state.roundLengthMs).humanize()
+	, 'diplomacy');
 };
-
-
-
-
-
 Diplomacy.newRoundHandler = function(state){
-	//console.log('new round');
-	//var temp = Moment(state.roundEndTime);
-	//console.log('New round', state.currentRound, 'Ending at ' + temp.format('ddd Do HH:mm'));
-}
+	var roundEnd = Moment(state.roundEndTime).format('ddd Do HH:mm')
 
+	//Add a slight pause so the messages appear in the right order
+	setTimeout(function(){
+		Higs.reply([
+			"> *Round " + state.currentRound + "* (of " + state.totalRounds + ")",
+			"> Submit your actions by directly messaging Higgins. This round will end at *" + roundEnd + "*",
+			"",
+		].join('\n'),
+		'diplomacy');
+	}, 500);
+
+};
 Diplomacy.endRoundHandler = function(state){
-	Higs.reply(print.endRound(state))
-}
+	Higs.reply([
+		"*Round " + state.currentRound + " is over!*",
+		"",
+		print.actions(state),
+		"",
+		"The current scores are:\n" + print.scoreboard(state)
+	].join('\n'),
+	'diplomacy');
+};
 Diplomacy.endGameHandler = function(state){
-	Higs.reply(print.endGame(state));
+	setTimeout(function(){
+		Higs.reply('Game is over!', 'diplomacy');
+	}, 1000);
 }
 
 
@@ -152,7 +165,6 @@ module.exports = {
 	listenIn : ['diplomacy', 'direct'],
 	listenFor : ['message'],
 	response : function(msg, info, Higgins){
-		Higs = Higgins;
 
 		try{
 			if(info.isDirect){
@@ -160,21 +172,20 @@ module.exports = {
 					return parseMove(msg, info.user)
 				}
 				if(utils.messageHas(msg, ['playing', 'join'])){
-					Diplomacy.addPlayer(info.user)
+					return Diplomacy.addPlayer(info.user)
 				}
-
-
 			}else if(utils.messageHas(msg, BOT_NAMES)){
-
+				if(utils.messageHas(msg, ['rule', 'help', 'how'])){
+					return Higs.reply(print.rules());
+				}
 				if(utils.messageHas(msg, ['playing', 'join'])){
 					return Diplomacy.addPlayer(info.user)
 				}
-
 				if(utils.messageHas(msg, ['start'], 'game')){
-					return triggerStart(info.user);
+					return triggerStart(info.user, msg);
 				}
 				if(utils.messageHas(msg, ['end'], 'game')){
-					return triggerEnd(info.user);
+					return Diplomacy.endGame(info.user);
 				}
 				if(utils.messageHas(msg, ['score', 'points', 'players'])){
 					return Higs.reply('The current scores are: \n' +
@@ -186,6 +197,4 @@ module.exports = {
 			Higs.reply(':warning: ' + e.toString())
 		}
 	},
-
-	//STATE : Diplomacy.getState
 }
