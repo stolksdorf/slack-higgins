@@ -28,7 +28,7 @@
     "markov": "0.0.7",
     "moment": "^2.12.0",
     "request": "~2.69.0",
-    "slack-helperbot": "0.0.5",
+    "slack-helperbot": "^0.0.5",
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1"
