@@ -12,12 +12,23 @@ var timer;
 
 
 //Use to easily retrieve and modify game state
+/*
 var Game = function(args){
 	if(args){
 		Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
 	}
 	return Storage.get(KEY)
 };
+*/
+
+var temp = {};
+var Game = function(args){
+	if(args){
+		temp = _.extend({}, temp, args);
+	}
+	return temp
+};
+
 
 
 var config = {
@@ -38,10 +49,20 @@ var Diplomacy = {
 	endRoundHandler : function(){},
 	endGameHandler : function(){},
 
+	/*
 	isRunning : function(){
 		return !!Storage.get(KEY);
 	},
+	*/
+	isRunning : function(){
+
+		return !_.isEmpty(temp)
+	},
+
+
 	startGame : function(initiator, roundLength, roundCount){
+		if(Diplomacy.isRunning()) throw "A game is currently running.";
+
 		var state = {
 			investPool : config.investStart,
 			currentRound : 0,
@@ -55,7 +76,7 @@ var Diplomacy = {
 		};
 
 		Game(state);
-		Diplomacy.startTimer();
+		//Diplomacy.startTimer();
 		Diplomacy.startRound();
 	},
 
@@ -86,6 +107,7 @@ var Diplomacy = {
 	},
 
 	endGame : function(initiator){
+		if(!Diplomacy.isRunning()) throw "A game isn't currently running.";
 		if(initiator && Game().initiator !== initiator) throw "Only " + Game().initiator + " can end the game early.";
 		Diplomacy.endGameHandler(Game());
 		clearInterval(timer);
@@ -105,6 +127,8 @@ var Diplomacy = {
 
 	addPlayer : function(name){
 		var state = Game();
+		if(state.players[name]) throw 'You are already playing!';
+
 		state.players[name] = {
 			name : name,
 			isMerc : false,
@@ -129,12 +153,38 @@ var Diplomacy = {
 	},
 }
 
+//Diplomacy.endGame();
+
+
 //Server restart timer code
 if(Diplomacy.isRunning()){
 	Diplomacy.startTimer();
 }
 
 module.exports = Diplomacy;
+
+Diplomacy.newRoundHandler = function(state){
+	console.log('new round', state);
+}
+Diplomacy.endRoundHandler = function(state){
+	console.log('end round', state);
+}
+Diplomacy.endGameHandler = function(state){
+	console.log('end game', state);
+}
+
+
+
+Diplomacy.startGame('scott', 15000, 6);
+Diplomacy.addPlayer('scott');
+Diplomacy.addPlayer('dave');
+Diplomacy.submitMove('scott', 'defend');
+Diplomacy.submitMove('dave', 'attack', 'scott');
+Diplomacy.endRound();
+Diplomacy.submitMove('scott', 'defend');
+Diplomacy.endGame();
+
+
 
 
 

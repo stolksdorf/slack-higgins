@@ -37,6 +37,7 @@ var getPlayersByAction = function(state, actionType){
 };
 var getSupportersFor = function(state, targetName){
 	return _.reduce(state.players, (r, player)=>{
+		//console.log(player, targetName);
 		if(player.move.action == 'support' && player.move.target == targetName) r.push(player.name);
 		return r;
 	}, []);
@@ -89,6 +90,7 @@ var Engine = {
 			if(!player.isMerc && !player.move.action){
 				player.move.action = 'defend'
 			}
+			//console.log('init', player);
 		});
 		return state;
 	},

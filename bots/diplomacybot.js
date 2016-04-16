@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var utils = require('slack-helperbot/utils.js');
+var Moment = require('moment');
 
 var Diplomacy = require('diplomacy.game.js');
 
@@ -10,6 +11,8 @@ const BOT_NAMES = ['higgins', 'higs', 'diplomacybot'];
 var Higs = require('slack-helperbot/botLoader.js').getBotContext({
 	name : 'diplomacybot',
 	icon : ':passport_control:'
+},{
+	channel : 'diplomacy'
 });
 
 
@@ -27,50 +30,12 @@ var Higs = require('slack-helperbot/botLoader.js').getBotContext({
 //
 
 
-Diplomacy.newRoundHandler = function(state){
-	console.log('new round');
-}
-
-Diplomacy.endRoundHandler = function(state){
-	Higs.reply(printEndRound(state))
-}
-Diplomacy.endGameHandler = function(state){
-	console.log('END GAME');
-}
-
-
-var parseMove = function(msg, playerName){
-	var target;
-	var action = _.find(ACTIONS, (action)=>{
-		return msg.indexOf(action) !== -1;
-	});
-	if(action == 'attack' || action == 'support'){
-		var index = _.reduce(msg.split(' '), (r, part, i)=>{
-			if(_.includes(part, action)) r = i + 1;
-			return r;
-		}, null);
-		target = msg.split(' ')[index];
-	}
-
-	//check if new player
-	if(!Diplomacy.getState().players[playerName]){
-		Diplomacy.addPlayer(playerName);
-		Higs.reply(playername + ' has joined the game!', 'diplomacy');
-	}
-
-	try{
-		Diplomacy.submitMove(playerName, action, target);
-		Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.');
-	}catch(e){
-		Higs.reply(e.toString());
-	}
-}
 
 
 
 
 
-
+/*
 var HandleDebugCommands = function(msg, info){
 	//Debug Commands
 	if(utils.messageHas(msg, 'start')){
@@ -95,7 +60,7 @@ var HandleDebugCommands = function(msg, info){
 	}
 
 	if(utils.messageHas(msg, 'actions')){
-		Higs.reply(JSON.stringify(Diplomacy.gameState().submittedMoves, null, '  '));
+		Higs.reply(JSON.stringify(Diplomacy.getState().submittedMoves, null, '  '));
 	}
 	if(utils.messageHas(msg, 'end round')){
 
@@ -111,7 +76,7 @@ var HandleDebugCommands = function(msg, info){
 			return msg.indexOf(action) !== -1;
 		})
 
-		if(!_.includes(Diplomacy.gameState().players, player)){
+		if(!_.includes(Diplomacy.getState().players, player)){
 			Diplomacy.addPlayer(player);
 			Higs.reply(player + ' has joined the game!', 'diplomacy');
 		}
@@ -122,10 +87,11 @@ var HandleDebugCommands = function(msg, info){
 
 
 }
+*/
 
 //Provide a state to get deltas
 var printScoreboard = function(state){
-	var sortedScores = _.fromPairs(_.sortBy(_.toPairs(Diplomacy.gameState().scores), (pair)=>{
+	var sortedScores = _.fromPairs(_.sortBy(_.toPairs(Diplomacy.getState().scores), (pair)=>{
 		return 999999 - pair[1];
 	}));
 
@@ -175,8 +141,11 @@ var printMoveResults = function(state){
 }
 
 var printEndRound = function(state){
+
+	return "END ROUND";
+
 	var msg = 'End of round ' +
-		Diplomacy.gameState().currentRound + '/' + Diplomacy.gameState().config.totalRounds + '!!\n';
+		Diplomacy.getState().currentRound + '/' + Diplomacy.getState().config.totalRounds + '!!\n';
 
 	msg += '\n' + printMoveResults(state) + '\n\n The new scores are: \n' + printScoreboard(state);
 
@@ -185,22 +154,69 @@ var printEndRound = function(state){
 
 
 
-
-var testMoves = function(){
-
-	Diplomacy.addPlayer('scott');
-	Diplomacy.addPlayer('lp');
-	Diplomacy.addPlayer('meg');
-	Diplomacy.addPlayer('jared');
-
-	Diplomacy.submitMove('scott', 'invest');
-	Diplomacy.submitMove('lp', 'support', 'meg');
-	Diplomacy.submitMove('meg', 'attack', 'jared');
-	Diplomacy.submitMove('jared', 'attack', 'lp');
-
-
+Diplomacy.newRoundHandler = function(state){
+	console.log('new round');
+	var temp = Moment(state.roundEndTime);
+	console.log('New round', state.currentRound, 'Ending at ' + temp.format('ddd Do HH:mm'));
 }
 
+Diplomacy.endRoundHandler = function(state){
+	Higs.reply(printEndRound(state))
+}
+Diplomacy.endGameHandler = function(state){
+	console.log('END GAME');
+}
+
+
+var parseMove = function(msg, playerName){
+	var target;
+	var action = _.find(ACTIONS, (action)=>{
+		return msg.indexOf(action) !== -1;
+	});
+	if(action == 'attack' || action == 'support'){
+		var index = _.reduce(msg.split(' '), (r, part, i)=>{
+			if(_.includes(part, action)) r = i + 1;
+			return r;
+		}, null);
+		target = msg.split(' ')[index];
+	}
+
+	//check if new player
+	if(!Diplomacy.getState().players[playerName]) addPlayer(playerName);
+
+	try{
+		Diplomacy.submitMove(playerName, action, target);
+		Higs.reply('Got it! You are *' + action + 'ing* ' + (target || '') + ' this round.', playerName);
+	}catch(e){
+		Higs.reply(':warning: ' + e.toString(), playerName);
+	}
+}
+
+
+
+var addPlayer = function(playerName){
+	try{
+		Diplomacy.addPlayer(playerName)
+		Higs.reply(playerName + ' has joined the game!', 'diplomacy');
+	}catch(e){
+		Higs.reply(':warning: ' + e.toString(), playerName)
+	}
+}
+var triggerStartGame = function(username){
+	try{
+		Higs.reply('Start Game!')
+		Diplomacy.startGame(username, 15000, 6)
+	}catch(e){
+		Higs.reply(':warning: ' + e.toString())
+	}
+}
+var triggerEndGame = function(username){
+	try{
+		Diplomacy.endGame(username)
+	}catch(e){
+		Higs.reply(':warning: ' + e.toString())
+	}
+}
 
 
 
@@ -212,42 +228,31 @@ module.exports = {
 	listenFor : ['message'],
 	response : function(msg, info, Higgins){
 
-		console.log(info.channel);
-
-		//if(info.channel === 'diplomacy' || info.isDirect){
-
-
-
-
-			Higs = Higgins;
-
-			if(utils.messageHas(msg, 'db') && !info.isDirect){
-				return HandleDebugCommands(msg, info, Higgins);
+		if(info.isDirect){
+			if(utils.messageHas(msg, ACTIONS)){
+				return parseMove(msg, info.user)
+			}
+			if(utils.messageHas(msg, ['playing', 'join'])){
+				Diplomacy.addPlayer(info.user)
 			}
 
 
-		//////////////////////
+		}else if(utils.messageHas(msg, BOT_NAMES)){
 
-		if(utils.messageHas(msg, ['start game'])){
-			Diplomacy.startGame(info.user, 5*60*60, 3);
+			if(utils.messageHas(msg, ['playing', 'join'])){
+				return Diplomacy.addPlayer(info.user)
+			}
+
+			if(utils.messageHas(msg, ['start'], 'game')){
+				return triggerStartGame(info.user);
+			}
+			if(utils.messageHas(msg, ['end'], 'game')){
+				return triggerEndGame(info.user);
+			}
+			if(utils.messageHas(msg, ['score', 'points', 'players'])){
+				return Higs.reply('The current scores are: \n' + printScoreboard());
+			}
 		}
-
-
-
-		if(utils.messageHas(msg, BOT_NAMES, ['score', 'points', 'players'])){
-			return Higs.reply('The current scores are: \n' + printScoreboard());
-		}
-
-
-		if(info.isDirect && utils.messageHas(msg, ACTIONS)){
-			return parseMove(msg, info.user)
-		}
-
-
-		//}
-
-
-
 
 	}
 }
