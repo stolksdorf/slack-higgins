@@ -225,7 +225,7 @@ module.exports = {
 	icon : ':passport_control:',
 
 	listenIn : ['diplomacy', 'direct'],
-	listenFor : ['message'],
+	//listenFor : ['message'],
 	response : function(msg, info, Higgins){
 
 		if(info.isDirect){

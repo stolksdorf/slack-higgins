@@ -37,7 +37,6 @@ var getPlayersByAction = function(state, actionType){
 };
 var getSupportersFor = function(state, targetName){
 	return _.reduce(state.players, (r, player)=>{
-		//console.log(player, targetName);
 		if(player.move.action == 'support' && player.move.target == targetName) r.push(player.name);
 		return r;
 	}, []);
@@ -85,13 +84,13 @@ var Engine = {
 	initPlayers : function(state){
 		_.each(state.players, (player)=>{
 			player.result = {};
-			player.result.supporters = getSupportersFor(state, player.name);
 			if(!player.move) player.move = {};
-			if(!player.isMerc && !player.move.action){
-				player.move.action = 'defend'
-			}
-			//console.log('init', player);
+			if(!player.isMerc && !player.move.action) player.move.action = 'defend'
 		});
+		//figure out the supporters after default actiosn have been set
+		_.each(state.players, (player)=>{
+			player.result.supporters = getSupportersFor(state, player.name);
+		})
 		return state;
 	},
 

@@ -12,15 +12,15 @@ var timer;
 
 
 //Use to easily retrieve and modify game state
-/*
+
 var Game = function(args){
 	if(args){
 		Storage.set(KEY, _.extend({}, Storage.get(KEY), args));
 	}
 	return Storage.get(KEY)
 };
-*/
 
+/*
 var temp = {};
 var Game = function(args){
 	if(args){
@@ -28,7 +28,7 @@ var Game = function(args){
 	}
 	return temp
 };
-
+*/
 
 
 var config = {
@@ -37,6 +37,10 @@ var config = {
 	investFn : function(state){
 		return state.investPool + 1
 	}
+}
+
+var noGameCheck = function(){
+	if(!Diplomacy.isRunning()) throw "A game isn't currently running.";
 }
 
 
@@ -49,16 +53,14 @@ var Diplomacy = {
 	endRoundHandler : function(){},
 	endGameHandler : function(){},
 
-	/*
 	isRunning : function(){
 		return !!Storage.get(KEY);
 	},
-	*/
+	/*
 	isRunning : function(){
-
 		return !_.isEmpty(temp)
 	},
-
+	*/
 
 	startGame : function(initiator, roundLength, roundCount){
 		if(Diplomacy.isRunning()) throw "A game is currently running.";
@@ -76,13 +78,12 @@ var Diplomacy = {
 		};
 
 		Game(state);
-		//Diplomacy.startTimer();
+		Diplomacy.startTimer();
 		Diplomacy.startRound();
 	},
 
 	startRound : function(){
 		var state = Game();
-
 		//Reset past results and moves
 		_.each(state.players, (player)=>{
 			delete player.result;
@@ -107,7 +108,7 @@ var Diplomacy = {
 	},
 
 	endGame : function(initiator){
-		if(!Diplomacy.isRunning()) throw "A game isn't currently running.";
+		noGameCheck();
 		if(initiator && Game().initiator !== initiator) throw "Only " + Game().initiator + " can end the game early.";
 		Diplomacy.endGameHandler(Game());
 		clearInterval(timer);
@@ -126,6 +127,7 @@ var Diplomacy = {
 	},
 
 	addPlayer : function(name){
+		noGameCheck();
 		var state = Game();
 		if(state.players[name]) throw 'You are already playing!';
 
@@ -137,8 +139,10 @@ var Diplomacy = {
 		Game(state);
 	},
 	submitMove : function(name, action, target){
+		noGameCheck();
 		var state = Game();
 		var player = state.players[name];
+
 
 		if(!player) throw 'There is no player with that name playing';
 		if(target && !state.players[target]) throw "That player isn't playing the game";
@@ -153,16 +157,37 @@ var Diplomacy = {
 	},
 }
 
-//Diplomacy.endGame();
-
-
 //Server restart timer code
 if(Diplomacy.isRunning()){
 	Diplomacy.startTimer();
 }
 
+
 module.exports = Diplomacy;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 Diplomacy.newRoundHandler = function(state){
 	console.log('new round', state);
 }
