@@ -16,6 +16,20 @@ var Higs = require('slack-helperbot/botLoader.js').getBotContext({
 
 
 var print = {
+	cmds : function(){
+		return ["> The commands for Diplomacy are:",
+			"> - `higgins start game with X rounds lasting XX [min/hr/days]`",
+			"> - `higgins end the game`",
+			"> - `higgins scores plz`",
+			"> - `higgins join the game`",
+			"> - `higgins what are the rules?`",
+			"",
+			"> Debug Commands",
+			"> - `debug add player1`",
+			"> - `debug player1 action player2`",
+			"> - `debug end round`"
+		].join('\n');
+	},
 	rules  : function(){
 		return "PUT RULES HERE"
 	},
@@ -194,6 +208,9 @@ module.exports = {
 					return Diplomacy.addPlayer(info.user)
 				}
 			}else if(utils.messageHas(msg, BOT_NAMES)){
+				if(utils.messageHas(msg, ['cmds', 'commands'])){
+					return Higs.reply(print.cmds());
+				}
 				if(utils.messageHas(msg, ['rule', 'help', 'how'])){
 					return Higs.reply(print.rules());
 				}
