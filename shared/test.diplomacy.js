@@ -23,7 +23,9 @@ Storage.init(function(){
 	scoreBoardTest();
 
 
+
 	//console.log(DiplomacyBot.STATE());
+
 
 })
 

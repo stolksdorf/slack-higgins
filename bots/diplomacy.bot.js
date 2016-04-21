@@ -105,7 +105,12 @@ var parseMove = function(msg, playerName){
 	if(!Diplomacy.isRunning()) throw "A game isn't currently running.";
 	if(!Diplomacy.getState().players[playerName]) addPlayer(playerName);
 
-	submitMove(playerName, action, target);
+	//Catch it here to make sure it gets sent to the private channel
+	try{
+		submitMove(playerName, action, target);
+	}catch(e){
+		Higs.reply(':warning: ' + e.toString(), playerName);
+	}
 };
 var submitMove = function(playerName, action, target){
 	Diplomacy.submitMove(playerName, action, target);
@@ -168,9 +173,22 @@ Diplomacy.endRoundHandler = function(state){
 };
 Diplomacy.endGameHandler = function(state){
 	setTimeout(function(){
-		Higs.reply('Game is over!', 'diplomacy');
+		Higs.reply('*Game is over!*', 'diplomacy');
 	}, 1000);
 }
+
+
+
+
+
+//TODO: Add time remaining command
+//TODO: Debug command for current player's actions
+//TODO: Remove supporters if you are attacking
+
+
+//BUG: Attempt to action a player, msg went to general
+//BUG: Attacking players keep showing up as undefined
+//BUG: Joining the game didn't result in a messgae
 
 
 
@@ -183,17 +201,20 @@ module.exports = {
 	listenIn : ['diplomacy', 'direct'],
 	listenFor : ['message'],
 	response : function(msg, info, Higgins){
+		Higs = Higgins;
 
 		try{
 			if(_.startsWith(msg, 'debug')){
 				if(utils.messageHas(msg, 'end round')){
 					Diplomacy.endRound()
 				}else if(utils.messageHas(msg, 'add')){
-					addPlayer(_.words(msg)[2]);
+					addPlayer(msg.split(' ')[2]);
+				}else if(utils.messageHas(msg, 'actions')){
+					Higs.reply(JSON.stringify(Diplomacy.getState().players, null, '  '));
 				}else{
-					var parts = _.words(msg);
+					var parts = msg.split(' ');
 					Diplomacy.submitMove(parts[1], parts[2], parts[3])
-					Higs.reply(parts[1] + ' ' + parts[2] + ' ' + parts[3])
+					Higs.reply('Got it! ' + parts[1] + ' ' + parts[2] + ' ' + parts[3])
 				}
 				return;
 			}
