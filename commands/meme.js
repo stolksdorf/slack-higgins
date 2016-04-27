@@ -17,6 +17,7 @@ module.exports = function(msg, info, reply, error) {
 	return reply({
 		attachments: [
 			{
+				fallback : msg.toUpperCase(),
 				image_url : 'http://memeapi.com/find.php?name=' + encodeURIComponent(msg),
 			}
 		]
