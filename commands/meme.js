@@ -17,9 +17,8 @@ module.exports = function(msg, info, reply, error) {
 	return reply({
 		attachments: [
 			{
-				title : msg,
-				title_link : 'http://memeapi.com/find.php?name=' + encodeURIComponent(msg),
-				image_url : 'http://memeapi.com/find.php?name=' + encodeURIComponent(msg)
+				fallback : msg.toUpperCase(),
+				image_url : 'http://memeapi.com/find.php?name=' + encodeURIComponent(msg),
 			}
 		]
 	});
