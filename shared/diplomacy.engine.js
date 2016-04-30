@@ -89,7 +89,14 @@ var Engine = {
 		});
 		//figure out the supporters after default actiosn have been set
 		_.each(state.players, (player)=>{
-			player.result.supporters = getSupportersFor(state, player.name);
+			var supporters = getSupportersFor(state, player.name);
+
+			//If a player is attacking someone who is supporting them, remove them from their supporters
+			if(player.move.action == 'attack'){
+				supporters = _.without(supporters, player.move.target);
+			}
+
+			player.result.supporters = supporters;
 		})
 		return state;
 	},
