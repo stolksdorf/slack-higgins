@@ -21,13 +21,9 @@ const Higgins = MicroBots(config.get('slack_bot_token'), {
 });
 
 
-
-
-
 /* Load Bots */
 glob('./bots/**/*.bot.js', {}, (err, files) => {
 	if(err) return logbot.error(err);
-
 	var bots = _.reduce(files, (r, botFile)=>{
 		try{
 			r.push(require(botFile));
@@ -36,10 +32,22 @@ glob('./bots/**/*.bot.js', {}, (err, files) => {
 		}
 		return r;
 	}, []);
-
 	Higgins.loadBots(bots);
 });
 
+/* Load Cmds */
+glob('./cmds/**/*.cmd.js', {}, (err, files) => {
+	if(err) return logbot.error(err);
+	var cmds = _.reduce(files, (r, cmdFile)=>{
+		try{
+			r.push(require(cmdFile));
+		}catch(e){
+			logbot.error(e, 'Command Load Error');
+		}
+		return r;
+	}, []);
+	Higgins.loadCmds(app, cmds);
+});
 
 
 var port = process.env.PORT || 8000;
