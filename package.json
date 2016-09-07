@@ -14,6 +14,9 @@
   "keywords": [
     "slack"
   ],
+  "engines": {
+    "node": "^6.0.0"
+  },
   "author": "stolksdorf",
   "license": "ISC",
   "bugs": {
