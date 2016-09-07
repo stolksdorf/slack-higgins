@@ -50,8 +50,8 @@ glob('./cmds/**/*.cmd.js', {}, (err, files) => {
 		}
 		return r;
 	}, []);
-	//Higgins.loadCmds(app, Cmds);
-	test.load(app, Cmds);
+	Higgins.loadCmds(app, Cmds);
+	//test.load(app, Cmds);
 });
 
 
