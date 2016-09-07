@@ -1,9 +1,19 @@
+
+//Maybe remove?
 require('app-module-path').addPath('./shared');
+
 
 var fs = require('fs');
 var _ = require('lodash');
 var express = require('express');
 var app = express();
+
+
+
+
+
+
+
 
 /* Setup CONFIG */
 var fs = require('fs');
