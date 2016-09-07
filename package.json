@@ -27,6 +27,7 @@
     "lodash": "^4.6.1",
     "markov": "0.0.7",
     "moment": "^2.12.0",
+    "nconf": "^0.8.4",
     "request": "~2.69.0",
     "slack-microbots": "^2.0.0",
     "superagent": "^1.7.2",

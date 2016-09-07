@@ -8,14 +8,24 @@ var _ = require('lodash');
 var express = require('express');
 var app = express();
 
+var config = require('nconf');
+config.argv()
+	.env({ lowerCase: true })
+	.file('environment', { file: 'config/local.json' })
+	.file('defaults', { file: 'config/default.json' });
+config.env('__');
 
 
 
 
+console.log(config.get('diagnostics_webhook'));
+
+
+/*
 
 
 
-/* Setup CONFIG */
+
 var fs = require('fs');
 if(fs.existsSync('./config.json')){
 	var config;
@@ -49,3 +59,5 @@ var port = process.env.PORT || 8000;
 
 app.listen(port);
 console.log('running bot server at localhost:8000');
+
+*/
