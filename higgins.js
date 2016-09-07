@@ -21,6 +21,7 @@ const Higgins = MicroBots(config.get('slack_bot_token'), {
 });
 
 
+
 /* Load Bots */
 glob('./bots/**/*.bot.js', {}, (err, files) => {
 	if(err) return logbot.error(err);
@@ -48,6 +49,7 @@ glob('./cmds/**/*.cmd.js', {}, (err, files) => {
 		}
 		return r;
 	}, []);
+	console.log(cmds);
 	Higgins.loadCmds(app, cmds);
 });
 
