@@ -2,62 +2,51 @@
 //Maybe remove?
 require('app-module-path').addPath('./shared');
 
+const _ = require('lodash');
+const MicroBots = require('slack-microbots');
+const glob = require('glob');
+const express = require('express');
+const app = express();
 
-var fs = require('fs');
-var _ = require('lodash');
-var express = require('express');
-var app = express();
-
-var config = require('nconf');
+const config = require('nconf');
 config.argv()
 	.env({ lowerCase: true })
 	.file('environment', { file: 'config/local.json' })
 	.file('defaults', { file: 'config/default.json' });
 config.env('__');
 
+const logbot = require('slack-microbots/logbot.js');
+logbot.setupWebhook(config.get('diagnostics_webhook'));
+
+
+const Higgins = MicroBots(config.get('slack_bot_token'), {
+	name : 'Higgins',
+	icon : ':tophat:'
+});
 
 
 
-console.log(config.get('diagnostics_webhook'));
 
 
-/*
+/* Load Bots */
+glob('./bots/**/*.bot.js', {}, (err, files) => {
+	if(err) return logbot.error(err);
 
+	var bots = _.reduce(files, (r, botFile)=>{
+		try{
+			r.push(require(botFile));
+		}catch(e){
+			logbot.error(e, 'Bot Load Error');
+		}
+		return r;
+	}, []);
 
+	Higgins.loadBots(bots);
+});
 
-
-var fs = require('fs');
-if(fs.existsSync('./config.json')){
-	var config;
-	try{
-		//try loading a local config
-		config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
-	}catch(e){
-		console.log('ERROR', e);
-	}
-	process.env = _.extend(config, process.env);
-}
-
-//Boot up helperbot
-require('slack-helperbot')({
-	expressApp : app,
-	diagnosticsWebhook : process.env.DIAGNOSTICS_WEBHOOK,
-	local : !process.env.PRODUCTION,
-
-	cmdList : _.map(fs.readdirSync('./commands'), (path)=>{return './commands/' + path}),
-	botList : _.map(fs.readdirSync('./bots'),     (path)=>{return './bots/' + path}),
-
-	botInfo : {
-		icon : ':tophat:',
-		name : 'higgins',
-		token : process.env.SLACK_BOT_TOKEN
-	}
-})
 
 
 var port = process.env.PORT || 8000;
 
 app.listen(port);
 console.log('running bot server at localhost:8000');
-
-*/
