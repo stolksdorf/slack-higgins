@@ -1,7 +1,3 @@
-
-//Maybe remove?
-require('app-module-path').addPath('./shared');
-
 const _ = require('lodash');
 const MicroBots = require('slack-microbots');
 const glob = require('glob');
