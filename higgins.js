@@ -27,6 +27,7 @@ glob('./bots/**/*.bot.js', {}, (err, files) => {
 	var bots = _.reduce(files, (r, botFile)=>{
 		try{
 			r.push(require(botFile));
+			console.log(`Loaded ${botFile}`);
 		}catch(e){
 			logbot.error(e, 'Bot Load Error');
 		}
@@ -41,6 +42,7 @@ glob('./cmds/**/*.cmd.js', {}, (err, files) => {
 	var cmds = _.reduce(files, (r, cmdFile)=>{
 		try{
 			r.push(require(cmdFile));
+			console.log(`Loaded ${cmdFile}`);
 		}catch(e){
 			logbot.error(e, 'Command Load Error');
 		}
