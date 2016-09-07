@@ -1,38 +1,55 @@
-require('app-module-path').addPath('./shared');
+const _ = require('lodash');
+const MicroBots = require('slack-microbots');
+const glob = require('glob');
+const express = require('express');
+const app = express();
 
-var fs = require('fs');
-var _ = require('lodash');
-var express = require('express');
-var app = express();
+const config = require('nconf');
+config.argv()
+	.env({ lowerCase: true })
+	.file('environment', { file: 'config/local.json' })
+	.file('defaults', { file: 'config/default.json' });
+config.env('__');
 
-/* Setup CONFIG */
-var fs = require('fs');
-if(fs.existsSync('./config.json')){
-	var config;
-	try{
-		//try loading a local config
-		config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
-	}catch(e){
-		console.log('ERROR', e);
-	}
-	process.env = _.extend(config, process.env);
-}
+const logbot = require('slack-microbots/logbot.js');
+logbot.setupWebhook(config.get('diagnostics_webhook'));
 
-//Boot up helperbot
-require('slack-helperbot')({
-	expressApp : app,
-	diagnosticsWebhook : process.env.DIAGNOSTICS_WEBHOOK,
-	local : !process.env.PRODUCTION,
 
-	cmdList : _.map(fs.readdirSync('./commands'), (path)=>{return './commands/' + path}),
-	botList : _.map(fs.readdirSync('./bots'),     (path)=>{return './bots/' + path}),
+const Higgins = MicroBots(config.get('slack_bot_token'), {
+	name : 'Higgins',
+	icon : ':tophat:'
+});
 
-	botInfo : {
-		icon : ':tophat:',
-		name : 'higgins',
-		token : process.env.SLACK_BOT_TOKEN
-	}
-})
+
+/* Load Bots */
+glob('./bots/**/*.bot.js', {}, (err, files) => {
+	if(err) return logbot.error(err);
+	var bots = _.reduce(files, (r, botFile)=>{
+		try{
+			r.push(require(botFile));
+			console.log(`Loaded ${botFile}`);
+		}catch(e){
+			logbot.error(e, 'Bot Load Error');
+		}
+		return r;
+	}, []);
+	Higgins.loadBots(bots);
+});
+
+/* Load Cmds */
+glob('./cmds/**/*.cmd.js', {}, (err, files) => {
+	if(err) return logbot.error(err);
+	var cmds = _.reduce(files, (r, cmdFile)=>{
+		try{
+			r.push(require(cmdFile));
+			console.log(`Loaded ${cmdFile}`);
+		}catch(e){
+			logbot.error(e, 'Command Load Error');
+		}
+		return r;
+	}, []);
+	Higgins.loadCmds(app, cmds);
+});
 
 
 var port = process.env.PORT || 8000;
