@@ -20,12 +20,13 @@ const Higgins = MicroBots(config.get('slack_bot_token'), {
 	icon : ':tophat:'
 });
 
-
+let Bots = [];
+let Cmds = [];
 
 /* Load Bots */
 glob('./bots/**/*.bot.js', {}, (err, files) => {
 	if(err) return logbot.error(err);
-	var bots = _.reduce(files, (r, botFile)=>{
+	Bots = _.reduce(files, (r, botFile)=>{
 		try{
 			r.push(require(botFile));
 			console.log(`Loaded ${botFile}`);
@@ -34,13 +35,13 @@ glob('./bots/**/*.bot.js', {}, (err, files) => {
 		}
 		return r;
 	}, []);
-	Higgins.loadBots(bots);
+	Higgins.loadBots(Bots);
 });
 
 /* Load Cmds */
 glob('./cmds/**/*.cmd.js', {}, (err, files) => {
 	if(err) return logbot.error(err);
-	var cmds = _.reduce(files, (r, cmdFile)=>{
+	Cmds = _.reduce(files, (r, cmdFile)=>{
 		try{
 			r.push(require(cmdFile));
 			console.log(`Loaded ${cmdFile}`);
@@ -49,9 +50,17 @@ glob('./cmds/**/*.cmd.js', {}, (err, files) => {
 		}
 		return r;
 	}, []);
-	console.log(cmds);
-	Higgins.loadCmds(app, cmds);
+	Higgins.loadCmds(app, Cmds);
 });
+
+
+app.get('/', (req, res)=>{
+	return res.status(200).json({
+		bots : Bots,
+		cmds : Cmds,
+	})
+})
+
 
 
 var port = process.env.PORT || 8000;
