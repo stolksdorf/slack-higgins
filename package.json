@@ -1,11 +1,11 @@
 {
   "name": "slack-higgins",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "a slackbot for my personal slack",
   "main": "index.js",
   "scripts": {
     "start": "node higgins.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodemon higgins.js"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "markov": "0.0.7",
     "moment": "^2.12.0",
     "request": "~2.69.0",
-    "slack-helperbot": "^0.0.9",
+    "slack-microbots": "^2.0.0",
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1"
