@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const MicroBots = require('slack-microbots');
 const glob = require('glob');
+const path = require('path');
 const express = require('express');
 const app = express();
 
@@ -14,6 +15,8 @@ config.env('__');
 const logbot = require('slack-microbots/logbot.js');
 logbot.setupWebhook(config.get('diagnostics_webhook'));
 
+const Storage = require('slack-microbots/storage')
+
 
 const Higgins = MicroBots(config.get('slack_bot_token'), {
 	name : 'Higgins',
@@ -23,110 +26,42 @@ const Higgins = MicroBots(config.get('slack_bot_token'), {
 let Bots = [];
 let Cmds = [];
 
-/* Load Bots */
-glob('./bots/**/*.bot.js', {}, (err, files) => {
-	if(err) return logbot.error(err);
-	Bots = _.reduce(files, (r, botFile)=>{
-		try{
-			r.push(require(botFile));
-			console.log(`Loaded ${botFile}`);
-		}catch(e){
-			logbot.error(e, 'Bot Load Error');
-		}
-		return r;
-	}, []);
-	Higgins.loadBots(Bots);
-});
 
-/* Load Cmds */
-glob('./cmds/**/*.cmd.js', {}, (err, files) => {
-	if(err) return logbot.error(err);
-	Cmds = _.reduce(files, (r, cmdFile)=>{
-		try{
-			r.push(require(cmdFile));
-			console.log(`Loaded ${cmdFile}`);
-		}catch(e){
-			logbot.error(e, 'Command Load Error');
-		}
-		return r;
-	}, []);
-	Higgins.loadCmds(app, Cmds);
-	//test.load(app, Cmds);
-});
+Storage.init(() => {
 
-
-
-
-
-
-
-
-
-const formatResponse = (response) => {
-	if(_.isString(response)){
-		return { text : response };
-	}else if(!_.isPlainObject(response)){
-		return { text : JSON.stringify(response) };
-	}else{
-		return response;
-	}
-};
-
-var test = {
-	load : function(expressInstance, cmds){
-		_.each(cmds, (cmd) => {
-			if(!cmd.url){
-				console.error('URL not set for command');
-				return;
+	/* Load Bots */
+	glob('./bots/**/*.bot.js', {}, (err, files) => {
+		if(err) return logbot.error(err);
+		const bots = _.reduce(files, (r, botFile)=>{
+			try{
+				r.push(require(botFile));
+				console.log(`Loaded ${botFile}`);
+				Bots.push(path.basename(botFile));
+			}catch(e){
+				logbot.error(e, 'Bot Load Error');
 			}
+			return r;
+		}, []);
+		Higgins.loadBots(bots);
+		logbot.msg('Successful restart!');
+	});
 
-			console.log('adding', cmd.url);
-
-			expressInstance.all(`${cmd.url}`, (req, res) => {
-				console.log('processing endpoint');
-				const input = _.assign({}, req.query, req.body);
-				try{
-					cmd.handle(
-						input.text,
-						input,
-						(response) => {
-							return res.status(200).send(_.assign({
-								'response_type': 'in_channel',
-							}, formatResponse(response)));
-						},
-						(error) => {
-							return res.status(200).send(_.assign({
-								'response_type': 'ephemeral',
-							}, formatResponse(err)));
-						}
-					);
-				}catch(err){
-					console.error(`Command Run Error : ${err}`);
-					return res.status(200).send();
-				}
-			})
-		});
-		return expressInstance;
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	/* Load Cmds */
+	glob('./cmds/**/*.cmd.js', {}, (err, files) => {
+		if(err) return logbot.error(err);
+		const cmds = _.reduce(files, (r, cmdFile)=>{
+			try{
+				r.push(require(cmdFile));
+				console.log(`Loaded ${cmdFile}`);
+				Cmds.push(path.basename(cmdFile));
+			}catch(e){
+				logbot.error(e, 'Command Load Error');
+			}
+			return r;
+		}, []);
+		Higgins.loadCmds(app, cmds);
+	});
+});
 
 
 app.get('/', (req, res)=>{

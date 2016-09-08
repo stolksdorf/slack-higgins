@@ -28,8 +28,6 @@ var Categories = {
 };
 
 
-var Scores = Storage.get("scores") || {};
-
 var isActive = false;
 var storedClue = {};
 var Higs = {};
@@ -86,6 +84,8 @@ var cleanup = function(){
 
 
 var increaseScore = function(username, points){
+	var Scores = Storage.get("scores") || {};
+
 	if(!Scores[username]){
 		Scores[username] = {
 			user   : username,
@@ -107,6 +107,8 @@ var increaseScore = function(username, points){
 
 
 var awardCrown = function(username){
+	var Scores = Storage.get("scores") || {};
+
 	Scores[username].crowns += 1;
 	_.each(Scores, (score)=>{
 		score.points = 0;
