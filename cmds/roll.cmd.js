@@ -59,27 +59,30 @@ var getRoll = function(msg){
 	}
 }
 
-module.exports = function(msg, info, reply, error){
-	var res;
-	try{
-		if(_.includes(msg, 'check') || _.includes(msg, 'throw')){
-			res = getCheck(msg);
-		}else{
-			res = getRoll(msg);
+module.exports = {
+	url : '/roll',
+	handle : function(msg, info, reply, error){
+		var res;
+		try{
+			if(_.includes(msg, 'check') || _.includes(msg, 'throw')){
+				res = getCheck(msg);
+			}else{
+				res = getRoll(msg);
+			}
+		}catch(e){
+			return error(e);
 		}
-	}catch(e){
-		return error(e);
+
+		var response = {
+			text : res.text
+		};
+
+		if(res.rolls.length > 1){
+			response.attachments = [{
+				text : 'rolls: ' + JSON.stringify(res.rolls)
+			}]
+		}
+
+		reply(response);
 	}
-
-	var response = {
-		text : res.text
-	};
-
-	if(res.rolls.length > 1){
-		response.attachments = [{
-			text : 'rolls: ' + JSON.stringify(res.rolls)
-		}]
-	}
-
-	reply(response);
 }
