@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var Storage = require('slack-helperbot/storage');
+var Storage = require('slack-microbots/storage').create('diplomacy');
 var Engine = require('./diplomacy.engine.js');
 
 const TICK_RATE = 500; //1000 * 60 * 5

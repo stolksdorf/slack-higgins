@@ -3,8 +3,8 @@ var jared_pester = ['HEY CATHLEEN', 'WHATCHYA THINKING ABOUT CATHLEEN','WHAT ARE
 //,'ᶦ ᶠᵘᶜᵏᶦᶰᵍ ᶫᵒᵛᵉ ᶦᵗ ʷʰᵉᶰ ʸᵒᵘ ᵗʸᵖᵉ ʲᵃʳᵉᵈ'
 
 module.exports = {
-//  listenFor : ['user_typing'],
-  response : _.throttle(function(msg, info, Higgins){
+  channel : '*',
+  handle : _.throttle(function(msg, info, Higgins){
     if(info.user == 'gobot'){
       Higgins.reply(_.sample(jared_pester));
     }

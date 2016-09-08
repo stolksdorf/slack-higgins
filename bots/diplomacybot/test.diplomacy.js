@@ -1,6 +1,6 @@
-var DiplomacyBot = require('../bots/diplomacy.bot.js');
+var DiplomacyBot = require('./diplomacy.bot.js');
 var DiplomacyGame = require('./diplomacy.game.js');
-var Storage = require('slack-helperbot/storage');
+var Storage = require('slack-microbots/storage').create('diplomacy');
 
 var bot = {
 	reply : function(text, target){

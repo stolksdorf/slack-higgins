@@ -7,7 +7,7 @@ var Utils = require('slack-microbots/utils');
 module.exports = {
 	name : 'testbot',
 	icon : ':gear:',
-	channel : 'general',
+	channel : 'none', // 'general',
 	handle : function(msg, info, Higgins){
 		if(info.user == 'scott') Higgins.reply('yo');
 	}

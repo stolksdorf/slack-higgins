@@ -1,14 +1,14 @@
 var _ = require('lodash');
-var utils = require('slack-helperbot/utils.js');
+var utils = require('slack-microbots/utils.js');
 var Moment = require('moment');
 
-var Diplomacy = require('../shared/diplomacy.game.js');
-var Print = require('../shared/diplomacy.print.js');
+var Diplomacy = require('./diplomacy.game.js');
+var Print = require('./diplomacy.print.js');
 
 const ACTIONS = ['defend', 'attack', 'support', 'invest'];
 const BOT_NAMES = ['higgins', 'higs', 'diplomacybot'];
 
-var Higs = require('slack-helperbot/botLoader.js').getBotContext({
+var Higs = require('slack-microbots').getBotInstance({
 	name : 'diplomacybot',
 	icon : ':passport_control:'
 },{
@@ -121,10 +121,8 @@ Diplomacy.endGameHandler = function(state){
 module.exports = {
 	name : 'diplomacybot',
 	icon : ':passport_control:',
-
-	listenIn : ['diplomacy', 'direct'],
-	listenFor : ['message'],
-	response : function(msg, info, Higgins){
+	channel : 'diplomacy',
+	handle : function(msg, info, Higgins){
 		Higs = Higgins;
 
 		try{

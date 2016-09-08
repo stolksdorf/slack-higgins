@@ -1,9 +1,9 @@
 var _ = require('lodash');
 var request = require('superagent');
 var moment = require('moment');
-var Storage = require('slack-helperbot/storage');
-var utils = require('slack-helperbot/utils');
-var TriviaApi = require('trivia.api.js');
+var Storage = require('slack-microbots/storage').create('trivia');
+var utils = require('slack-microbots/utils');
+var TriviaApi = require('./trivia.api.js');
 
 var CROWN_THRESHOLD = 25000;
 
@@ -28,7 +28,7 @@ var Categories = {
 };
 
 
-var Scores = Storage.get("trivia_scores") || {};
+var Scores = Storage.get("scores") || {};
 
 var isActive = false;
 var storedClue = {};
@@ -102,7 +102,7 @@ var increaseScore = function(username, points){
 		printScoreboard();
 	}
 
-	Storage.set('trivia_scores', Scores);
+	Storage.set('scores', Scores);
 }
 
 
@@ -143,9 +143,8 @@ var refreshCategoryPool = function(categoryId){
 
 
 module.exports = {
-	listenIn : 'trivia-time',
-	listenFor : ['message'],
-	response  : function(msg, info, Higgins){
+	channel : 'trivia-time',
+	handle : function(msg, info, Higgins){
 		if(!msg) return;
 		Higs = Higgins;
 

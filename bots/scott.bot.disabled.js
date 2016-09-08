@@ -1,12 +1,12 @@
 var _ = require('lodash');
 var request = require('superagent');
-var Storage = require('slack-helperbot/storage');
-var utils = require('slack-helperbot/utils');
+var Storage = require('slack-microbots/storage').create('scottbot');
+var utils = require('slack-microbots/utils');
 var markov = require('markov');
 
 var MSG_THRESHOLD = 1200;
 
-var megChain;
+var scottChain;
 
 var filterMessages = function(obj){
 	return _.reduce(obj.messages.matches, (r, msg)=>{
@@ -26,7 +26,7 @@ var getScottMessagesFromSlack = function(cb){
 		request.get('https://slack.com/api/search.messages')
 			.query({
 				token : 'xoxp-19237672322-19237672338-22373161312-288780caec',//BotInstance.token,
-				query : 'from:meggeroni',
+				query : 'from:scott',
 				sort : 'timestamp',
 				page : page,
 				count : 800
@@ -51,10 +51,10 @@ var getScottMessagesFromSlack = function(cb){
 }
 
 var buildChain = function(){
-	megChain = markov(3);
-	Storage.get('megbot_msgs', function(msgs){
+	scottChain = markov(3);
+	Storage.get('scottbot_msgs', function(msgs){
 		_.each(msgs, (m)=>{
-			megChain.seed(m);
+			scottChain.seed(m);
 		});
 	});
 }
@@ -63,23 +63,22 @@ var buildChain = function(){
 buildChain();
 
 module.exports = {
-	icon : ':meg:',
-	name : "megbot",
-
-	listenFor : ['message'],
-	response : function(msg, info, Higgins, BotInstance){
-		if(utils.messageHas(msg, 'megbot', 'rebuild') && info.user == 'scott'){
+	icon : ':scott:',
+	name : "scottbot",
+	channel : '*',
+	handle : function(msg, info, Higgins){
+		if(utils.messageHas(msg, 'scottbot', 'rebuild') && info.user == 'scott'){
 			getScottMessagesFromSlack(function(msgs){
-				Storage.set('megbot_msgs', msgs);
+				Storage.set('scottbot_msgs', msgs);
 				buildChain();
-				Higgins.reply('Built with ' + msgs.length + ' meg messages!');
+				Higgins.reply('Built with ' + msgs.length + ' scott messages!');
 			});
-		}else if(utils.messageHas(msg, 'megbot')){
-			if(!megChain){
+		}else if(utils.messageHas(msg, 'scottbot')){
+			if(!scottChain){
 				buildChain();
 				return Higgins.reply('Recalibrating... sorry try again!');
 			}
-			Higgins.reply(megChain.respond(msg).join(' '));
+			Higgins.reply(scottChain.respond(msg).join(' '));
 		}
 	}
 }

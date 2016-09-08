@@ -8,9 +8,8 @@ var pollMaster;
 //Helps out PollBot by adding the default reactions for each option whenever a user posts a poll
 
 module.exports = {
-	listenFor : ['message'],
-	response : function(msg, info, Higgins){
-
+	channel : '*',
+	handle : function(msg, info, Higgins){
 		if(_.startsWith(msg, '/poll')){
 			pollMaster = info.user;
 		}
@@ -20,7 +19,7 @@ module.exports = {
 				if(_.includes(msg, ':' + num + ':')){
 					//make this syncronous using 'async'
 					return function(cb){
-						Higgins.react(num).always(function(){ cb(); });
+						Higgins.react(num).then(cb);
 					};
 				}
 				return function(cb){ return cb() };
