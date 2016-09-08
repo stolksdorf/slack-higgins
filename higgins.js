@@ -71,6 +71,8 @@ app.get('/', (req, res)=>{
 	})
 })
 
+require('./apps/jira.app.js')(app);
+
 
 
 var port = process.env.PORT || 8000;
