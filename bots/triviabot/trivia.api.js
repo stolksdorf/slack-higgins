@@ -1,9 +1,9 @@
 var _ = require('lodash');
 var request = require('superagent');
 
-var Storage = require('slack-helperbot/storage');
+var Storage = require('slack-microbots/storage').create('trivia');
 
-var ClueCache = Storage.get("trivia_cluecache") || {};
+var ClueCache = Storage.get("cluecache") || {};
 
 
 
@@ -27,7 +27,7 @@ var TriviaApi = {
 		var getQuestion = function(){
 			//Remove a random element from the question cache
 			var clue = ClueCache[categoryId].splice(_.random(ClueCache[categoryId].length - 1), 1)[0];
-			Storage.set("trivia_cluecache", ClueCache);
+			Storage.set("cluecache", ClueCache);
 
 			//Check for invalid questions
 			if(!clue || !clue.answer || !clue.question){
@@ -64,7 +64,7 @@ var TriviaApi = {
 					}else{
 						//when we run out of questions, finish the callback
 						ClueCache[categoryId] = questions;
-						Storage.set("trivia_cluecache", ClueCache);
+						Storage.set("cluecache", ClueCache);
 						cb(questions);
 					}
 				});
