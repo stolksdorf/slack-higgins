@@ -1,59 +1,47 @@
 # higgins
-A Slackbot for my personal slack. [List of Custom Integrations](https://coolsville.slack.com/apps/manage/custom-integrations)
-
-
-
-
-*Protip:* When developing locally, using `nodemon` will auto-restart the slack server whnever the project changes. Very useful
-
-
-
-
-
-[Command List](https://coolsville.slack.com/apps/manage/A0F82E8CA-slash-commands)
+A Slackbot for my personal slack. [List of Custom Integrations](https://coolsville.slack.com/apps/manage/custom-integrations), [Command List](https://coolsville.slack.com/apps/manage/A0F82E8CA-slash-commands)
 
 
 ### Add a new command
 
 1. [Head here](https://coolsville.slack.com/apps/new/A0F82E8CA-slash-commands) and fill out the info
 2. The url is `http://slack-higgins.herokuapp.com/[YOUR COMMAND]`, eg. `http://slack-higgins.herokuapp.com/coolcmd`
-3. Set the **Method** to `GET`
 4. Give it whatever name and Icon you like
 4. Hit "Save Integration"!
-3. Create a new file in the `commands` folder named `[YOUR COMMAND].js`, eg. `coolcmd.js`
+3. Create a new file in the `cmds` folder named `[YOUR COMMAND].cmd.js`, eg. `coolcmd.cmd.js`
 4. Follow this starting template
 
 ```javascript
-module.exports = function(msg, info, reply){
+module.exports = {
+  url : '/coolcmd',
+  handle : function(msg, info, reply){
 	reply('Hello' + info.sender + ', you said ' + msg);
+  }
 }
 ```
-
-
-
 
 Commit your changes and LogBot will tell you when the server has restarted in the `diagnostics` channel
 
 
 
 ### Add a new bot
-1. Create a new file in the `bots` folder named `[YOUR BOT].js`, eg. `testbot9000.js`
+1. Create a new file in the `bots` folder named `[YOUR BOT].bot.js`, eg. `testbot9000.bot.js`
 1. Follow this starting template
 
 ```javascript
 module.exports = {
-	listenFor : ['message'],
-	response : function(msg, info, Higgins){
-		Higgins.reply("Hey " + info.user)
-	}
+  name : 'AwesomeBot', //Optional
+  icon : ':robot_face:', //Optional
+  channel : '*', //Every channel, or listen in on a specific channel
+  handle : function(msg, info, Higgins){
+    Higgins.reply("Hey " + info.user)
+  }
 }
 ```
 
 Commit your changes and LogBot will tell you when the server has restarted in the `diagnostics` channel
 
-`listenFor` is a list of slack events your bot will trigger on. [Full list here](https://api.slack.com/rtm) but you probably just want to use `'message'`
-
-`response` is a function that takes 3 parameters.
+`handle` is a function that takes 3 parameters.
 
 * `msg` will be a string that is the message from the event (if there is one)
 * `info` will be an object with a bunch of data about the event. `info.channel`, `info.user`, etc.
