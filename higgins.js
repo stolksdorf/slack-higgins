@@ -2,8 +2,10 @@ const _ = require('lodash');
 const MicroBots = require('slack-microbots');
 const glob = require('glob');
 const path = require('path');
+const bodyParser = require('body-parser')
 const express = require('express');
 const app = express();
+app.use(bodyParser.json());
 
 const config = require('nconf');
 config.argv()
