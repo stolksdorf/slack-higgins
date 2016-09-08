@@ -6,12 +6,15 @@ var _ = require('lodash');
 
 module.exports = function(expressInstance){
 
-	expressInstance.get('/jira/oauth', (req, res)=>{
+	expressInstance.all('/jira/oauth', (req, res)=>{
 
 	});
 
 
-	expressInstance.post('/jira/event', (req, res)=>{
+	expressInstance.all('/jira/event', (req, res)=>{
+
+		console.log('query', req.query);
+		console.log('body', req.body);
 
 		if(req.body.type == 'url_verification'){
 			return res.status(200).send(req.body.challenge);
