@@ -14,7 +14,7 @@ module.exports = {
 			pollMaster = info.user;
 		}
 
-		if(info.bot_id == POLLBOT_ID){
+		if(info.userId == POLLBOT_ID){
 			var fns = _.map(nums, (num)=>{
 				if(_.includes(msg, ':' + num + ':')){
 					//make this syncronous using 'async'

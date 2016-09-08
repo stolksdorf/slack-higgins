@@ -127,7 +127,10 @@ var printCategories = function(){
 	Higs.reply('The categories are: \n' + categories);
 }
 
+
 var printScoreboard = function(){
+	var Scores = Storage.get("scores") || {};
+
 	var sortedScores = _.sortBy(Scores, (score)=>{
 		return 999999 - score.points;
 	});
@@ -142,6 +145,7 @@ var refreshCategoryPool = function(categoryId){
 		Higs.reply('Refreshed category pool!');
 	})
 }
+
 
 
 module.exports = {
