@@ -74,7 +74,7 @@ module.exports = {
 				res = getRoll(msg);
 			}
 		}catch(e){
-			return Higgins.reply(e.toString());
+			return 
 		}
 
 		var response = res.text;
