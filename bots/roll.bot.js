@@ -68,7 +68,7 @@ module.exports = {
 		if(!utils.messageHas(msg, 'roll')) return;
 		var res;
 		try{
-			if(_.includes(msg, 'check') || _.includes(msg, 'throw')){
+			if(_.includes(msg, 'check') || _.includes(msg, 'throw') || _.includes(msg, 'save')){
 				res = getCheck(msg);
 			}else{
 				res = getRoll(msg);
