@@ -1,13 +1,16 @@
+var _ = require('lodash');
 var utils = require('slack-microbots/utils');
+var santaSayings = ['Ho ho ho!', 'Christmas is coming!', 'Chestnuts roasting on an open fire...']
+
 
 module.exports = {
 	name : 'katiebot',
 	icon : ':katie:',
 	channel : 'secret-laboratory',
 	handle : function(msg, info, Higgins){
-    if(info.user == 'katie'){
-      Higgins.react('tada');
+    		if(info.user == 'katie'){
+      		Higgins.react('tada');
     }
-		Higgins.reply('yo');
+		Higgins.reply(_.sample(santaSayings));
 	}
 }
