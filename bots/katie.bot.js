@@ -12,5 +12,5 @@ module.exports = {
       			Higgins.react('tada');
 			Higgins.reply(_.sample(santaSayings));
     		}
-	}, 2000);
+	}, 2000)
 };
