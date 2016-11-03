@@ -10,7 +10,7 @@ module.exports = {
 	handle : function(msg, info, Higgins){
     		if(info.user == 'katie' && _.random(15) == 3){
       			Higgins.react('tada');
-    }
 			Higgins.reply(_.sample(santaSayings));
-	}
-}
+    		}
+	},
+};
