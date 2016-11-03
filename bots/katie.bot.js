@@ -9,8 +9,8 @@ module.exports = {
 	channel : 'secret-laboratory',
 	handle : function(msg, info, Higgins){
     		if(info.user == 'katie' && _.random(15) == 3){
-      		Higgins.react('tada');
+      			Higgins.react('tada');
     }
-		Higgins.reply(_.sample(santaSayings));
+			Higgins.reply(_.sample(santaSayings));
 	}
 }
