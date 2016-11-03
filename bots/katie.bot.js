@@ -8,7 +8,7 @@ module.exports = {
 	icon : ':katie:',
 	channel : 'secret-laboratory',
 	handle : function(msg, info, Higgins){
-    		if(info.user =='katie' && _.random(10) == 5){
+    		if(info.user =='katie' && _.random(50) == 5){
       		Higgins.react('tada');
     }
 		Higgins.reply(_.sample(santaSayings));
