@@ -7,9 +7,9 @@ module.exports = {
 	name : 'katiebot',
 	icon : ':katie:',
 	channel : 'secret-laboratory',
-	handle : function(msg, info, Higgins){
+	handle : _.delay(function(msg, info, Higgins){
     			if(info.user == 'katie'){
-				_.delay(Higgins.reply(_.sample(santaSayings)), 5000);
+				(Higgins.reply(_.sample(santaSayings));
     		}
-	}
+	}, 5000)
 };
