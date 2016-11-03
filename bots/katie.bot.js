@@ -8,9 +8,9 @@ module.exports = {
 	icon : ':katie:',
 	channel : 'secret-laboratory',
 	handle : setInterval(function(msg, info, Higgins){
-    		if(info.user == 'katie' && _.random(15) == 3){
+    		if(info.user == 'katie'){
       			Higgins.react('tada');
 			Higgins.reply(_.sample(santaSayings));
     		}
-	}, 2000)
+	}, 1000)
 };
