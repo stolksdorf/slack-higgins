@@ -8,8 +8,8 @@ module.exports = {
 	icon : ':katie:',
 	channel : 'secret-laboratory',
 	handle : _.delay(function(msg, info, Higgins){
-    		if(info.user == 'katie'){
-			Higgins.reply(_.sample(santaSayings));
+    			if(info.user == 'katie'){
+				Higgins.reply(_.sample(santaSayings));
     		}
 	}, 1000)
 };
