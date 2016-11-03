@@ -9,7 +9,7 @@ module.exports = {
 	channel : 'secret-laboratory',
 	handle : function(msg, info, Higgins){
     			if(info.user == 'katie'){
-				(Higgins.reply(_.delay(_.sample(santaSayings), 5000)));
+				Higgins.reply(_.sample(santaSayings));
     		}
 	}
 };
