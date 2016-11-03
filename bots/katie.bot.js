@@ -4,12 +4,14 @@ var santaSayings = ['Ho ho ho!', 'Christmas is coming!', 'Chestnuts roasting on 
 
 
 module.exports = {
-	name : 'katiebot',
-	icon : ':katie:',
-	channel : 'secret-laboratory',
-	handle : function(msg, info, Higgins){
-    		if(info.user == 'katie'){
-			Higgins.reply(_.sample(santaSayings));
-    		}
-	}
+    name : 'katiebot',
+    icon : ':katie:',
+    channel : 'secret-laboratory',
+    handle : function(msg, info, Higgins){
+        if(info.user == 'katie'){
+            _.delay(() => {
+                Higgins.reply(_.sample(santaSayings));
+            }, 5000);
+        }
+    }
 };
