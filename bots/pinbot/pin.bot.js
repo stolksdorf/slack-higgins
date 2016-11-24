@@ -18,11 +18,11 @@ module.exports = {
 				ts        : info.item.created
 			}).save((err, obj)=>{
 				if(err) return;
-				Higgins.reply(`Saved your pin! You can view it here ${PIN_URL}${obj._id}`);
+				Higgins.reply(`Saved your pin! You can view it here ${PIN_URL}`);
 			});
 		}
 
-		if(info.type == 'message' && utils.messageHas(msg, ['higgins', 'pinbot'], ['pin'])){
+		if(info.type == 'message' && utils.messageHas(msg, ['higgins', 'pinbot', 'higs'], ['pin'])){
 			Higgins.reply(`You can find all Coolsville pins here, ${PIN_URL}`);
 		}
 	}

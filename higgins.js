@@ -5,6 +5,7 @@ const path = require('path');
 const bodyParser = require('body-parser')
 const express = require('express');
 const app = express();
+app.use(express.static(__dirname + '/build'));
 app.use(bodyParser.json());
 
 const config = require('nconf');

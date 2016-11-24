@@ -1,8 +1,8 @@
 const vitreumTasks = require('vitreum/tasks');
-const gulp = require('gulp');
+let gulp = require('gulp');
 
 
-const gulp = vitreumTasks(gulp, {
+gulp = vitreumTasks(gulp, {
 	entryPoints: [
 		'./client/pins'
 	],

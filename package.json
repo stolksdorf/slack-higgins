@@ -4,6 +4,10 @@
   "description": "a slackbot for my personal slack",
   "main": "index.js",
   "scripts": {
+    "build": "node_modules/.bin/gulp prod",
+    "watch": "node_modules/.bin/gulp",
+    "libs": "node_modules/.bin/gulp fresh",
+    "postinstall": "npm run build",
     "start": "node higgins.js",
     "test": "nodemon higgins.js"
   },
