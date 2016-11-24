@@ -42,7 +42,7 @@
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "request": "~2.69.0",
-    "slack-microbots": "^2.0.6",
+    "slack-microbots": "^2.1.0",
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
     "vitreum": "^3.3.0",
