@@ -14,6 +14,15 @@ config.argv()
 	.file('defaults', { file: 'config/default.json' });
 config.env('__');
 
+//DB
+require('mongoose')
+	.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI || 'mongodb://localhost/naturalcrit')
+	.connection.on('error', () => { console.log(">>>ERROR: Run Mongodb.exe ya goof!") });
+
+
+const PinModel = require('./bots/pinbot/pin.model.js').model;
+
+
 const logbot = require('slack-microbots/logbot.js');
 logbot.setupWebhook(config.get('diagnostics_webhook'));
 
@@ -66,12 +75,32 @@ Storage.init(() => {
 });
 
 
+const vitreumRender = require('vitreum/render');
+app.get('/pins*', (req, res)=>{
+	PinModel.find({}, (err, pins) => {
+		//return res.json(pins);
+		vitreumRender({
+			page: './build/pins/bundle.dot',
+			globals: {},
+			prerenderWith : './client/pins/pins.jsx',
+			initialProps: {
+				url: req.originalUrl,
+				pins : pins
+			},
+			clearRequireCache : !process.env.PRODUCTION,
+		}, (err, page) => {
+			return res.send(page)
+		});
+	});
+});
+
+
 app.get('/', (req, res)=>{
 	return res.status(200).json({
 		bots : Bots,
 		cmds : Cmds,
 	})
-})
+});
 
 
 var port = process.env.PORT || 8000;
