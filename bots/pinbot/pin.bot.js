@@ -22,7 +22,7 @@ module.exports = {
 			});
 		}
 
-		if(info.type == 'message' && utils.messageHas(msg, ['higgins', 'pinbot', 'higs'], ['pin'])){
+		if(info.type == 'message' && utils.messageHas(msg, ['higgins', 'pinbot', 'higs'], ['where', 'link', 'url'])){
 			Higgins.reply(`You can find all Coolsville pins here, ${PIN_URL}`);
 		}
 	}
