@@ -52,13 +52,15 @@ const Pins = React.createClass({
 		});
 
 		return _.map(pins, (pin)=>{
+			console.log(pin.text);
+
 			return <div className='pin' key={pin.ts}>
 				<div className='top'>
 					<span className='user'>{pin.user}</span>
 					<span className='date'>{this.getDateString(pin.ts)}</span>
 					<a href={pin.permalink} target='_blank'><i className='fa fa-external-link' /></a>
 				</div>
-				<div className='text'>{pin.text}</div>
+				<pre className='text'>{pin.text}</pre>
 			</div>
 		});
 	},
