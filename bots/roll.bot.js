@@ -82,7 +82,7 @@ module.exports = {
 		try{
 			if(_.includes(msg, 'check') || _.includes(msg, 'throw') || _.includes(msg, 'save')){
 				res = getCheck(msg);
-			}else if(_.includes(msg, 'check')){
+			}else if(_.includes(msg, 'fudge')){
 				res = getFudge();
 			}else{
 				res = getRoll(msg);
