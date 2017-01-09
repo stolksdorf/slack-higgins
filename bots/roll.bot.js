@@ -60,6 +60,18 @@ var getRoll = function(msg){
 	}
 }
 
+var getFudge = function(){
+	var rolls = _.times(4, function(){
+		return _.sample([-1,-1,0,0,1,1]);
+	});
+	var sum = _.sum(rolls);
+	
+	return {
+		text : sum + (sum == -4 ? ':grimacing:' : '') + (sum == 4 ? ':tada:' : ''),
+		rolls : rolls
+	};	
+}
+
 module.exports = {
 	name : 'rollbot',
 	icon : ':game_die:',
@@ -70,6 +82,8 @@ module.exports = {
 		try{
 			if(_.includes(msg, 'check') || _.includes(msg, 'throw') || _.includes(msg, 'save')){
 				res = getCheck(msg);
+			}else if(_.includes(msg, 'check')){
+				res = getFudge();
 			}else{
 				res = getRoll(msg);
 			}
