@@ -24,6 +24,24 @@ var parseDice = function(msg){
 	};
 };
 
+var getBear = function(){
+	var description = _.sample(['rookie', 'washed-up', 'retired', 'unhinged', 'slick', 'incompetent']);
+	var bear = _sample([
+		'Grizzly bear, who is terrifiying',
+		'Polar bear, who is amazing at swimming',
+		'Panda bear, who will eat anything that looks like bamboo',
+		'Black bear, who can climb anything',
+		'Sun bear, who can sense honey',
+		'Honey Badger, who is pure carnage'
+	]);
+	var role = _.sample(['muscle', 'brains', 'driver', 'hacker', 'thief', 'face']);
+
+	return {
+		text : `You are a ${description} ${bear}. You are the ${role} of the group.`,
+		rolls : []
+	}
+}
+
 var getCheck = function(msg){
 	var numOfDice = 1
 	if(hasDisadvantage(msg) || hasAdvantage(msg)){
@@ -84,6 +102,8 @@ module.exports = {
 				res = getCheck(msg);
 			}else if(_.includes(msg, 'fudge')){
 				res = getFudge();
+			}else if(_.includes(msg, 'bear')){
+				res = getBear();
 			}else{
 				res = getRoll(msg);
 			}
