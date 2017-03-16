@@ -26,7 +26,7 @@ var parseDice = function(msg){
 
 var getBear = function(){
 	var description = _.sample(['rookie', 'washed-up', 'retired', 'unhinged', 'slick', 'incompetent']);
-	var bear = _sample([
+	var bear = _.sample([
 		'Grizzly bear, who is terrifiying',
 		'Polar bear, who is amazing at swimming',
 		'Panda bear, who will eat anything that looks like bamboo',
