@@ -1,17 +1,12 @@
-var utils = require('slack-microbots/utils');
+const Slack = require('pico-slack');
 
-module.exports = {
-	name : 'santabot',
-	icon : ':santa:',
-	channel : '*',
-	handle : function(msg, info, Higgins){
-		if(info.isDirect && utils.messageHas(msg, ['santachat', 'santabot'])){
-			Higgins.reply(msg
+Slack.onMessage((msg)=>{
+	if(msg.isDirect && Slack.msgHas(msg.text, ['santachat', 'santabot'])){
+		Slack.msgAs('santabot', ':santa:', 'secret-santa', msg.text
 				.replace('santachat', '')
 				.replace('santabot', '')
 				.replace('Santachat', '')
 				.replace('Santabot', '')
-			, 'secret-santa');
-		}
+		);
 	}
-}
+});

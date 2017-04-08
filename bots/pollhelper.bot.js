@@ -1,36 +1,15 @@
-var _ = require('lodash');
-var async = require('async');
-var nums = ['one','two','three','four','five','six','seven','eight','nine'];
-
-var POLLBOT_ID = 'B0NB1NTD0';
-var pollMaster;
+const Slack = require('pico-slack');
+const _ = require('lodash');
+const nums = ['one','two','three','four','five','six','seven','eight','nine'];
 
 //Helps out PollBot by adding the default reactions for each option whenever a user posts a poll
+Slack.onMessage((msg)=>{
+	if(msg.user !== 'pollbot') return;
+	const flow = Promise.resolve();
 
-module.exports = {
-	channel : '*',
-	handle : function(msg, info, Higgins){
-		if(_.startsWith(msg, '/poll')){
-			pollMaster = info.user;
+	_.each(nums, (num)=>{
+		if(_.includes(msg.text, ':' + num + ':')){
+			flow.then(()=>Slack.react(msg, num));
 		}
-
-		if(info.userId == POLLBOT_ID){
-			var fns = _.map(nums, (num)=>{
-				if(_.includes(msg, ':' + num + ':')){
-					//make this syncronous using 'async'
-					return function(cb){
-						Higgins.react(num).then(cb);
-					};
-				}
-				return function(cb){ return cb() };
-			});
-			//make sure the reactions happen in order
-			async.series(fns);
-
-			Higgins.reply(_.sample([
-				'Smashing poll ' + pollMaster,
-				'Top shelf question ' + pollMaster +'!'
-			]))
-		}
-	}
-}
+	});
+});

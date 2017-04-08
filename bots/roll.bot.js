@@ -1,22 +1,17 @@
-var _ = require('lodash');
-var utils = require('slack-microbots/utils');
-
-var errorResponse = function(){};
+const Slack = require('pico-slack');
+const _ = require('lodash');
 
 
-var rollDice = function(dice){
-	return _.times(dice.num, function(){
-		return _.random(1, dice.type);
-	});
-};
-var hasAdvantage = function(msg){
+const rollDice = (dice)=>_.times(dice.num, ()=>_.random(1, dice.type));
+
+const hasAdvantage = function(msg){
 	return _.includes(msg, 'adv') || _.includes(msg, 'inspiration');
 };
-var hasDisadvantage = function(msg){
+const hasDisadvantage = function(msg){
 	return _.includes(msg, 'dis')
 };
-var parseDice = function(msg){
-	var dNotation = msg.match(/([\d]*)d([\d]+)/);
+const parseDice = function(msg){
+	const dNotation = msg.match(/([\d]*)d([\d]+)/);
 	if(dNotation === null) throw "Oops, your dice string wasn't formatted properly";
 	return {
 		num : Number(dNotation[1] || 1),
@@ -42,17 +37,17 @@ var getBear = function(){
 	}
 }
 
-var getCheck = function(msg){
-	var numOfDice = 1
+const getCheck = function(msg){
+	let numOfDice = 1
 	if(hasDisadvantage(msg) || hasAdvantage(msg)){
 		numOfDice = 2;
 	}
-	var rolls = rollDice({
+	const rolls = rollDice({
 		num : numOfDice,
 		type : 20
 	});
 
-	var result = rolls[0];
+	let result = rolls[0];
 	if(hasDisadvantage(msg)){
 		result = _.min(rolls);
 	}else if(hasAdvantage(msg)){
@@ -68,9 +63,9 @@ var getCheck = function(msg){
 	}
 }
 
-var getRoll = function(msg){
-	var dice = parseDice(msg);
-	var rolls = rollDice(dice);
+const getRoll = function(msg){
+	const dice = parseDice(msg);
+	const rolls = rollDice(dice);
 
 	return {
 		text : dice.num + 'd' + dice.type + ': ' + _.sum(rolls),
@@ -83,40 +78,36 @@ var getFudge = function(){
 		return _.sample([-1,-1,0,0,1,1]);
 	});
 	var sum = _.sum(rolls);
-	
+
 	return {
 		text : sum + (sum == -4 ? ':grimacing:' : '') + (sum == 4 ? ':tada:' : ''),
 		rolls : rolls
-	};	
+	};
 }
 
-module.exports = {
-	name : 'rollbot',
-	icon : ':game_die:',
-	channel : '*',
-	handle : function(msg, info, Higgins){
-		if(!utils.messageHas(msg, 'roll')) return;
-		var res;
-		try{
-			if(_.includes(msg, 'check') || _.includes(msg, 'throw') || _.includes(msg, 'save')){
-				res = getCheck(msg);
-			}else if(_.includes(msg, 'fudge')){
-				res = getFudge();
-			}else if(_.includes(msg, 'bear')){
-				res = getBear();
-			}else{
-				res = getRoll(msg);
-			}
-		}catch(e){
-			return 
+
+Slack.onMessage((msg)=>{
+	if(!Slack.msgHas(msg.text, 'roll')) return;
+
+	let res;
+	try{
+		if(Slack.msgHas(msg.text, ['check','throw','save'])){
+			res = getCheck(msg.text);
+		}else if(Slack.msgHas(msg.text, 'fudge')){
+			res = getFudge();
+		}else if(Slack.msgHas(msg.text, 'bear')){
+			res = getBear();
+		}else{
+			res = getRoll(msg.text);
 		}
-
-		var response = res.text;
-
-		if(res.rolls.length > 1){
-			response += '\n > rolls: ' + JSON.stringify(res.rolls)
-		}
-
-		Higgins.reply(response);
+	}catch(e){
+		return Slack.error(e);
 	}
-}
+
+	let response = res.text;
+	if(res.rolls.length > 1){
+		response += '\n> ' + JSON.stringify(res.rolls)
+	}
+
+	Slack.msgAs('rollbot', ':game_die:', msg.channel, response);
+});

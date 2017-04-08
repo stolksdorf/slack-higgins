@@ -1,13 +1,9 @@
 {
   "name": "slack-higgins",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "a slackbot for my personal slack",
-  "main": "index.js",
+  "main": "higgins.js",
   "scripts": {
-    "build": "node_modules/.bin/gulp prod",
-    "watch": "node_modules/.bin/gulp",
-    "libs": "node_modules/.bin/gulp fresh",
-    "postinstall": "npm run build",
     "start": "node higgins.js",
     "test": "nodemon higgins.js"
   },
@@ -22,30 +18,26 @@
     "node": "^6.0.0"
   },
   "author": "stolksdorf",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/stolksdorf/slack-higgins/issues"
   },
   "homepage": "https://github.com/stolksdorf/slack-higgins#readme",
   "dependencies": {
-    "app-module-path": "^1.0.5",
     "body-parser": "^1.15.2",
     "classnames": "^2.2.5",
     "express": "^4.13.4",
     "glob": "^7.0.6",
     "google": "^1.4.0",
     "lodash": "^4.6.1",
-    "markov": "0.0.7",
     "moment": "^2.17.0",
     "mongoose": "^4.7.0",
     "nconf": "^0.8.4",
-    "react": "^15.4.1",
-    "react-dom": "^15.4.1",
+    "pico-redis": "^1.0.0",
+    "pico-slack": "^1.1.0",
     "request": "~2.69.0",
-    "slack-microbots": "^2.1.0",
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
-    "vitreum": "^3.3.0",
     "xkcd": "^1.1.1"
   }
 }

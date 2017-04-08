@@ -1,17 +1,9 @@
-var _ = require('lodash');
-var utils = require('slack-microbots/utils');
-var santaSayings = ['Ho ho ho!', 'Christmas is coming!', 'Chestnuts roasting on an open fire...','Merry Christmas!']
+const Slack = require('pico-slack');
+const Msg = Slack.msgAs.bind(null, 'batiebot', 'katie');
 
 
-module.exports = {
-    name : 'katiebot',
-    icon : ':katie:',
-    channel : 'secret-laboratory',
-    handle : function(msg, info, Higgins){
-        if(info.user == 'katie'){
-            _.delay(() => {
-                Higgins.reply(_.sample(santaSayings));
-            }, 5000);
-        }
-    }
-};
+Slack.onMessage((msg)=>{
+	if(msg.channel == 'secret-laboratory' && msg.user == 'katie'){
+		Msg(msg.channel, 'Why hello there!');
+	}
+});
