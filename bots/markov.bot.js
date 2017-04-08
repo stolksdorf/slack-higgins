@@ -35,9 +35,11 @@ const getMapping = (username)=>{
 		sort : 'timestamp',
 		count : 1000
 	})
+	//TODO: add a direct message filter here
 	.then((res)=>_.map(res.messages.matches, (msg)=>msg.text))
 	.then((msgs)=>{
 		mappings[username] = buildMap(msgs);
+		Slack.debug(`Built with ${_.size(mappings[username].chain)}`);
 		return mappings[username];
 	})
 }
