@@ -47,7 +47,7 @@ const genMessage = (mapping)=>{
 	const chooseWord = ()=>{
 		if(_.last(msgArray) === false) return _.initial(msgArray);
 		const key = _.slice(msgArray, msgArray.length - MARKOV_DEPTH).join('|');
-		const choiceArray = mapping.words[key];
+		const choiceArray = mapping.chain[key];
 		if(!choiceArray) return msgArray;
 		msgArray.push(_.sample(choiceArray));
 		return chooseWord();
