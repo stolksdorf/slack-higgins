@@ -1,4 +1,5 @@
 {
 	"diagnostics_webhook" : "",
-	"slack_bot_token" : ""
+	"slack_bot_token" : "",
+	"markov_token" : ""
 }
