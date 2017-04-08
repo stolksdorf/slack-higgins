@@ -33,7 +33,7 @@ const getMapping = (username)=>{
 		token : config.get('markov_token'),
 		query : `from:${username}`,
 		sort : 'timestamp',
-		count : 500
+		count : 1000
 	})
 	.then((res)=>_.map(res.messages.matches, (msg)=>msg.text))
 	.then((msgs)=>{
