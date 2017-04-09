@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const config = require('nconf');
 
-const MARKOV_DEPTH = 4;
+const MARKOV_DEPTH = 6;
 const SEP = '';
 
 const SafeChannels = _.map([
