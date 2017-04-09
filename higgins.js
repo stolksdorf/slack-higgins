@@ -12,13 +12,21 @@ const config = require('nconf')
 	.file('environment', { file: `config/${process.env.NODE_ENV}.json` })
 	.file('defaults', { file: 'config/default.json' });
 
-
-
 const Slack = require('pico-slack');
 const Redis = require('pico-redis');
 
+try{
+	Redis.connect();
+	Redis.raw.on("error", function(err) {
+		Redis.raw.quit();
+		console.error("Error connecting to redis", err);
+	});
+}catch(e){
+
+}
+
 Slack.setInfo('higgins', ':tophat:');
-Redis.connect();
+
 const loadCmds = require('./cmd.loader.js');
 
 

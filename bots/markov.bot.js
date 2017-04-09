@@ -4,6 +4,32 @@ const config = require('nconf');
 
 const MARKOV_DEPTH = 2;
 
+const SafeChannels = _.map([
+	"1861",
+	"always-sunny",
+	"automation",
+	"boardgames",
+	"climbing",
+	"cooking-and-baking",
+	"design-dabblers",
+	"diet-talk",
+	"dnd",
+	"dnd-homebrew",
+	"events",
+	"floofs",
+	"general",
+	"habitual-homebrewers",
+	"hmmm",
+	"mighty-maple-leafs",
+	"myers-briggs",
+	"overwatch",
+	"random",
+	"science",
+	"the-tasting-room",
+	"travel-talk",
+	"vidya"
+], (channel)=>`in:${channel}`).join(' ');
+
 let mappings = {};
 
 const buildMap = (msgs)=>{
@@ -31,7 +57,7 @@ const getMapping = (username)=>{
 	Slack.debug(`Building mapping for ${username}`);
 	return Slack.api('search.messages', {
 		token : config.get('markov_token'),
-		query : `from:${username}`,
+		query : `from:${username} ${SafeChannels}`,
 		sort : 'timestamp',
 		count : 1000
 	})
