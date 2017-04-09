@@ -50,7 +50,6 @@ const buildMap = (msgs)=>{
 			if(key.length > MARKOV_DEPTH) key.shift();
 		});
 	})
-	console.log(resulta);
 	return result;
 }
 
