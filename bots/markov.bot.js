@@ -2,7 +2,8 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const config = require('nconf');
 
-const MARKOV_DEPTH = 2;
+const MARKOV_DEPTH = 4;
+const SEP = '';
 
 const SafeChannels = _.map([
 	"1861",
@@ -35,7 +36,7 @@ let mappings = {};
 const buildMap = (msgs)=>{
 	let result = { starts : [], chain : {}};
 	_.each(msgs, (msg)=>{
-		let words = msg.split(' ');
+		let words = msg.split(SEP);
 		words.push(false);
 		result.starts.push(_.slice(words, 0, MARKOV_DEPTH))
 		let key = [];
@@ -49,6 +50,7 @@ const buildMap = (msgs)=>{
 			if(key.length > MARKOV_DEPTH) key.shift();
 		});
 	})
+	console.log(resulta);
 	return result;
 }
 
@@ -65,7 +67,7 @@ const getMapping = (username)=>{
 	.then((res)=>_.map(res.messages.matches, (msg)=>msg.text))
 	.then((msgs)=>{
 		mappings[username] = buildMap(msgs);
-		Slack.debug(`Built with ${_.size(mappings[username].chain)}`);
+		Slack.debug(`Built with ${_.size(msgs)}`);
 		return mappings[username];
 	})
 }
@@ -80,7 +82,7 @@ const genMessage = (mapping)=>{
 		msgArray.push(_.sample(choiceArray));
 		return chooseWord();
 	}
-	return chooseWord().join(' ');
+	return chooseWord().join(SEP);
 }
 
 Slack.onMessage((msg)=>{
