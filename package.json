@@ -5,7 +5,8 @@
   "main": "higgins.js",
   "scripts": {
     "start": "node higgins.js",
-    "test": "nodemon higgins.js"
+    "test": "nodemon higgins.js",
+    "dev": "nodemon higgins.js"
   },
   "repository": {
     "type": "git",
