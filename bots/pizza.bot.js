@@ -2,10 +2,26 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const Redis = require('pico-redis')('pizzabot');
 
+const toppings = [
+	'red_circle',
+	'mushroom',
+	'bell',
+	'tomato',
+	'cheese',
+	'hot_pepper',
+	'pineapple',
+	'chicken',
+	'cow2',
+	'pig2',
+	'hotdog',
 
-let tempTS;
-let tempChannel;
+	//garlic
+	//onions
+	//olives
+]
 
+
+let storedMsg;
 
 const messageReact = (channel, text, reactions=[])=>{
 	const flow = Promise.resolve();
@@ -20,28 +36,38 @@ const messageReact = (channel, text, reactions=[])=>{
 		.then(()=>end)
 }
 
+const getMessageReactions = (msg)=>{
+	return Slack.api('reactions.get', {
+			timestamp : msg.ts,
+			channel : msg.channel
+		})
+		.then((res)=>{
+			return _.reduce(res.message.reactions, (r, reaction)=>{
+				if(!_.includes(toppings, reaction.name)) return r;
+				_.each(reaction.users, (user)=>{
+					if(!r[Slack.users[user]]) r[Slack.users[user]] = [];
+					r[Slack.users[user]].push(reaction.name);
+				})
+				return r;
+			}, {})
+		});
+}
+
 Slack.onMessage((msg)=>{
 	if(!Slack.msgHas(msg.text, 'pizzabot')) return;
 
 	if(Slack.msgHas(msg.text, 'test')){
-		Slack.api('reactions.get', {
-			timestamp : tempTS,
-			channel : tempChannel
-		})
-		.then((res)=>res.message.reactions)
-		.then((reactions)=>console.log(reactions))
-
-
-
+		getMessageReactions(storedMsg)
+			.then((reactions)=>console.log(reactions))
 		return;
 	}
 
-	messageReact(msg.channel, 'test', ['+1', 'dizzy', 'on'])
+	messageReact(msg.channel, 'Pick your *favourite* toppings', toppings)
 		.then((res)=>{
 			console.log('COOL RES', res);
-			tempChannel = res.channel;
-			tempTS = res.ts;
+			storedMsg = res;
 		})
 
 
 });
+
