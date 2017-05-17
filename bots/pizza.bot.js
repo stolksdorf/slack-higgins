@@ -15,15 +15,16 @@ const toppings = [
 	'pig2',
 	'hotdog',
 
-	//garlic
-	//onions
-	//olives
-]
+	'garlic',
+	'onion',
+	'olive',
+	'olive_black'
+];
 
 
 let storedMsg;
 
-const messageReact = (channel, text, reactions=[])=>{
+const messageAndReact = (channel, text, reactions=[])=>{
 	const flow = Promise.resolve();
 	let end;
 
@@ -62,7 +63,7 @@ Slack.onMessage((msg)=>{
 		return;
 	}
 
-	messageReact(msg.channel, 'Pick your *favourite* toppings', toppings)
+	messageAndReact(msg.channel, 'Pick your *favourite* toppings', toppings)
 		.then((res)=>{
 			console.log('COOL RES', res);
 			storedMsg = res;
