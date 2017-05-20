@@ -96,14 +96,13 @@ const PizzaEngine = {
 		const totalSlices = _.reduce(prefs, (acc, pref)=>acc+pref.hunger, 0);
 
 
-		const results = _.times(attempts, ()=>PizzaEngine.getScoredPizzaSet(totalSlices, toppings, prefs));
+		let bestSet = { score : -10 };
+		const results = _.times(attempts, ()=>{
+			const set = PizzaEngine.getScoredPizzaSet(totalSlices, toppings, prefs);
+			if(set.score > bestSet.score) bestSet = set;
+		});
 
-		return _.sortBy(results, (res)=>-res.score);
-
-
-
-
-
+		return bestSet;
 	}
 
 
