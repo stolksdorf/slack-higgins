@@ -7,19 +7,19 @@ const toppings = ['red_circle', 'mushroom', 'bell', 'tomato', 'cheese', 'hot_pep
 
 const prefs = {
 	scott : {
-		like : ['garlic', 'onion', 'chicken'],
-		hate : ['olive', 'olive_black', 'hot_pepper'],
-		hunger : 5
+		like : ['garlic', 'onions', 'chicken'],
+		hate : ['olive', 'olive_black', 'hot_pepper', 'mushrooms'],
+		hunger : 6
 	},
-	meg : {
-		like : ['red_circle', 'olive', 'chicken'],
-		hate : ['pineapple'],
-		hunger : 8
-	},
-	katie : {
-		like : [],
-		hate : ['pineapple'],
+	carly : {
+		like : ['pineapple', 'chicken', 'garlic', 'red pepper', 'goat cheese'],
+		hate : ['ham', 'olives'],
 		hunger : 2
+	},
+	lp : {
+		like : ['garlic', 'red pepper', 'goat cheese', 'onions', 'chicken'],
+		hate : ['olives', 'pepperoni', 'ham', 'tomato'],
+		hunger : 4
 	}
 }
 
@@ -53,9 +53,9 @@ const testSet2 =[
 // console.log(PizzaEngine.scorePizzas(testSet1, prefs));
 // console.log(PizzaEngine.scorePizzas(testSet2, prefs));
 
-
-const res = PizzaEngine.getOptimalPizzaSet(prefs)
+console.time('test')
+const res = PizzaEngine.getOptimalPizzaSet(prefs, 100)
 console.log(JSON.stringify(res, null, '  '));
-
+console.timeEnd('test');
 
 

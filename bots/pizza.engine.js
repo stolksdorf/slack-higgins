@@ -75,7 +75,7 @@ const PizzaEngine = {
 		//Reduce score if anyone is hungry
 		score -= _.sum(_.values(hungerRemaining)) * 5;
 		//Reduce score for 'wasted' pizza
-		score -= _.sum(slicesRemaining) * 2
+		score -= _.sum(slicesRemaining) * 0.5
 		return score;
 	},
 
@@ -100,7 +100,11 @@ const PizzaEngine = {
 		const results = _.times(attempts, ()=>{
 			const set = PizzaEngine.getScoredPizzaSet(totalSlices, toppings, prefs);
 			if(set.score > bestSet.score) bestSet = set;
+
+			return set;
 		});
+
+		return _.slice(_.sortBy(results, (result)=>-result.score), 0, 5);
 
 		return bestSet;
 	}
