@@ -46,6 +46,14 @@ const quotes = [
 	'_They must often change, who would be constant in happiness or wisdom._',
 	'_The pain of parting is nothing to the joy of meeting again._',
 	'_To part is the lot of all mankind. The world is a scene of constant leave-taking, and the hands that grasp in cordial greeting today, are doomed ere long to unite for the the last time, when the quivering lips pronounce the word – Farewell._',
+	'_So sweetly she bade me adieu,\nI thought that she bade me return._',
+	'_Love reckons hours for months, and days for years; and every little absence is an age._',
+	'_Where is the good in goodbye?_',
+	'_As the presence of those we love is as a double life, so absence, in its anxious longing and sense of vacancy, is as a foretaste of death._',
+	'_Promise me you’ll never forget me because if I thought you would I’d never leave._',
+	'_May you always have work for your hands to do.\nMay your pockets hold always a coin or two.\nMay the sun shine bright on your windowpane.\nMay the rainbow be certain to follow each rain.\nMay the hand of a friend always be near you.\nAnd may God fill your heart with gladness to cheer you._',
+	'_May the sun shine, all day long,\neverything go right, and nothing wrong.\nMay those you love bring love back to you,\nand may all the wishes you wish come true!_',
+
 ];
 
 
