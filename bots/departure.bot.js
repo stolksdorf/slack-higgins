@@ -34,6 +34,18 @@ const quotes = [
 	'_Not to understand a treasure’s worth till time has stole away the slighted good, is cause of half the poverty we feel, and makes the world the wilderness it is._',
 	'_She went her unremembering way,\nShe went and left in me\nThe pang of all the partings gone,\nAnd partings yet to be._',
 	'_Only in the agony of parting do we look into the depths of love._',
+	'_Love is missing someone whenever you’re apart, but somehow feeling warm inside because you’re close in heart._',
+	'_There are no goodbyes for us. Wherever you are, you will always be in my heart._',
+	'_Don’t cry because it’s over, smile because it happened._',
+	'_Great is the art of beginning, but greater is the art of ending._',
+	'_It’s time to say goodbye, but I think goodbyes are sad and I’d much rather say hello. Hello to a new adventure._',
+	'_All changes, even the most longed for, have their melancholy; for what we leave behind us is a part of ourselves; we must die to one life before we can enter another._',
+	'_Never say goodbye because goodbye means going away and going away means forgetting._',
+	'_Remember me and smile, for it’s better to forget than to remember me and cry._',
+	'_So long as the memory of certain beloved friends lives in my heart, I shall say that life is good._',
+	'_They must often change, who would be constant in happiness or wisdom._',
+	'_The pain of parting is nothing to the joy of meeting again._',
+	'_To part is the lot of all mankind. The world is a scene of constant leave-taking, and the hands that grasp in cordial greeting today, are doomed ere long to unite for the the last time, when the quivering lips pronounce the word – Farewell._',
 ];
 
 
