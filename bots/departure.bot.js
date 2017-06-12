@@ -17,7 +17,7 @@ const quotes = [
 	'_Rest you merry._',
 	'_There lies your way._',
 	'_Give me now leave, to leave thee._',
-	'_Close the door on your way out._'
+	'_Close the door on your way out._',
 	'_Farewell! Thou art too dear for my possessing._',
 	'_May your pockets be heavy and your heart be light; may good luck pursue you each morning and night._',
 	'_But fate ordains that dearest friends must part._',
