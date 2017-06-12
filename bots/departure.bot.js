@@ -1,7 +1,9 @@
 const _ = require('lodash');
 const Slack = require('pico-slack');
 
-const quotes = [	'_Absence diminishes little passions and increases great ones, as the wind extinguishes candles and fans a fire._',
+const quotes = [
+	'_Absence diminishes little passions and increases great ones, as the wind extinguishes candles and fans a fire._',
+	'_Adieu! I have too grieved a heart to take a tedious leave._',
 	'_All changes, even the most longed for, have their melancholy; for what we leave behind us is a part of ourselves; we must die to one life before we can enter another._',
 	'_As contraries are known by contraries, so is the delight of presence best known by the torments of absence._',
 	'_As the presence of those we love is as a double life, so absence, in its anxious longing and sense of vacancy, is as a foretaste of death._',
