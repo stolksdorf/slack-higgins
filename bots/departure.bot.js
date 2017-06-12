@@ -53,7 +53,6 @@ const quotes = [
 	'_Promise me you’ll never forget me because if I thought you would I’d never leave._',
 	'_May you always have work for your hands to do.\nMay your pockets hold always a coin or two.\nMay the sun shine bright on your windowpane.\nMay the rainbow be certain to follow each rain.\nMay the hand of a friend always be near you.\nAnd may God fill your heart with gladness to cheer you._',
 	'_May the sun shine, all day long,\neverything go right, and nothing wrong.\nMay those you love bring love back to you,\nand may all the wishes you wish come true!_',
-
 ];
 
 
