@@ -43,7 +43,7 @@ const loadBots = ()=>{
 				require(botpath);
 				console.log('loaded', botpath);
 			}catch(e){
-				Slack.error('Bot Load Error', e);
+				Slack.error('Bot Load Error', botpath, e);
 			}
 		})
 	})
