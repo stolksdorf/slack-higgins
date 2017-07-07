@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node higgins.js",
     "test": "nodemon higgins.js",
-    "dev": "nodemon higgins.js"
+    "dev": "nodemon higgins.js",
+    "logs": "heroku logs -t --app=slack-higgins"
   },
   "repository": {
     "type": "git",
