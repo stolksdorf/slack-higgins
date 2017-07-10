@@ -71,7 +71,8 @@ const getMapping = (username)=>{
 		sort : 'timestamp',
 		count : 1000
 	})
-	.then((res)=>_.map(res.messages.matches, (msg)=>msg.text))
+	//remove all refs to links
+	.then((res)=>_.map(res.messages.matches, (msg)=>msg.text.replace(/(<h.+>)/gi, '')))
 	.then((msgs)=>{
 		mappings[username] = buildMap(msgs);
 		Slack.debug(`Map for ${username}bot built with ${_.size(msgs)} messages`);
