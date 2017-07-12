@@ -121,3 +121,15 @@ Slack.onMessage((msg)=>{
 			.catch((err)=>Slack.error(err))
 	}
 });
+
+//Send a random bot message every few hours.
+const HOURS = 1000 * 60 * 60;
+const sendRandomMessage = ()=>{
+	const randomUser = _.sample(Slack.users);
+	getMapping(randomUser)
+		.then(({mapping, info})=>genMessage(mapping, info))
+		.then((text)=>Slack.msgAs(`${randomUser}bot`, randomUser, 'general', text))
+		.then(()=>makeTimeout())
+}
+const makeTimeout = ()=>setTimeout(()=>sendRandomMessage(), _.random(2,6) * HOURS);
+makeTimeout();
