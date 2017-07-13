@@ -19,6 +19,10 @@ Slack.onMessage((msg)=>{
 					msgId = res.message.ts;
 				})
 		})
+		.catch((err)=>{
+			Slack.log(err);
+			Slack.msg(msg.channel, `I got all jacked up`);
+		})
 
 })
 
@@ -49,6 +53,7 @@ const getAllFiles = ()=>{
 	let result = [];
 
 	const getFiles = (page=1)=>{
+		Slack.log(`loooking at page ${page}`);
 		return Slack.api('files.list', {token : config.get('command_token'), page:page})
 			.then((res)=>{
 				result = _.concat(result, _.map(res.files, (file)=>file.id));
