@@ -66,7 +66,7 @@ const getMapping = (username)=>{
 	let query = `from:${username} ${SafeChannels}`
 	if(username=='hivebot') query = `${SafeChannels}`;
 	return Slack.api('search.messages', {
-		token : config.get('markov_token'),
+		token : config.get('command_token'),
 		query : query,
 		sort : 'timestamp',
 		count : 1000
