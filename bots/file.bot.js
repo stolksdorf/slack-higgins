@@ -14,7 +14,7 @@ Slack.onMessage((msg)=>{
 	getAllFiles()
 		.then((res)=>{
 			files = res;
-			Slack.msg(msg.channel, `I found ${files.length} files that I can delete. React with a thumbs up to this message to let me know I can delete them`)
+			Slack.msg(msg.channel, `I found ${files.length} files that I can delete. Larger than 30mb and older than 9 months. React with a thumbs up to this message to let me know I can delete them`)
 				.then((res)=>{
 					msgId = res.message.ts;
 				})
@@ -49,16 +49,25 @@ const deleteFile = (fileId)=>{
 	});
 }
 
+const MEGABYTE = 1000000;
+const DAY = 1000 * 60 * 60 * 24;
 const getAllFiles = ()=>{
 	let result = [];
 
 	const getFiles = (page=1)=>{
 		Slack.log(`loooking at page ${page}`);
-		return Slack.api('files.list', {token : config.get('command_token'), page:page})
+		return Slack.api('files.list', {
+				token : config.get('command_token'),
+				page:page,
+				count:1000,
+				ts_to : Math.floor((_.now() - 9 * 30 * DAY) / 1000)
+			})
 			.then((res)=>{
-				result = _.concat(result, _.map(res.files, (file)=>file.id));
+				result = _.concat(result, _.reduce(res.files, (acc, file)=>{
+					if(file.size > 30 * MEGABYTE) acc.push(file.id);
+					return acc;
+				}, []));
 				if(res.paging.pages > page) return getFiles(page + 1);
-
 				return result
 			})
 	}
