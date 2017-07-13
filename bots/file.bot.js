@@ -8,39 +8,34 @@ let msgId = false;
 const MAX_SIZE = 5;
 const MAX_AGE = 60;
 
+// Slack.onMessage((msg)=>{
+// 	if(!Slack.msgHas(msg.text, 'higgins', 'clean house')) return;
+// 	Slack.msg(msg.channel, '_Sure, give me a sec_');
+// 	getAllFiles()
+// 		.then((res)=>{
+// 			files = res;
+// 			Slack.msg(msg.channel, `I found ${files.length} files that I can delete. Larger than ${MAX_SIZE}mb and older than ${MAX_AGE} days. React with a thumbs up to this message to let me know I can delete them`)
+// 				.then((res)=>{
+// 					msgId = res.message.ts;
+// 				})
+// 		})
+// 		.catch((err)=>{
+// 			Slack.log(err);
+// 			Slack.msg(msg.channel, `I got all jacked up`);
+// 		})
+// })
 
-Slack.onMessage((msg)=>{
-	if(!Slack.msgHas(msg.text, 'higgins', 'clean house')) return;
-
-	Slack.msg(msg.channel, '_Sure, give me a sec_');
-
-	getAllFiles()
-		.then((res)=>{
-			files = res;
-			Slack.msg(msg.channel, `I found ${files.length} files that I can delete. Larger than ${MAX_SIZE}mb and older than ${MAX_AGE} days. React with a thumbs up to this message to let me know I can delete them`)
-				.then((res)=>{
-					msgId = res.message.ts;
-				})
-		})
-		.catch((err)=>{
-			Slack.log(err);
-			Slack.msg(msg.channel, `I got all jacked up`);
-		})
-
-})
-
-
-Slack.onReact((msg)=>{
-	if(msg.item.ts == msgId){
-		Slack.msg(msg.channel, '_Got it, This might take a while..._');
-		msgId = false;
-		Promise.all(_.map(files, (file)=>deleteFile(file)))
-			.then(()=>{
-				Slack.msg(msg.channel, `_Whew, all done! ${files.length} deleted!`);
-				files = [];
-			});
-	}
-})
+// Slack.onReact((msg)=>{
+// 	if(msg.item.ts == msgId){
+// 		Slack.msg(msg.channel, '_Got it, This might take a while..._');
+// 		msgId = false;
+// 		Promise.all(_.map(files, (file)=>deleteFile(file)))
+// 			.then(()=>{
+// 				Slack.msg(msg.channel, `_Whew, all done! ${files.length} deleted!`);
+// 				files = [];
+// 			});
+// 	}
+// })
 
 const deleteFile = (fileId)=>{
 	return new Promise((resolve, reject)=>{
