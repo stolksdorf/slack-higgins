@@ -5,6 +5,9 @@ const _ = require('lodash');
 let files = [];
 let msgId = false;
 
+const MAX_SIZE = 5;
+const MAX_AGE = 60;
+
 
 Slack.onMessage((msg)=>{
 	if(!Slack.msgHas(msg.text, 'higgins', 'clean house')) return;
@@ -14,7 +17,7 @@ Slack.onMessage((msg)=>{
 	getAllFiles()
 		.then((res)=>{
 			files = res;
-			Slack.msg(msg.channel, `I found ${files.length} files that I can delete. Larger than 30mb and older than 9 months. React with a thumbs up to this message to let me know I can delete them`)
+			Slack.msg(msg.channel, `I found ${files.length} files that I can delete. Larger than ${MAX_SIZE}mb and older than ${MAX_AGE} days. React with a thumbs up to this message to let me know I can delete them`)
 				.then((res)=>{
 					msgId = res.message.ts;
 				})
@@ -60,11 +63,11 @@ const getAllFiles = ()=>{
 				token : config.get('command_token'),
 				page:page,
 				count:1000,
-				ts_to : Math.floor((_.now() - 9 * 30 * DAY) / 1000)
+				ts_to : Math.floor((_.now() - MAX_AGE* DAY) / 1000)
 			})
 			.then((res)=>{
 				result = _.concat(result, _.reduce(res.files, (acc, file)=>{
-					if(file.size > 30 * MEGABYTE) acc.push(file.id);
+					if(file.size > MAX_SIZE * MEGABYTE) acc.push(file.id);
 					return acc;
 				}, []));
 				if(res.paging.pages > page) return getFiles(page + 1);
