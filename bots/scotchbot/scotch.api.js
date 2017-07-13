@@ -1,6 +1,8 @@
 const fs = require('fs');
 const _ = require('lodash');
 
+const compare = require('string-similarity').compareTwoStrings;
+
 //const rawcsv = fs.readFileSync('./bots/scotchbot/whisky.db.temp.csv', 'utf8');
 const rawcsv = fs.readFileSync('./bots/scotchbot/scotch.db.csv', 'utf8');
 
@@ -35,9 +37,14 @@ console.log(_.mapValues(groups, (group)=>group.length));
 
 
 module.exports = {
+	list : scotches,
 
-	list : scotches
-
-
+	find : (scotchName) => {
+		const bestMatch = _.maxBy(scotches, (scotch)=>compare(scotchName, scotch.name))
+		return {
+			confidence : compare(scotchName, bestMatch.name)
+			scotch : bestMatch
+		};
+	}
 
 }

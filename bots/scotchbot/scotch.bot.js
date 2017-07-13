@@ -5,10 +5,22 @@ const ScotchAPI = require('./scotch.api.js');
 const Formatter = require('./scotch.formatter.js');
 
 Slack.onMessage((msg)=>{
-	if(!Slack.msgHas(msg.text, 'scotchbot')) return;
+	//if(!Slack.msgHas(msg.text, 'scotchbot')) return;
 
 
-	const result = Formatter.info(_.sample(ScotchAPI.list))
+//	const result = Formatter.info(_.sample(ScotchAPI.list))
+
+
+	let result = ScotchAPI.find(msg.text)
+
+	if(!result){
+		result = "can not find";
+	}else{
+		result = Formatter.info(result);
+	}
+
+
+
 
 
 
@@ -19,7 +31,9 @@ Slack.onMessage((msg)=>{
 
 
 
+const result = ScotchAPI.find('junk')
 
+console.log(result);
 
 
 

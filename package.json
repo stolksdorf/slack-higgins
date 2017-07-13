@@ -39,6 +39,7 @@
     "pico-redis": "^1.0.0",
     "pico-slack": "^1.3.0",
     "request": "~2.69.0",
+    "string-similarity": "^1.2.0",
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1"
