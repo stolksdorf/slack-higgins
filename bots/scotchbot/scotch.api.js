@@ -28,21 +28,17 @@ const processCSV = (rawcsv)=>{
 const scotches = processCSV(rawcsv);
 
 
-console.log('min', _.minBy(scotches, (scotch)=>scotch.rating));
-console.log('max', _.maxBy(scotches, (scotch)=>scotch.rating));
-
-const groups = _.groupBy(scotches, (scotch)=>Math.floor(scotch.rating));
-
-console.log(_.mapValues(groups, (group)=>group.length));
+// const groups = _.groupBy(scotches, (scotch)=>Math.floor(scotch.rating));
+// console.log(_.mapValues(groups, (group)=>group.length));
 
 
 module.exports = {
 	list : scotches,
 
-	find : (scotchName) => {
-		const bestMatch = _.maxBy(scotches, (scotch)=>compare(scotchName, scotch.name))
+	lookup : (scotchName) => {
+		const bestMatch = _.maxBy(scotches, (scotch)=>compare(scotchName.toLowerCase(), scotch.name.toLowerCase()))
 		return {
-			confidence : compare(scotchName, bestMatch.name)
+			confidence : compare(scotchName.toLowerCase(), bestMatch.name.toLowerCase()),
 			scotch : bestMatch
 		};
 	}
