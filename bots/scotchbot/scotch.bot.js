@@ -14,7 +14,6 @@ const getImportantWords = (text)=>{
 	return _.reduce(filteredWords, (acc, info)=>{
 		const word = info[0];
 		const partOfSpeech = info[1];
-		if(word.toLowerCase() == 'scotchbot') return acc;
 		if(_.includes(['NN', 'NNP', 'NNPS', 'CD'], partOfSpeech)){
 			acc.push(word);
 		}
@@ -36,22 +35,6 @@ Slack.onMessage((msg)=>{
 		return send(Formatter.lookup(scotch, confidence));
 	}
 
-
-//	const result = Formatter.info(_.sample(ScotchAPI.list))
-
-	// let result = ScotchAPI.find(msg.text)
-
-	// if(!result){
-	// 	result = "can not find";
-	// }else{
-	// 	result = Formatter.info(result);
-	// }
-
-
-
-
-
-	//Slack.msgAs('scotchbot', ':wine_glass:', msg.channel, result);
 });
 
 
@@ -59,22 +42,14 @@ Slack.onMessage((msg)=>{
 
 
 
-const parse = (text)=>{
-	console.log();
-}
-
-
-
-
-
 /* Lookup */
 
-parse(`Hey scotchbot, can you tell me about Ardbeg?`)
-parse(`scotchbot what's your review of Ardbeg`)
-parse(`scotchbot can you give me a review of Ardbeg`)
-parse(`Scotchbot, ardbeg, Thoughts?`)
-parse(`Macallan 10yo Sherry Oak`)
-parse(`Lagavulin 12yo Cask Strength`)
+// parse(`Hey scotchbot, can you tell me about Ardbeg?`)
+// parse(`scotchbot what's your review of Ardbeg`)
+// parse(`scotchbot can you give me a review of Ardbeg`)
+// parse(`Scotchbot, ardbeg, Thoughts?`)
+// parse(`Macallan 10yo Sherry Oak`)
+// parse(`Lagavulin 12yo Cask Strength`)
 
 
 
