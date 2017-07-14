@@ -9,11 +9,11 @@ let storage = {};
 
 
 
-const MAX_SIZE = 0.5;
+const MAX_SIZE = 5;
 const MAX_AGE = 60;
 
 Slack.onMessage((msg)=>{
-	if(!Slack.msgHas(msg.text, 'higgins', 'clean house')) return;
+	if(!Slack.msgHas(msg.text, 'higgins', 'clean', 'house')) return;
 	Slack.msg(msg.channel, '_Sure, give me a sec_');
 	getAllFiles(msg.user_id)
 		.then(({files, size})=>{
