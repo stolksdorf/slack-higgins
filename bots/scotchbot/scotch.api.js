@@ -1,6 +1,6 @@
 const fs = require('fs');
 const _ = require('lodash');
-
+const Groups = require('./group.info.js');
 const compare = require('string-similarity').compareTwoStrings;
 
 //const rawcsv = fs.readFileSync('./bots/scotchbot/whisky.db.temp.csv', 'utf8');
@@ -18,7 +18,8 @@ const processCSV = (rawcsv)=>{
 			stdev   : _.toNumber(parts[2]),
 			cost    : parts[4],
 			class   : parts[5],
-			group   : parts[6],
+			supergroup   : parts[6],
+			group   : parts[7],
 			country : parts[8],
 			type    : parts[9].replace('"', '').replace('\r', ''),
 		};
@@ -41,6 +42,32 @@ module.exports = {
 			confidence : compare(scotchName.toLowerCase(), bestMatch.name.toLowerCase()),
 			scotch : bestMatch
 		};
+	},
+
+	//groups, cost
+	search : (params = {})=>{
+		return _.filter(scotches, (scotch)=>{
+
+			if(params.groups){
+				const hasMatchingGroup = _.some(params.groups, (group)=>scotch.group == group);
+				if(!hasMatchingGroup) return false;
+			}
+
+			if(params.costs){
+				const hasMatchingCost = _.some(params.costs, (cost)=>scotch.cost == cost);
+				if(!hasMatchingCost) return false;
+			}
+
+			return true;
+		});
+	},
+
+
+	recommend : (text)=>{
+
+
+
+
 	}
 
 }

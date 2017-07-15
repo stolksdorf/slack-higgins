@@ -11,7 +11,7 @@ const prices = {
 	'$$$' :  'about $50-$70 CAD',
 	'$$$$' :  'about $70~$125 CAD',
 	'$$$$$' :  'about $125~$300 CAD',
-	'$$$$$+' :  'over $300 CAD'
+	'$$$$$+' :  'over $300 CAD :dizzy_face:'
 }
 
 
@@ -38,18 +38,34 @@ const Formatter = {
 		const preamble = _.sample([
 			`I too, like to live dangerously,`,
 			`Like a leaf on the wind`,
-			`I think you might like this one`
+			`I think you might like this one`,
+			`One right off the top of the head`
 		]);
 		return `_${preamble}_\n${Formatter.description(scotch)}`;
+	},
+
+	recommend : (scotches)=>{
+		let preamble = _.sample([
+			`I have just the thing for you`
+		]);
+		let result = `_${preamble}_\n${Formatter.description(scotches[0])}`
+
+		if(scotches.length == 2){
+			const secondPreamble = _.sample([
+				`Or, how about this`
+			]);
+			result += `\n\n_${secondPreamble}_\n${Formatter.description(scotches[1])}`
+		}
+		return result;
 	},
 
 	description : (scotch)=>{
 		let rating = '';
 		if(Math.floor(scotch.rating) == 9){
-			rating = 'It\'s quite highly rated. ';
+			rating = `It's quite highly rated. `;
 		}
 		if(Math.floor(scotch.rating) < 8){
-			rating = 'It\'s not that highly rated. ';
+			rating = `It's not that highly rated. `;
 		}
 
 		const pricing = 'And it can be yours for ' + prices[scotch.cost];
