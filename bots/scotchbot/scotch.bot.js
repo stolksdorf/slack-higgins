@@ -49,7 +49,7 @@ Slack.onMessage((msg)=>{
 	}
 
 	if(Slack.msgHas(msg.text, ['help', 'what do you do'])){
-		return send(`Well, I can do a grea tmany things. My knowledge of scotch is unrivaled.`
+		return send(`Well, I can do a great many things. My knowledge of scotch is unrivaled.`
 			+ `I can give a review and nearly every scotch, and can recommend you a scotch if you let me know what you like`
 		);
 	}

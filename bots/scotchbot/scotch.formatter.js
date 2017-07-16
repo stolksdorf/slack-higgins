@@ -71,7 +71,7 @@ const Formatter = {
 		const pricing = 'And it can be yours for ' + prices[scotch.cost];
 		const type = (scotch.type == 'Malt' ? 'Single Malt' : 'Blend');
 
-		return `*${scotch.name}*, it's a ${_.sample(niceWords)} ${type}; ${Groups.getDescription(scotch.group)}. ${rating}${pricing}.`;
+		return `*${scotch.name}*, it's a ${_.sample(niceWords)} coming from ${scotch.country.} ${type}; ${Groups.getDescription(scotch.group)}. ${rating}${pricing}.`;
 	}
 
 };
