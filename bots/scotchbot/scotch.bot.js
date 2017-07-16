@@ -46,7 +46,7 @@ Slack.onMessage((msg)=>{
 
 	if(Slack.msgHas(msg.text, ['introduce yourself', 'say hello'])){
 		return send(`Greetings and saluations to the fine populace of Coolsville. `+
-			`I, Scotchbot, am your steadfast servant in your sortie to seek out, however shy, the most succulent of spirits; *Scotch*. `)
+			`I, Scotchbot, am your steadfast servant in your sortie to seek out, however surreptitious or unsung, the most succulent of spirits; *Scotch*. `)
 	}
 
 	if(Slack.msgHas(msg.text, ['what can you do', 'how do you'])){

@@ -22,7 +22,7 @@ Slack.onMessage((msg)=>{
 				size
 			}
 			return Slack.msg(msg.channel,
-				`Alright ${msg.user}, I looked for your files larger than ${MAX_SIZE}mb and older than ${MAX_AGE} days. ` +
+				`Alright ${msg.user}, I looked for your files older than ${MAX_AGE} days. ` +
 				`I found ${files.length} files, totaling ${size}mb. ${msg.user}, react with :boom: to let me know you want _your files_ removed.`)
 				.then((res)=>{
 					storage[msg.user].ts = res.message.ts;
@@ -71,7 +71,8 @@ const getAllFiles = (userID)=>{
 			})
 			.then((res)=>{
 				result = _.concat(result, _.filter(res.files, (file)=>{
-					return file.size > MAX_SIZE * MEGABYTE;
+					return true
+					//return file.size > MAX_SIZE * MEGABYTE;
 				}))
 				if(res.paging.pages > page) return getFiles(page + 1, result);
 				return result;
