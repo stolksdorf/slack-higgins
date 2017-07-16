@@ -42,28 +42,36 @@ const recommendScotch = (text)=>{
 
 Slack.onMessage((msg)=>{
 	if(!Slack.msgHas(msg.text, 'scotchbot')) return;
-	const send = (text)=>Slack.msgAs('scotchbot', ':wine_glass:', msg.channel, text);
+	const send = (text)=>Slack.msgAs('scotchbot', ':scotch:', msg.channel, text);
 
 	if(Slack.msgHas(msg.text, ['introduce yourself', 'say hello'])){
-		return send(`Why hello, everyone. `)
+		return send(`Greetings and saluations to the fine populace of Coolsville. `+
+			`I, Scotchbot, am your steadfast servant in your sortie to seek out, however shy, the most succulent of spirits; *Scotch*. `)
 	}
 
-	if(Slack.msgHas(msg.text, ['help', 'what do you do'])){
-		return send(`Well, I can do a great many things. My knowledge of scotch is unrivaled.`
-			+ `I can give a review and nearly every scotch, and can recommend you a scotch if you let me know what you like`
+	if(Slack.msgHas(msg.text, ['what can you do', 'how do you'])){
+		return send(`Well, I can do a great many things. My knowledge of scotch is unrivaled. `
+			+ `I can give a review of nearly every scotch or recommend you a scotch.\n\n`
+			+ `For example you can say 'Scotchbot mayhaps I desire to whet my palette with something smoky, pungent, and _very_ expensive' or `
+			+ `'yo scotchbot whats the deal with Lagavulin?'.`
 		);
+	}
+
+	if(Slack.msgHas(msg.text, 'how', 'were', 'made')){
+		return send(`Well my good friend, you have the rare opportunity to witness the creation of such a fine bot as myself! ` +
+			`\n\nhttps://www.youtube.com/playlist?list=PLAWj9jpFY-UsjNiFiACdUMP_dxJCK_QIv`);
 	}
 
 	if(Slack.msgHas(msg.text, ['random', 'heart'])){
 		return send(Formatter.random(_.sample(ScotchAPI.list)));
 	}
 
-	if(Slack.msgHas(msg.text, ['tell me', 'review', 'describe', 'description', 'thoughts'])){
+	if(Slack.msgHas(msg.text, ['tell me', 'review', 'describe', 'description', 'thoughts', 'the deal'])){
 		const {scotch, confidence} = ScotchAPI.lookup(getImportantWords(msg.text));
 		return send(Formatter.lookup(scotch, confidence));
 	}
 
-	if(Slack.msgHas(msg.text, ['recommend', 'suggest'])){
+	if(Slack.msgHas(msg.text, ['recommend', 'suggest', 'desire', 'palette'])){
 		const scotches = _.sampleSize(recommendScotch(msg.text), _.sample([1,1,1,1,2]))
 		if(scotches.length == 0){
 			return send(`_I couldn't find anything for you, however..._\n` +
@@ -72,66 +80,5 @@ Slack.onMessage((msg)=>{
 		return send(Formatter.recommend(scotches));
 	}
 
+	return send(`_${Formatter.misunderstand()}_`);
 });
-
-
-
-//const result = Groups.getMatchingGroup('Give me something medicinal')
-
-//console.log(recommendScotch('Give me something medicinal and cheap'));
-//console.log(recommendScotch('Give me something sweet and fancy'));
-
-
-// const result = ScotchAPI.search({
-// 	groups :['J'],
-// 	costs : ['$', "$$", '$$$']
-// })
-
-// console.log(result);
-
-
-
-//Hey scothcbot, can you recommend me something sweet and very smoky, but cheap, but I'm poor?
-
-
-
-
-
-/* Lookup */
-
-// parse(`Hey scotchbot, can you tell me about Ardbeg?`)
-// parse(`scotchbot what's your review of Ardbeg`)
-// parse(`scotchbot can you give me a review of Ardbeg`)
-// parse(`Scotchbot, ardbeg, Thoughts?`)
-// parse(`Macallan 10yo Sherry Oak`)
-// parse(`Lagavulin 12yo Cask Strength`)
-
-
-
-
-
-
-
-
-
-/* User Stories */
-/*
-- generally conversationalif no match
-- Ask it for help,
-
-- Recommend a scotch,
-	- price, cheap, expensive
-	- based on your collection?
-	- name a soctch a similar scotch
-	-
-
-- info abut a scotch
-- loosey goosey scotch name parsing
-
-- Maintain a scotch collection,
-	- redis
-	- list, add, and remove
-	-
-
-
-*/

@@ -12,6 +12,7 @@ const groups = {
 		body : 'Full-bodied',
 		taste: ['sweet', 'sherry'],
 		accent: ['fruity', 'honey', 'spicy'],
+		some: [],
 		examples : ['Aberlour A’Bunadh', 'Auchentoshan Three Wood', 'Glenfiddich 15yo', 'Glendronach 12yo', 'Glenmorangie Lasanta']
 	},
 	'B' : {
@@ -39,6 +40,7 @@ const groups = {
 		body : 'Full-bodied',
 		taste : ['sweet', 'malty'],
 		accent : ['fruity', 'spicy', 'smoky'],
+		some: [],
 		examples : ['Bunnahabhain 12yo', 'Deanston 12yo', 'Glen Garioch 10yo/12yo/15yo', 'Glenlivet French Oak 15yo', 'Tobermory 10yo']
 	},
 	'G' : {
@@ -52,6 +54,7 @@ const groups = {
 		body : 'Very light-bodied',
 		taste : ['sweet', 'apéritif-style'],
 		accent : ['malty', 'fruity', 'floral'],
+		some: [],
 		examples : ['Auchentoshan Classic/10yo', 'Cardhu 12yo', 'Dalwhinnie 15yo', 'Glen Grant 10yo', 'Tamdhu 10yo']
 	},
 	'I' : {
@@ -87,6 +90,10 @@ const GroupInfo = {
 			some : [],
 			examples : []
 		});
+
+		// let taste = _.sampleSize(info.taste, _.random(1,3));
+		// let accent = _.sampleSize(info.accent, _.random(2,4));
+		// let some = _.sampleSize(info.some, _.random(0,2));
 
 		const notes = joinAnd(_.sampleSize(info.accent, _.random(2,4)));
 
