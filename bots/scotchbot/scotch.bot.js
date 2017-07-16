@@ -71,7 +71,7 @@ Slack.onMessage((msg)=>{
 		return send(Formatter.lookup(scotch, confidence));
 	}
 
-	if(Slack.msgHas(msg.text, ['recommend', 'suggest', 'desire', 'palette'])){
+	if(Slack.msgHas(msg.text, ['recommend', 'suggest', 'desire', 'palette', 'want'])){
 		const scotches = _.sampleSize(recommendScotch(msg.text), _.sample([1,1,1,1,2]))
 		if(scotches.length == 0){
 			return send(`_I couldn't find anything for you, however..._\n` +
