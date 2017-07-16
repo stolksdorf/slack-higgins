@@ -46,6 +46,7 @@ module.exports = {
 
 	//groups, cost
 	search : (params = {})=>{
+		if(params.groups && !_.isArray(params.groups)) params.groups = [params.groups];
 		return _.filter(scotches, (scotch)=>{
 
 			if(params.groups){
@@ -61,13 +62,5 @@ module.exports = {
 			return true;
 		});
 	},
-
-
-	recommend : (text)=>{
-
-
-
-
-	}
 
 }

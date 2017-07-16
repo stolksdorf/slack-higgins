@@ -33,8 +33,10 @@ const recommendScotch = (text)=>{
 	if(Slack.msgHas(text, ['fancy', 'rich', 'expensive', 'pricy'])){
 		costs = ['$$$$$', '$$$$$+']
 	}
+	console.log(group, costs);
+
 	return ScotchAPI.search({
-		groups :[group],
+		groups : group,
 		costs : costs
 	});
 }
