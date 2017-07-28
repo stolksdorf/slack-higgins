@@ -71,9 +71,9 @@ const getMapping = (username)=>{
 		sort : 'timestamp',
 		count : 1000
 	})
-	//remove all refs to links
 	.then((res)=>_.reduce(res.messages.matches, (r, msg)=>{
-		const text = msg.text.replace(/(<h.+>)/gi, '').trim();
+		const text = msg.text.replace(/(<h.+>)/gi, '').trim(); //Remove links from messages
+		if(text.indexOf('uploaded a file:') !== -1) return r;  //Skip file upload messages
 		if(text) r.push(text);
 		return r;
 	}, []))
@@ -106,6 +106,9 @@ const genMessage = (mapping, info)=>{
 }
 
 Slack.onMessage((msg)=>{
+
+	console.log(msg.text);
+
 	_.each(Slack.users, (user)=>{
 		if(Slack.msgHas(msg.text, `${user}bot`)){
 			getMapping(user)
