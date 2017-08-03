@@ -106,9 +106,6 @@ const genMessage = (mapping, info)=>{
 }
 
 Slack.onMessage((msg)=>{
-
-	console.log(msg.text);
-
 	_.each(Slack.users, (user)=>{
 		if(Slack.msgHas(msg.text, `${user}bot`)){
 			getMapping(user)
@@ -131,7 +128,7 @@ const sendRandomMessage = ()=>{
 	const randomUser = _.sample(Slack.users);
 	getMapping(randomUser)
 		.then(({mapping, info})=>genMessage(mapping, info))
-		.then((text)=>Slack.msgAs(`${randomUser}bot`, randomUser, 'general', text))
+		.then((text)=>Slack.msgAs(`${randomUser}bot`, randomUser, 'bottin-around', text))
 		.then(()=>makeTimeout())
 }
 const makeTimeout = ()=>setTimeout(()=>sendRandomMessage(), _.random(2,6) * HOURS);
