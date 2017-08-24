@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const Slack = require('pico-slack');
+const fs = require('fs');
 const config = require('nconf');
 
 const MARKOV_DEPTH = 6;
@@ -122,7 +123,21 @@ Slack.onMessage((msg)=>{
 	}
 });
 
-//Send a random bot message every few hours.
+/** Thesis Bot **/
+const thesis = fs.readFileSync('./bots/katie_thesis.txt', 'utf8');
+const thesisMapping = buildMap(thesis.split('\n'));
+console.log(thesisMapping);
+Slack.onMessage((msg)=>{
+	if(Slack.msgHas(msg.text, `thesisbot`)){
+		Slack.msgAs(`thesisbot`, 'pencil', msg.channel, genMessage(thesisMapping))
+			.catch((err)=>Slack.error(err))
+	}
+});
+
+
+
+
+/** Random Proc **/
 const HOURS = 1000 * 60 * 60;
 const sendRandomMessage = ()=>{
 	const randomUser = _.sample(Slack.users);
