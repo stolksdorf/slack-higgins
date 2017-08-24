@@ -45,6 +45,7 @@ let mappings = {};
 const buildMap = (msgs)=>{
 	let result = { starts : [], chain : {}};
 	_.each(msgs, (msg)=>{
+		if(!msg) return;
 		let words = msg.split(SEP);
 		words.push(false);
 		result.starts.push(_.slice(words, 0, MARKOV_DEPTH))
