@@ -1,7 +1,4 @@
-Evaluating contaminants of emerging concern in municipal wastewater effluents
-by
-Emily Kaitlin McCann
-
+Evaluating contaminants of emerging concern in municipal wastewater effluents by Emily Kaitlin McCann
 A thesis
 presented to the University of Waterloo
 in fulfilment of the
@@ -9,20 +6,11 @@ thesis requirement for the degree of
 Master of Science
 in
 Biology
-
-
-
-
-
-
-
-
 Waterloo, Ontario, Canada, 2016
 ©Emily Kaitlin McCann 2016
 Author’s Declaration
 I hereby declare that I am the sole author of this thesis. This is a true copy of the thesis, including any required final revisions, as accepted by my examiners.
 I understand that my thesis may be made electronically available to the public. 
-
 Abstract
 Municipal wastewater treatment plant effluent (MWWE) is a complex matrix that acts as a significant source of contaminants to aquatic receiving environments. Contaminants of emerging concern (CECs) are known to affect aquatic organisms downstream of MWWE discharges. Past studies in the Grand River watershed of southern Ontario on the small-bodied, benthic rainbow darter (Etheostoma caeruleum) have shown altered gene expression, sex steroid levels, gonad size and expression of intersex (testis-ova) associated with wastewater outfalls. Over $700M is currently being spent by the municipal government to upgrade the two major wastewater treatment plants (WWTP) within the Grand River watershed (Waterloo, Kitchener) where biological impacts in the receiving waters have been observed. Although extensive research is currently being performed in the Grand River to determine the biological impacts of WWTP upgrades on exposed fish and benthos, there was no comprehensive work being done on the chemistry of the effluent itself. The objectives of the current study were to determine how process changes and temporal variability altered the concentration of select CECs present in the effluent as well as the total estrogenicity of the discharged effluent. Archived and current effluent samples from 2009 through to 2015 were analyzed for select CECs with LC-MS/MS as well as total estrogenicity with the Yeast Estrogen Screen assay. Concentrations of selected pharmaceuticals, such as ibuprofen and naproxen, are greatly reduced with nitrifying treatment while other contaminants such as carbamazepine and diclofenac remain recalcitrant. The removal of key CECs varies dependent on their physiochemical properties, with readily biotransformed CECs the most effectively removed by the WWTP after a transition to nitrifying treatment. 
 Increased understanding of how major upgrades to treatment plant infrastructure alter the contaminant concentrations in wastewater effluent will greatly improve our ability to inform future watershed regulatory decision-making. These improvements have potential significance for the environment downstream of the WWTPs where endocrine disruption has been documented, including high expression of intersex in fish. This data is a crucial piece of information supporting numerous studies examining the biological consequences of CECs in the aquatic receiving environment. 
@@ -32,7 +20,6 @@ I could not have asked for a better supervisor than Dr. Mark Servos. I am deeply
 Teaching analytical chemistry to a biologist is no easy feat. To Leslie Bragg, thank you for your patience and expertise as I learned to work in a whole new world. 
 To my friends and family, your support, humor, and love have been foundational to my success. I am lucky to have each and every one of you in my life. 
 Table of Contents
-
 Author’s Declaration	ii
 Abstract	ii
 Acknowledgements	ii
@@ -90,8 +77,6 @@ A3: Linear regression analysis of CECs, Nitrate, and Ammonia	2
 A4: Ammonia and Nitrate data from the Region of Waterloo	2
 A5: Principle components analysis details	2
 A6: Flow Data for the Kitchener and Waterloo WWTPs	2
-
- 
 List of Figures
 Figure 1.6.1 Broad timeline of upgrades at the Kitchener WWTP adapted from Region of Waterloo (2010). UVDF = UV disinfection, EPS = Effluent pumping station.	2
 Figure 3.1.1. Ammonia and nitrate concentrations in the Kitchener WWTP November 2010 - November 2015. Sampling events corresponded with when samples were taken for CEC analysis.	2
@@ -113,7 +98,6 @@ Figure 3.7.1. Total estrogenicity in E2 equivalents at the Waterloo WWTP, 2009 -
 Figure 3.8.1. Principle Components Analysis of the Waterloo WWTP, 2011 - 2015.	2
 Figure A4.1. Annual mean ammonia and nitrate concentrations at the Kitchener WWTP 2007 - 2015, data provided by the Region of Waterloo.	2
 Figure A4.2. Annual mean ammonia and nitrate data for the Waterloo WWTP 2007 – 2015; data provided by the Region of Waterloo.	2
- 
 List of Tables
 Table 1.5.1. Some physical and chemical properties of selected CECs.	2
 Table 1.6.1 Characteristics of the Waterloo WWTP	2
@@ -154,12 +138,10 @@ The YES assay is a relatively straightforward and rapid way to determine the tot
 Adverse impacts associated with CECs in wastewater effluents
 The ubiquitous presence of CECs in wastewater effluents has led to a large body of work investigating their potential impacts on aquatic life. Recent laboratory findings have demonstrated that chronic exposure to environmentally relevant levels of common pharmaceuticals can impact the metabolism, reproductive success, and development of fish (Ainter et al. 2009; David and Pancharatna 2009a; David and Pancharatna 2009b; Lister et al. 2009; Galus et al. 2013a; Galus et al. 2013b; Luo et al. 2014; Schoenfuss et al. 2015). Zebrafish exposed to ibuprofen and acetaminophen have shown increased developmental abnormalities and increased mortality (David and Pancharatna 2009a; David and Pancharatna 2009b), decreased spawning rates, and decreased clutch sizes (Lister et al. 2009). Galus et al. (2013a,b) found that adult female zebrafish exposed to four individual pharmaceuticals (carbamazepine, acetaminophen, venlafaxine, and gemfibrozil) as well as to a mixture of these pharmaceuticals produced fewer viable embryos and experienced increased oocyte atresia as well as altered kidney morphology. Likewise, the exposure of embryos to the same pharmaceuticals resulted in reduced survival and increased developmental abnormalities (Galus et al. 2013a,b). Goldfish exposed to the antidepressant fluoxetine exhibit altered behaviour, reproduction (Mennigen et al. 2008; Mennigen et al. 2010), and altered sex steroid levels (Mennigen et al. 2010). These findings indicate the potential for adverse impacts on fish exposed to wastewater effluents containing common pharmaceuticals. 
 More thoroughly documented are the adverse impacts associated with the natural and synthetic estrogens often found in wastewater effluents (Lange et al. 2001; Nash et al. 2004; Schäfers et al. 2007; Parrott & Blunt 2005; Kidd et al. 2007). These CECs act as estrogen receptor agonists and have the potential to impact aquatic life at very low (>1 ng/L) concentrations. Many studies have reported changes in the reproductive system or fitness of wild fish downstream of WWTP outfalls (Jobling et al. 1998; Woodling et al. 2006; Hinck et al. 2009; Tanna et al. 2013), and recent work has demonstrated that secondary-treated municipal effluents have the potential to cause changes in fish and fish populations in receiving environments (e.g. Tyler et al. 2008; Tetreault et al. 2011; 2013). Of particular note is the occurrence of intersex and changes in reproductive performance in fish associated with these wastewater effluent outfalls (Bahamonde et al. 2013; Sumpter & Jobling 2013); these changes may have associated impacts at the population levels (Tetreault et al. 2011; Fuzzen et al. 2015).  In a whole lake experiment, Kidd et al. (2007) found exposure of fathead minnows (Pimephales promelas) to 5 – 6 ng/L of 17a-ethinylestradiol (EE2) resulted in feminized male fish with arrested gonadal development, which within two years led to recruitment failure in the population. These observations suggest that very low levels of EDCs in the environment can have adverse effects on exposed fish, and removal of these compounds from effluents should be an area of concern for environmental decision-makers.
-	Removal of CECs from wastewater 
+Removal of CECs from wastewater 
 Although removal through treatment is crucial to limiting the entry of CECs into the environment, effluent quality monitoring does not typically include the analysis of these contaminants. Traditional measures of effluent quality focus instead on indicators such as total suspended solids, nutrient loading, and biological oxygen demand. Although these indicators are important parameters to assist in the mitigation of environmental impact, they fail to account for the presence of CECs at trace (ng/L or ?g/L) levels. No current Canadian legislation exists to specifically address these contaminants, and thus removal is dependent on processes implemented to meet conventional targets.
 As wastewater treatment plants are not intentionally designed to remove CECs, removal efficacy varies between individual contaminants and treatment processes (Nakada et al. 2006; Salveson et al. 2012; Luo et al. 2014). Chemical processes, such as hydrolysis, volatilization, and photolysis, can also be important for the removal of some chemicals. However, these processes are generally responsible for very little CEC removal during conventional wastewater treatment. Sorption and biotransformation are the primary mechanisms for the removal of CECs from municipal wastewater (Salveson et al. 2012; Luo et al. 2014).  Sorption is the process by which CECs are removed from wastewater through complexing with organic solid waste due to hydrophobic or electrostatic interactions (Salveson et al. 2012). Sorbable CECs are often hydrophobic, though the properties of the sludge in the system (e.g. organic content, charge) can also modify removal (Hyland et al. 2012). This is demonstrated by removal due to electrostatic interactions between negatively charged activated sludge and CECs that are positively charged at sludge pH (Jelic et al. 2012), indicating that estimation of a compound’s sorption potential must consider both its hydrophobicity and its ionization state (Salveson et al. 2012). Historically, a compound’s log Kow value (octonal-water partitioning coefficient) was used to estimate sorption to sludge. However, this metric does not account for the altered sorption potential of weakly acidic or basic compounds in different ionization states. A pH-dependent partitioning coefficient (log Dow) is a more accurate metric to estimate sorption potential for ionizable compounds (Salveson et al. 2012). However, the use of these metrics provides only a broad estimation of sorption potential. To accurately assess the sorption of a CEC in a WWTP, the compound must be investigated within that particular system (determination of specific partition coefficients, Kp). This is in part due to the differences in the structure and properties of the organic matter in each matrix. 
 Biotransformation is the removal through biological processes and can be estimated based on a CEC’s physiochemical properties and verified through laboratory assays (Salveson et al. 2012). Biodegradation potential can be represented by a first-order kinetic rate that is calculated for each specific compound in a particular sludge, and can vary widely between different processes (Salveson et al. 2012).The biodegradability of a compound is dependent on factors such as its physical structure (chain length or branching), size, and solubility, as well as process characteristics (Salveson et al. 2012). CECs that readily degrade in wastewater systems tend to be soluble in water, smaller, and have sites amenable to biological attack, though these metrics provide only a broad generalization with which removal efficacy may be estimated. The degree of removal achieved by sorption and biotransformation for any CEC is thus driven by a combination of the CEC’s physiochemical properties and by the treatment processes it undergoes. Considering the number of chemicals and the diversity of treatment processes it is difficult to predict the composition of final wastewater effluents. Despite this complexity some general patterns have emerged from the literature. Although each treatment plant can vary considerably in design, they generally follow similar processes, and must meet similar legislated targets for effluent quality.
-
- 
 Table 1.5.1. Some physical and chemical properties of selected CECs. 
 Class	Compound	Most Common Use	Chemical Formula	Molecular Weight (g/mol)	pKa	Log Kow	Log Dow at pH 7g
 Antiandrogens	Triclosan	Personal care products	C12H7Cl3O2	289.54	7.9	4.76	4.9
@@ -191,7 +173,6 @@ Wastewater effluents in the Grand River watershed
 CECs have been detected in municipal wastewater effluents across Canada (Metcalfe et al. 2003; Servos et al. 2005; Lishman et al. 2006), including in the Grand River watershed (Tanna et al. 2013; Arlos et al. 2014). The Grand River is a highly impacted watershed, and receives inputs from more than 30 WWTPs (Chapman & Anderson 2011). Antimicrobials, antiandrogens, estrogens, artificial sweeteners, polycyclic musks and numerous pharmaceuticals have all been associated with major WWTP outfalls in the central Grand River (Servos et al. 2005; Smyth et al. 2008; Metcalfe et al. 2010; Spoelstra et al. 2013; Arlos et al. 2014; Couperus et al. 2016). Numerous studies evaluating impacts associated with these effluent outfalls in the Grand River have focused on the rainbow darter (Etheostoma caeruleum), a small-bodied benthic fish found throughout the watershed. When exposed to wastewater effluent in the Grand River, rainbow darter have exhibited effects at multiple levels of biological organization, including impacts often associated with EDCs. Rainbow darter present at sites downstream of wastewater treatment plants in the Grand River have been found to have altered gene expression, sex steroid levels, gonad size and expression of elevated rates of intersex (testis-ova) associated with wastewater outfalls (Tetreault et al. 2011; Tanna et al. 2013; Bahamonde et al. 2015). Downstream of the Kitchener WWTP outfall, 80 – 100% of fish captured between 2009 and 2011 exhibited intersex (Tetreault et al. 2011; Tanna et al. 2013; Bahamonde et al. 2015). In addition, there is evidence that suggests changes in reproductive performance (Fuzzen et al. 2015) and altered fish assemblages (Tetreault et al. 2013). These changes may be related to a variety of contaminants found in the effluents including estrogenic and/or antiandrogenic compounds present in the wastewater effluent.
 The Region of Waterloo is currently investing approximately $700 million to upgrade the Waterloo (Table 1.6.1) and Kitchener (
 Table 1.6.2) WWTPs in order to improve effluent quality (Bicudo et al. 2016). Previous studies following municipal treatment plant upgrades in Boulder, Colorado showed that treatment upgrades (moving from trickling filters and solid contact to activated sludge) reduced effluent estrogenicity, and corresponding impacts, such as intersex, in fish downstream of the outfall (Barber et al. 2012). Prior to upgrades, the Kitchener and Waterloo WWTPs operated as secondary activated sludge plants with minimal or no nitrification. 
-
 Table 1.6.1 Characteristics of the Waterloo WWTP 
 Treatment Plant	Waterloo – Pre	Waterloo – Post (anticipated)
 Treatment Capacity Rate (m3/d)	57,500	57,500
@@ -202,20 +183,12 @@ Secondary Treatment	Conventional activated sludge
 
 Advanced Treatment	Phosphorous removal	Phosphorous removal
 Disinfection	Sodium hypochlorite	UV light
-
-
-
-
-
-	
-
 Table 1.6.2. Characteristics of the Kitchener WWTP before and after upgrades.
 Treatment Plant	Kitchener – Pre	Kitchener – Post (Current status)
 Treatment capacity rate (m3/d)	122,000	122,000
 Treatment System	Convectional activated sludge (non-nitrifying)	Convectional activated sludge (fully nitrifying)
 Primary Treatment	Bar screen, grit removal, primary clarifier	Bar screen, grit removal, primary clarifier
 Secondary Treatment	Conventional activated sludge1	Conventional activated sludge3 with return activated sludge
-
 Advanced Treatment	Phosphorous removal	Phosphorous removal
 Disinfection	Sodium hypochlorite	UV light
 Notes	2Two secondary treatment trains; shared headworks, primary clarifier; trains re-join before chlorination/dechlorination	4Two secondary treatment trains; shared headworks, primary clarifier; trains re-join before UV disinfection 
@@ -225,9 +198,7 @@ Notes	2Two secondary treatment trains; shared headworks, primary clarifier; trai
 4 Train 1 operating as a fully mixed bioreactor; Train 2 operating as a three-pass plug flow train as of Fall 2012 
 Upgrades at the Kitchener and Waterloo WWTPs began in 2007 and are scheduled to be completed in 2018 (Bicudo et al. 2016). At both plants, upgrades will move treatment towards extended solids retention times, nitrification, and UV disinfection of the effluents which is expected to greatly improve their quality. The Region of Waterloo’s target for ammonia exiting the Kitchener WWTP is 7 mg/L year-round after the upgrades that occurred in 2012 and 2013, and 2 – 5 mg/L when all upgrades are completed in 2018 (Figure 1.6.1), far below the approximately 28 mg/L documented in effluents prior to upgrades (Bicudo et al. 2016). 
 The most significant upgrade impacting CEC removal at the Kitchener WWTP between 2007 and 2015 was the improvement to secondary treatment in late 2012 and early 2013 (Figure 1.6.1). The configuration of train 2 was altered from a completely mixed bioreactor to a three-step plug-flow system with a re-aeration zone for the return activated sludge entering the system (Bicudo et al. 2016). This change, paired with an upgrade from mechanical surface aeration to fine bubble aerators in both trains, allowed for a longer, stable SRT (an increase from <2 days to 5.4 days) and the growth of more diverse bacterial communities, resulting in nitrifying treatment in both treatment trains (Bicudo et al. 2016). In addition, these improvements increased the capacity of the secondary clarifiers (Bicudo et al. 2016). 
- 
 Figure 1.6.1 Broad timeline of upgrades at the Kitchener WWTP adapted from Region of Waterloo (2010). UVDF = UV disinfection, EPS = Effluent pumping station.
-
 The upgrades at the Waterloo WWTP, including major upgrades to include additional aeration to achieve nitrification, were originally expected to be completed in the fall of 2014 but have experienced delays in construction. The targeted upgrades were similar to those at the Kitchener WWTP, including implementation of a three-pass plug-flow system with fine bubble aeration for secondary treatment of effluents. Construction was halted after UV disinfection and return activated sludge processes were implemented but before improvements to aeration were made, resulting in high ammonia loading in the effluents (Figure A4.2). In mid-2014 a re-aeration zone was added for the return activated sludge (RAS) process, but the aeration in the rest of the secondary treatment train was not upgraded. 
  	Previous work in the Grand River watershed indicated that treatment plants with greater nitrification led to greater removal of CECs (Tanna et al. 2013; Arlos et al. 2014). A number of ongoing studies in the Grand River watershed are working to characterize fish response to these changes in treatment on numerous levels of biological organization. An evaluation of impacts requires knowledge of what the organisms in the affected sites are exposed to. Wastewater effluents are extremely complex matrices, and their makeup varies significantly depending on the inputs to and processes employed within the plant. Effluents exiting a WWTP can also vary seasonally or due to process upsets. As a result of this variation, proper characterization of exposure requires a thorough understanding of the effluents exiting the WWTP upstream of impacted sites, and cannot be generalized from other WWTPs. As a result, it is imperative to characterize the specific effluents affecting an impacted site, and to understand their temporal variability.  
 Study Objectives
@@ -237,26 +208,6 @@ This study was intended to support the interpretation of biological work occurri
 Study Scope
 To characterize the effluents of the Kitchener and Waterloo WWTPs over time, monthly grab samples of effluent were analyzed alongside limited archived samples for fifteen pharmaceuticals, three estrogens, and total estrogenicity. 
 Wastewater effluents may contain hundreds of CECs with widely varying physiochemical characteristics. The number of CECs selected for analysis must be therefore limited for practical reasons while still accurately characterizing the wastewater effluent. One way CECs can be categorized is by separation into broad categories based on the mechanisms by which they are removed in wastewater treatment (Salveson et al. 2012). A suite of indicator compounds was designed to allow for the evaluation of a broad spectrum of removal efficacy by sorption and biotransformation (Salveson et al. 2012). This allows for more general characterization of a WWTP’s removal efficacy for CECs with similar physical and chemical properties (Salveson et al. 2012).  The final consideration in the selection of CECs was the presence of a robust methodology and instrumentation for analysis and quantitation (Table 1.8.1). This was to ensure the data provided were accurate, precise, and sufficiently sensitive for environmental relevance. 
- 
-Table 1.8.1 Selected CECs and their categorization based on expected mechanisms of removal in wastewater treatment.
-		Biotransformation Potential
-	Level	Low	Medium	High
-Sorption Potential	Low	Carbamazepine
-Diclofenac	Sulfamethoxazole
-Trimethoprim
-Gemfibrozil
-Venlafaxine
-	Ibuprofen
-Naproxen
-
-	Medium		17-a ethinylestradiol
-Atorvastatin
-	Estradiol
-Estrone
-	High	Triclocarban		Triclosan
-Fluoxetine
-
- 
  -  Materials and Methods
 General Approach
 Archived sample extracts of effluent from the Kitchener and Waterloo WWTPs in 2010, 2011, 2012, and 2013 were analyzed for CECs and estrogenic potency alongside effluent samples taken monthly from September 2014 to September 2015. Corresponding water quality data was collected at each effluent sampling (ammonia, nitrate, nitrite, chloride, conductivity). Samples were analyzed for select CECs with two LC-MS/MS methods and total estrogenic potency with the YES assay. 
@@ -271,8 +222,6 @@ Sample Preparation and Solid Phase Extraction
 Solid Phase Extraction
 Wastewater effluent samples were analyzed for select CECs with two LC-MS/MS methods as well as total estrogenicity with the YES assay. Three solid phase extraction (SPE) methods were used, each optimized for the target analytes. The three solid phase extraction methods used are outlined in Table 2.4.1.
 All samples were filtered through a glass fiber filter with a pore size of 1 µm (Pall Corporation, Mississauga, ON) prior to extraction. Isotopically labelled standards for each target CEC were added to samples prior to extraction for analysis with LC-MS/MS. Samples for bioassays were not spiked. A ThermoFisher AutoTrace™ (Dionex, Sunnyvale, CA) was used to extract the samples. All cartridges were preconditioned with solvents followed by water, and samples were passed through at a rate of approximately 5 mL/min. After elution, samples were evaporated to dryness under a gentle stream of nitrogen using a ThermoFisher SE 500 solvent evaporator at 30°C (Dionex, Sunnyvale, CA). After extraction, samples were stored at -20°C until analysis.
- 
-
 Table 2.4.1. Three SPE methods for the optimized extraction of different target analytes from wastewater effluents.
 Target 	Cartridge	Volume extracted (mL)	Isotopically labelled surrogates (µg/L)	pH Adjustment	Wash	Elution	Reconstitution
 Pharmaceuticals, personal care products (PPCP)	Bond Elut Plexa1	100	20	To pH 2.0 ± 0.5 with 10 M HCl	5 mL water
@@ -285,75 +234,13 @@ Estrogens	Superclean LC-183	100	20	None	5 mL water
 5 mL hexanes	5 mL ethyl acetate
 5 mL ethyl acetate	500 µL MeOH with 75 µg/L lorazepam and chloramphenicol
 1Bond Elut Plexa cartridges (6 cc, 500 mg, Agilent Technologies, Mississauga, ON) 2 Oasis HLB cartridges (6cc, 500 mg, Waters, Milford, MA) 3 Superclean LC-18 cartridges (6cc, 500 mg, Sigma-Aldrich)
- 
 Solid Phase Extraction Quality Assurance and Quality Control
 With each batch of samples three quality assurance/quality control (QA/QC) samples were processed; one negative control (blank) and two positive controls (MS1, MS2). All three QA/QC samples were prepared in MilliQ water. The blank was spiked with only isotopically labelled standards. The positive controls MS1 and MS2 are identical replicates spiked with both isotopically labelled standards and unlabeled chemicals at a concentration of 20 µg/L. As of February 2015, additional wastewater matrix QA/QC samples were added to the monthly extractions, spiked with both isotopically labelled standards and unlabeled chemicals at a concentration of 20 µg/L. These additional QA/QC samples help to account for matrix effects as well as to determine the efficiency of the extraction procedure. 
 Sample Analysis
 LC-MS/MS analysis of select pharmaceuticals and personal care products
 Analysis of pharmaceutical samples extracted with Bond Elut Plexa was performed with liquid chromatography and tandem mass spectrometry (LC-MS/MS). Separation of analytes was completed on an Agilent 1200 HPLC (Agilent, San Pedro, CA) using a 4.6 mm x 150 mm x 5 µm Agilent Eclipse XDB-C18 column. Detection of analytes was completed using multiple reaction monitoring (MRM) on a Sciex 3200 QTRAP mass spectrometer (ABSciex, Concord, ON, Canada) with electrospray ionization (ESI). Samples were run in both positive and negative ion mode to identify all target analytes. Analytes were identified based on the transitions listed in Table 2.5.1. Source-dependent and compound-specific parameters are listed in Appendix A, Table A1.1. The mobile phases used for this analysis were 5 mM ammonium acetate in MilliQ water (A) and 100% methanol (B). The mobile phase gradient was dependent on which ion mode was selected. For positive ion mode, the mobile phase gradient began at 50% B, increased to 100% B over 7.5 min, and was then held at 100% B for 2 min. In negative ion mode, the mobile phase gradient began at 40% B, increased to 100% B over 7.5 minutes, and was then held at 100% B for 3 min. In both cases, a re-equilibration period of 5 minutes occurred after each sample to return the mobile phase gradient to starting conditions.
-Table 2.5.1 Parameters for analysis of select PPCPs
-Analyte 	Q1 	Q3 	Polarity 
-Atorvastatin	559.3	440.2	Positive
-p-hydroxy atorvastatin	575.2	440.3	Positive
-Carbamazepine	237.1 	193.3 	Positive
-Diclofenac	293.9	250	Negative
-Fluoxetine	310.3	44.3	Positive
-Gemfibrozil	249.1	121.1	Negative
-Ibuprofen	204.9 	160.9 	Negative
-Naproxen	229.0 	170.0 	Negative
-Sulfamethoxazole	254.1	156.2	Positive
-Triclocarban	314.8	161.6	Negative
-Triclosan	286.9 	35.0 	Negative
-Trimethoprim	291.1	261.2	Positive
-Venlafaxine	278.3	58.1 	Positive
-Surrogate	Q1 	Q3 	Polarity 
-Atorvastatin-d5	564.3	445.3	Positive
-p-hydroxy atorvastatin-d5	580.2	445.2	Positive
-Carbamazepine-d10	247.2	204.4	Positive
-Diclofenac-d4	298.2	253.8	Negative
-Fluoxetine-d5	315.2	44.2	Positive
-Gemfibrozil-d6	255	120.7	Negative
-Ibuprofen-d3	207.9	164.1	Negative
-Naproxen-d3 	232.1 	172.8 	Negative
-Sulfamethoxazole-d4	258.1	160.1	Positive
-Triclocarban-d4	316.9	159.9	Negative
-Triclosan-d3 	286.9 	35.0	Negative
-Trimethoprim-d3	294.2	230.3	Positive
-Venlafaxine-d6	288.4	58.1	Positive
-Q1=quadrupole 1; Q3=quadropole 3
- LC-MS/MS analysis of selected estrogens
 Analysis of select estrogens extracted with Superclean LC-18 was performed with LC-MS/MS. Separation of analytes via liquid chromatography was completed on an Agilent 1260 HPLC with a 2.1 mm x 50 mm x 1.8 µm Agilent ZORBAX Eclipse Plus C18 column. Detection of analytes was completed using dynamic multiple reaction monitoring (dMRM) on an Agilent 6460 triple quadrupole (QQQ) mass spectrometer with Agilent Jet Stream (AJS) electrospray ionization. Samples were run in both negative ion mode to identify all target analytes. Analytes were identified based on the transitions listed in Table 1.5.2. Source-dependent and compound-specific parameters are listed in Appendix A, Table A1.2. 
 The mobile phases used for this analysis were 0.5 mM ammonium fluoride in MilliQ water (A) and 100% acetonitrile (B). The mobile phase gradient started at 10% B, increased to 100% B over 10 minutes, and was then held at 100% B for 3 minutes. An 8 minute re-equilibration period occurred after each sample to establish the mobile phase gradient at its starting conditions.  
-Table 2.5.2. Parameters for the analysis of select estrogens via LC-MS/MS
-Analyte 	Q1	Q3	Polarity 
-Bisphenol A	227.3	133.2	Negative
-		212.3	Negative
-Estrone	269.4	145.1	Negative
-		143.1	Negative
-Estradiol	271.4	145.1	Negative
-		143.1	Negative
-Estriol	287.4	171.2	Negative
-		145.1	Negative
-Ethinylestradiol	295.39	158.9	Negative
-		144.9	Negative 
-Triclosan	286.99	35	Negative
-Surrogate	Q1	Q3	Polarity 
-Bisphenol A - d16	241.28	223.3	Negative
-		142.2	Negative
-Estrone - d2	271.2	147.1	Negative
-		145.1	Negative
-Estrone-d4	273.4	147.1	Negative
-		145.1	Negative
-Estradiol-d4	275.2	187.2	Negative
-		145.3	Negative
-Estriol-d2	289.39	173.2	Negative
-		147.1	Negative
-Estriol-d3	290.2	173.2	Negative
-		145.3	Negative
-Ethinylestradiol - d4	299.4	161.2	Negative
-		147.2	Negative
-Triclosan-d3	289.99	35	Negative
- 
 Measuring estrogenic potency with the YES assay
 Analysis of the total estrogenicity of samples extracted with the Oasis HLB method was performed with the YES assay. Buffers and other materials for the YES assay were prepared as outlined in Appendix A2: Reagents required for the YES Assay, Table A2.1.
 Saccharomyces cerevisiae cells (Receptor: ERtrp (YePtrpER), Reporter E2.ura (YRpE2ura)) provided by Heidi Engelhardt, University of Waterloo (originally from K. Gaido, Research Triangle Park) were stored in 30% glycerol stock at -80°C until use. After thawing at 4°C, cells were streaked on agar plates and placed in a 30°C incubator at 300 rpm for 3-4 days, or until identifiable colonies were present. Plates were then stored at 4°C until use for no more than 14 d.
@@ -377,34 +264,11 @@ Each LC-MS/MS method was optimized to achieve the best possible detection for th
 Data analysis for the PPCP method was completed with Analyst software version 1.6.1 (Applied Biosystems). For the estrogen method Agilent MassHunter Quantitative Analysis version B.05.02 was used for quantitation. A series of calibration standards at concentrations of 0, 0.5, 1, 10, 50, 100, 200, and 500 µg/L were run prior to each batch of samples. An additional two calibration points at 0.1 and 5 µg/L were added to this for the estrogen analysis. Samples were quantified based on the ratio of analyte peak area to isotopically labelled standard peak area. 
 The instrument detection (IDL) and quantification limits (IQL) were determined by running a series of blanks (n=7) as well as a calibration curve with concentrations of 0, 0.1, 0.5, 1.0, 10, 50, 100, 200, and 500 µg/L. The IDLs were reported as three times the standard deviation of the blanks. The IQLs were calculated based on ten times the standard deviation of the blanks.
 The method detection limit (MDL) was determined by running a series of wastewater samples that had been spiked with various concentrations of standards (0, 5, 10, and 50 ng/L). MDLs were calculated at a 99% confidence using a student’s t-test value (n-1) multiplied by the standard deviation of 7 samples. The instrument detection and quantification limits as well as the method detection limit for each analyte are listed in Table 2.6.1. 
-Table 2.6.1. LC-MS/MS method detection limits (MDL) for CECs in wastewater effluents.
-Analyte	Surface water MDL (ng/L)	Wastewater MDL (ng/L)
-Triclosan	11.2	56a
-Triclocarban	9.6	48a
-Sulfamethoxazole	1.2	6a
-Trimethoprim	1.2	6a
-Carbamazepine	1.54	10.8
-17a-ethynylestradiol 	1	3.2
-17ß-estradiol	0.5	3
-Estrone	1	4
-Estriol 	1	3.6
-Gemfibrozil	3.3	16.5a
-Diclofenac	7.3	36.5a
-Ibuprofen	2.2	21.4
-Naproxen	2.6	16.4
-Fluoxetine	10.33	51.7a
-Venlafaxine	1.36	8.2
-Atorvastatin	8.2	41a
-p-hydroxy Atorvastatin	8.2	41a
-o-hydroxy Atorvastatin	8.2	41a
-aWastewater MDL was calculated as 5x surface water MDL
 YES Assay
 The YES assay was previously validated in the Servos lab for use on wastewater effluent samples from the Kitchener and Waterloo WWTPs (Tanna et al. 2013). On each plate, a calibration curve of 17ß-estradiol standards at concentrations of 1.25E-08, 6.25E-09, 3.13E-09, 1.56E-09, 7.81E-10, 3.91E-10, 1.95E-10, 9.77E-11, 4.88E-11, 2.44E-11, 1.22E-11 M was run in duplicate. QA/QC samples were also run in duplicate on each plate in the form of one positive control (cells and a calibration curve standard), one negative control (MeOH and cells), and a blank (cells only). 
 The ß-galactosidase activity of each well was determined by comparing the rate of chromogen production at OD420 by the samples relative to the 17ß-estradiol calibration curve standards. Readings were taken every 30 s over a 30 m period. Standards or samples that were cytotoxic were not considered in calculations. The OD660 of each well was used to correct for the volume of cells present. As indicated by the ThermoFisher yeast ß-galactosidase assay kit, only values between 0.2 and 1 were included in these calculations. The equation used to determine ß-galactosidase activity is as follows, where t = time in minutes of incubation and V = volume of cells in mL used in the assay (Equation 1). 
 ß-galactosidase activity=(1000 × ?OD_420  )/(t ×V × OD_660 ) 			Equation 1
-
 Once ß-galactosidase activity was determined, the final E2eq of each well in ng/L was calculated with the following equation (Equation 2):
-
 Final Conc (ng/L E2 equivalents)==(Conc. of E2 (mol/L)×Vol of cells per well (µL))/(Vol of extract the cells are exposed to (µl))×MW of E2(g/mol)×final reconstituted volume after drying(mL) /vol of samples extracted (mL) ×serial dilution
 Equation 2
 Statistics
@@ -416,10 +280,8 @@ Figure 3.1.1. Ammonia and nitrate concentrations in the Kitchener WWTP November 
 Select Pharmaceuticals in the Kitchener WWTP
 The two pharmaceuticals (ibuprofen, naproxen) that were previously identified as having high biotransformation potential and low sorption potential were readily removed by the WWTP after upgrades were implemented. The concentration of ibuprofen in the Kitchener WWTP (Figure 3.2.1) was significantly lower (p < 0.001) in 2013 (26.3 ± 29.6 ng/L), 2014 (75.3 ± 42.4 ng/L), and 2015 (111 ± 77.7 ng/L) compared to pre-upgrade conditions (3540 ± 2790 ng/L), though the increase in concentration after 2013 was also significant (p < 0.001). Similarly, the concentration of naproxen (Figure 3.2.1) in the Kitchener WWTP effluent was significantly higher (p = 0.005) before upgrades (507 ± 353 ng/L) than during (163 ± 144 ng/L) or after in 2013 (25.5 ± 18.9 ng/L), 2014 (56.0 ± 33.9 ng/L), and 2015 (71.8 ± 53.1 ng/L).
  Figure 3.2.1. Select pharmaceuticals with high biotransformation and low sorption rates in the Kitchener WWTP effluents November 2010 - November 2015. Concentrations of ibuprofen and Naproxen were reduced significantly (p < 0.001) after the implementation of upgrades in 2012.
-
 In contrast, the two pharmaceuticals previously identified as having low sorption potential and low biotransformation potential (carbamazepine, diclofenac) were largely recalcitrant in the effluents even after upgrades. The concentration of carbamazepine (Figure 3.2.2) was significantly reduced (p < 0.001) only in 2013 (236 ± 46.3 ng/L) when compared to before upgrades occurred (619 ± 121 ng/L), and was not significantly different in 2014 (434 ± 221 ng/L) or 2015 (603 ± 313 ng/L). The concentration of diclofenac (Figure 3.2.2) in the WWTP effluent was not significantly different from 2010 (413 ± 285 ng/L) to 2015 (830 ± 401 ng/L) except for the period in 2012 while upgrades were being implemented (193 ± 278 ng/L), when concentrations were significantly lower (p < 0.001).
 Figure 3.2.2. Select pharmaceuticals with low biotransformation and sorption rates in the Kitchener WWTP effluents November 2010 - November 2015. Concentrations of carbamazepine and diclofenac did not change significantly after the implementation of upgrades in 2012.
-
 The four pharmaceuticals previously identified as having moderate biotransformation potential and low sorption potential (sulfamethoxazole, trimethoprim, gemfibrozil, venlafaxine) varied in their response to the WWTP upgrades. The concentration of venlafaxine (Figure 3.2.3) decreased significantly in the effluent (p < 0.001) in 2013 (911 ? 150 ng/L) and 2014 (953 ± 227 ng/L) but not in 2015 (1149 ± 309.1 ng/L) compared to before upgrades were implemented (1631 ± 231.5 ng/L). Sulfamethoxazole concentrations (Figure 3.2.3) were reduced in Kitchener WWTP effluents (p = 0.03) only in 2014. Concentrations of trimethoprim and gemfibrozil (Figure 3.2.3) in the effluent were not significantly different (p > 0.05) across the years from 2010 – 2015. 
 Figure 3.2.3. Select pharmaceuticals with moderate removal through biotransformation and low sorption at the Kitchener WWTP 2010 - 2015. The concentrations of sulfamethoxazole, trimethoprim, gemfibrozil, and venlafaxine were variable over time.  
 The concentration of triclosan in the Kitchener WWTP effluents (Figure 3.2.4) was significantly lower (p < 0.001) in 2013 (206 ± 86.9 ng/L), 2014 (319 ± 227 ng/L), and 2015 (226 ± 137 ng/L) compared to before-upgrade conditions (818 ± 164 ng/L). The concentration of fluoxetine was significantly lower (p = 0.035) than before upgrades (60.6 ± 46.6 ng/L) in 2013 (14.8 ± 5.24 ng/L) and 2014 (19.6 ± 10.8 ng/L), but not in 2015 (22.9 ± 7.71 ng/L).
