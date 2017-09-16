@@ -35,10 +35,6 @@ const SafeChannels = _.map([
 	"vidya"
 ], (channel)=>`in:${channel}`).join(' ');
 
-const toTinyNumber = (num)=>{
-	const map = {'1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','0':'⁰'};
-	return _.map(num.toString(), (n)=>map[n]).join('');
-}
 
 let mappings = {};
 
@@ -102,24 +98,38 @@ const genMessage = (mapping, info)=>{
 		msgArray.push(_.sample(choiceArray));
 		return chooseWord();
 	}
-	let text = chooseWord().join(SEP);
-	if(info) text += `\n\nᵇᵘᶦᶫᵗ ʷᶦᵗʰ ${toTinyNumber(info.msgs)} ᵐˢᵍˢ ᵘˢᶦᶰᵍ ${toTinyNumber(info.chars)} ᶫᵉᵗᵗᵉʳˢ`;
-	return text;
+	return {
+		text : chooseWord().join(SEP),
+		info
+	};
 }
+
+const sendMessage = (name, icon, channel, {text='', info=false})=>{
+	return Slack.api('chat.postMessage', {
+		channel    : channel,
+		username   : name,
+		icon_emoji : icon,
+		attachments: JSON.stringify([{
+			pretext      : text,
+			mrkdwn_in : ['text'],
+			footer : (info ? `built with ${info.msgs} messages, using ${info.chars} letters.` : '')
+		}])
+	});
+};
 
 Slack.onMessage((msg)=>{
 	_.each(Slack.users, (user)=>{
 		if(Slack.msgHas(msg.text, `${user}bot`)){
 			getMapping(user)
 				.then(({mapping, info})=>genMessage(mapping, info))
-				.then((text)=>Slack.msgAs(`${user}bot`, user, msg.channel, text))
+				.then((text)=>sendMessage(`${user}bot`, user, msg.channel, text))
 				.catch((err)=>Slack.error(err))
 		}
 	});
 	if(Slack.msgHas(msg.text, `hivebot`)){
 		getMapping('hivebot')
 			.then(({mapping, info})=>genMessage(mapping, info))
-			.then((text)=>Slack.msgAs(`hivebot`, 'hivebot', msg.channel, text))
+			.then((text)=>sendMessage(`hivebot`, 'hivebot', msg.channel, text))
 			.catch((err)=>Slack.error(err))
 	}
 });
@@ -127,16 +137,12 @@ Slack.onMessage((msg)=>{
 /** Thesis Bot **/
 const thesis = fs.readFileSync('./bots/katie_thesis.txt', 'utf8');
 const thesisMapping = buildMap(thesis.split('\n'));
-console.log(thesisMapping);
 Slack.onMessage((msg)=>{
 	if(Slack.msgHas(msg.text, `thesisbot`)){
-		Slack.msgAs(`thesisbot`, 'pencil', msg.channel, genMessage(thesisMapping))
+		sendMessage(`thesisbot`, 'pencil', msg.channel, genMessage(thesisMapping))
 			.catch((err)=>Slack.error(err))
 	}
 });
-
-
-
 
 /** Random Proc **/
 const HOURS = 1000 * 60 * 60;
@@ -144,8 +150,8 @@ const sendRandomMessage = ()=>{
 	const randomUser = _.sample(Slack.users);
 	getMapping(randomUser)
 		.then(({mapping, info})=>genMessage(mapping, info))
-		.then((text)=>Slack.msgAs(`${randomUser}bot`, randomUser, 'bottin-around', text))
+		.then((text)=>sendMessage(`${randomUser}bot`, randomUser, 'bottin-around', text))
 		.then(()=>makeTimeout())
 }
-const makeTimeout = ()=>setTimeout(()=>sendRandomMessage(), _.random(2,6) * HOURS);
+const makeTimeout = ()=>setTimeout(()=>sendRandomMessage(), _.random(5,10) * HOURS);
 makeTimeout();
