@@ -107,7 +107,7 @@ const genMessage = (mapping, info)=>{
 const sendMessage = (name, icon, channel, {text='', info=false})=>{
 	return Slack.api('chat.postMessage', {
 		channel    : channel,
-		username   : name,
+		username   : `:${name}:`,
 		icon_emoji : icon,
 		attachments: JSON.stringify([{
 			pretext      : text,

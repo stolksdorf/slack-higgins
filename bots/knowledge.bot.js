@@ -7,9 +7,22 @@ const speak = require('speakeasy-nlp');
 //Add people's names to the POS system
 // Add notable locations or other words to the POS system
 
+/*
+
+
+ //Remove special characters and return an array of tokens (words).
+module.exports = function(input) {
+    return input
+        .toLowerCase()
+        .replace(/[.,\/#!$%\^&\*;:{}=_`\"~()]/g, '')
+        .split(' ');
+};
+*/
+
 
 const coreSpeech = (text, filteredWords=[])=>{
 	let words = new pos.Lexer().lex(text.toLowerCase());
+	console.log(words);
 	words = _.filter((new pos.Tagger()).tag(words), (info)=>!_.includes(filteredWords, info[0]))
 	return _.reduce(words, (acc, info)=>{
 		const word = info[0];
