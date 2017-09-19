@@ -4,6 +4,8 @@
   "description": "a slackbot for my personal slack",
   "main": "higgins.js",
   "scripts": {
+    "lint": "eslint --fix *.js **/*.{js,jsx}",
+    "lint:dry": "eslint *.js **/*.{js,jsx}",
     "start": "node higgins.js",
     "test": "nodemon higgins.js",
     "dev": "nodemon higgins.js",
@@ -45,5 +47,9 @@
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.7.1",
+    "eslint-config-stolksdorf": "^1.0.1"
   }
 }

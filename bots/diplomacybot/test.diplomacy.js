@@ -1,19 +1,19 @@
-var DiplomacyBot = require('./diplomacy.bot.js');
-var DiplomacyGame = require('./diplomacy.game.js');
-var Storage = require('slack-microbots/storage').create('diplomacy');
+const DiplomacyBot = require('./diplomacy.bot.js');
+const DiplomacyGame = require('./diplomacy.game.js');
+const Storage = require('slack-microbots/storage').create('diplomacy');
 
-var bot = {
+const bot = {
 	reply : function(text, target){
-		var c = (target ? '[' + target + ']' : '')
+		const c = (target ? `[${target}]` : '');
 		console.log(' -', c, text);
 	}
 };
-var msg = function(user, text){
-	DiplomacyBot.response(text, {user : user, channel : 'diplomacy'}, bot)
-}
-var drt = function(user, text){
-	DiplomacyBot.response(text, {user : user, isDirect : true}, bot)
-}
+const msg = function(user, text){
+	DiplomacyBot.response(text, {user: user, channel: 'diplomacy'}, bot);
+};
+const drt = function(user, text){
+	DiplomacyBot.response(text, {user: user, isDirect: true}, bot);
+};
 
 
 Storage.init(function(){
@@ -27,13 +27,13 @@ Storage.init(function(){
 	//console.log(DiplomacyBot.STATE());
 
 
-})
+});
 
 
-var startGameTest = function(){
+const startGameTest = function(){
 	msg('scott', 'Higs, end game');
 	msg('scott', 'Higs, start the game with 8 rounds that each last 1 day');
-}
+};
 
 var scoreBoardTest = function(){
 	msg('scott', 'Higs, end game');
@@ -51,5 +51,5 @@ var scoreBoardTest = function(){
 	drt('scott', 'I am going to invest this round');
 
 
-}
+};
 

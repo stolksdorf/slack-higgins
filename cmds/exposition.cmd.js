@@ -1,6 +1,6 @@
 module.exports = {
-	url : '/exposition',
+	url    : '/exposition',
 	handle : function(msg, info, reply){
 		reply(msg);
 	}
-}
+};

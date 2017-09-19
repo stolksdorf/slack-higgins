@@ -1,6 +1,6 @@
 module.exports = {
-	url : '/dothething',
+	url    : '/dothething',
 	handle : function(msg, info, reply){
-		reply('http://i.imgur.com/vsZaaNR.gif' + " AM I DOING IT RIGHT?");
+		reply('http://i.imgur.com/vsZaaNR.gif' + ' AM I DOING IT RIGHT?');
 	}
-}
+};

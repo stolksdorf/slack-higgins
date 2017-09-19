@@ -23,7 +23,7 @@ module.exports = function(input) {
 const coreSpeech = (text, filteredWords=[])=>{
 	let words = new pos.Lexer().lex(text.toLowerCase());
 	console.log(words);
-	words = _.filter((new pos.Tagger()).tag(words), (info)=>!_.includes(filteredWords, info[0]))
+	words = _.filter((new pos.Tagger()).tag(words), (info)=>!_.includes(filteredWords, info[0]));
 	return _.reduce(words, (acc, info)=>{
 		const word = info[0];
 		const partOfSpeech = info[1];
@@ -43,7 +43,7 @@ const classifySpeech = (text)=>{
 
 Slack.onMessage((msg)=>{
 	if(!(Slack.msgHas(msg.text, [Slack.bot.id, 'higgins', 'higs']) && msg.channel == 'bottin-around')) return;
-	let text = msg.text.replace(`<@${Slack.bot.id}>`, '').replace('higgins', '').replace('Higgins', '');
+	const text = msg.text.replace(`<@${Slack.bot.id}>`, '').replace('higgins', '').replace('Higgins', '');
 
 	const sentiment = speak.sentiment.analyze(text);
 
@@ -52,6 +52,6 @@ Classify :
 \`\`\`${JSON.stringify(classifySpeech(text), null, '  ')}\`\`\`
 
 Sentiment : \`score: ${sentiment.score}, comparative: ${sentiment.comparative}\`
-`)
+`);
 
 });

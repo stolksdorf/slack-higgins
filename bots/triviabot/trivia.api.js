@@ -1,9 +1,9 @@
-var _ = require('lodash');
-var request = require('superagent');
+const _ = require('lodash');
+const request = require('superagent');
 
-var Storage = require('slack-microbots/storage').create('trivia');
+const Storage = require('slack-microbots/storage').create('trivia');
 
-var ClueCache = Storage.get("cluecache") || {};
+const ClueCache = Storage.get('cluecache') || {};
 
 
 
@@ -11,10 +11,10 @@ var ClueCache = Storage.get("cluecache") || {};
 // converts to lowercase
 // removes html tags and punctuation
 // removes trailing 's' or 'es'
-var stringToCleanWordArray = function(string) {
+const stringToCleanWordArray = function(string) {
 	return _.chain(string)
 		.words(/[^ \/-]+/g)
-		.map((word) => {
+		.map((word)=>{
 			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/s$/, '');
 		})
 		.filter()
@@ -26,8 +26,8 @@ var TriviaApi = {
 	getClue : function(categoryId, cb){
 		var getQuestion = function(){
 			//Remove a random element from the question cache
-			var clue = ClueCache[categoryId].splice(_.random(ClueCache[categoryId].length - 1), 1)[0];
-			Storage.set("cluecache", ClueCache);
+			const clue = ClueCache[categoryId].splice(_.random(ClueCache[categoryId].length - 1), 1)[0];
+			Storage.set('cluecache', ClueCache);
 
 			//Check for invalid questions
 			if(!clue || !clue.answer || !clue.question){
@@ -37,47 +37,47 @@ var TriviaApi = {
 			if(!clue.value) clue.value = 400;
 
 			cb(clue);
-		}
+		};
 
 		//If we don't have questions in that category, refresh the pool
 		if(!ClueCache[categoryId] || !ClueCache[categoryId].length){
 			return TriviaApi.refreshCategoryPool(categoryId, function(questions){
 				getQuestion();
-			})
+			});
 		}
 
 		return getQuestion();
 	},
 
 	refreshCategoryPool : function(categoryId, cb){
-		var questions = [];
-		var offset = 0;
+		let questions = [];
+		let offset = 0;
 
 		var callCategories = function(){
-			request.get("http://jservice.io/api/clues?category=" + categoryId + '&offset=' + offset)
+			request.get(`http://jservice.io/api/clues?category=${categoryId}&offset=${offset}`)
 				.send()
 				.end(function(err, res){
 					if(res.body.length){
 						offset += res.body.length;
 						questions = _.union(questions, res.body);
 						callCategories();
-					}else{
+					} else {
 						//when we run out of questions, finish the callback
 						ClueCache[categoryId] = questions;
-						Storage.set("cluecache", ClueCache);
+						Storage.set('cluecache', ClueCache);
 						cb(questions);
 					}
 				});
-		}
+		};
 		callCategories();
 	},
 
 	checkAnswer : function(clueAnswer, msg){
 		if(!msg) return false;
-		var dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to', 'thing', 'things'];
+		const dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to', 'thing', 'things'];
 
-		var msgWords = stringToCleanWordArray(msg);
-		var answerWords = stringToCleanWordArray(clueAnswer);
+		const msgWords = stringToCleanWordArray(msg);
+		const answerWords = stringToCleanWordArray(clueAnswer);
 
 		//each answer word must appear in the message
 		return _.every(answerWords, (answerWord)=>{
@@ -91,7 +91,7 @@ var TriviaApi = {
 	getCategories : function(categoryMap){
 		return _.map(categoryMap, (id, name)=>{
 			return {
-				id : id,
+				id   : id,
 				name : name,
 				size : (ClueCache[id] ? ClueCache[id].length : '???')
 			};

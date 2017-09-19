@@ -4,11 +4,11 @@ const PinModel = require('./pin.model.js').model;
 const PIN_URL = 'https://slack-higgins.herokuapp.com/pins/';
 
 module.exports = {
-	name : 'pinbot',
-	icon : ':pushpin:',
-	events: ['message', 'pin_added'],
+	name    : 'pinbot',
+	icon    : ':pushpin:',
+	events  : ['message', 'pin_added'],
 	channel : '*',
-	handle : function(msg, info, Higgins){
+	handle  : function(msg, info, Higgins){
 		if(info.type == 'pin_added' && info.item.type == 'message'){
 			const newPin = new PinModel({
 				user      : info.user,
@@ -26,4 +26,4 @@ module.exports = {
 			Higgins.reply(`You can find all Coolsville pins here, ${PIN_URL}`);
 		}
 	}
-}
+};
