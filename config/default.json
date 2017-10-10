@@ -1,5 +1,7 @@
 {
 	"diagnostics_webhook" : "",
 	"slack_bot_token" : "",
-	"command_token" : ""
+	"command_token" : "",
+	"dropbox_key" : "",
+	"dropbox_secret" : ""
 }

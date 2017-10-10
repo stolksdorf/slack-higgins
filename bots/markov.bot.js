@@ -3,6 +3,9 @@ const Slack = require('pico-slack');
 const fs = require('fs');
 const config = require('nconf');
 
+const LoadingMsgs = require('./loading.msgs.js');
+console.log(_.sample(LoadingMsgs));
+
 const MARKOV_DEPTH = 6;
 const SEP = '';
 
@@ -35,7 +38,6 @@ const SafeChannels = _.map([
 	'vidya'
 ], (channel)=>`in:${channel}`).join(' ');
 
-
 const mappings = {};
 
 const buildMap = (msgs)=>{
@@ -59,22 +61,38 @@ const buildMap = (msgs)=>{
 	return result;
 };
 
-const getMapping = (username)=>{
-	if(mappings[username]) return Promise.resolve({mapping: mappings[username]});
-	let query = `from:${username} ${SafeChannels}`;
-	if(username=='hivebot') query = `${SafeChannels}`;
+const searchMessages = (query, page=1)=>{
 	return Slack.api('search.messages', {
 		token : config.get('command_token'),
-		query : query,
 		sort  : 'timestamp',
-		count : 1000
+		count : 100,
+		page,
+		query,
 	})
-		.then((res)=>_.reduce(res.messages.matches, (r, msg)=>{
-			const text = msg.text.replace(/(<h.+>)/gi, '').trim(); //Remove links from messages
-			if(text.indexOf('uploaded a file:') !== -1) return r;  //Skip file upload messages
-			if(text) r.push(text);
-			return r;
-		}, []))
+		.then((res)=>{
+			const result = _.reduce(res.messages.matches, (r, msg)=>{
+				const text = msg.text.replace(/(<h.+>)/gi, '').trim(); //Remove links from messages
+				if(text.indexOf('uploaded a file:') !== -1) return r;  //Skip file upload messages
+				if(text) r.push(text);
+				return r;
+			}, []);
+			//console.log(res.messages.matches.length, result.length);
+			if(res.messages.pagination.page < res.messages.pagination.page_count){
+				return searchMessages(query, page + 1)
+					.then((msgs)=>_.concat(msgs, result));
+			}
+			return result;
+		});
+}
+
+const hasMapping = (username)=>!!mappings[username];
+
+
+const getMapping = (username)=>{
+	if(hasMapping(username)) return Promise.resolve({mapping: mappings[username]});
+	let query = `from:${username} ${SafeChannels}`;
+	if(username=='hivebot') query = `${SafeChannels}`;
+	return searchMessages(query)
 		.then((msgs)=>{
 			mappings[username] = buildMap(msgs);
 			Slack.debug(`Map for ${username}bot built with ${_.size(msgs)} messages`);
@@ -111,7 +129,7 @@ const sendMessage = (name, icon, channel, {text='', info=false})=>{
 		icon_emoji  : `:${icon}:`,
 		attachments : JSON.stringify([{
 			pretext   : text,
-			mrkdwn_in : ['text'],
+			mrkdwn_in : ['pretext'],
 			footer    : (info ? `built with ${info.msgs} messages, using ${info.chars} letters.` : '')
 		}])
 	});
@@ -120,14 +138,17 @@ const sendMessage = (name, icon, channel, {text='', info=false})=>{
 Slack.onMessage((msg)=>{
 	_.each(Slack.users, (user)=>{
 		if(Slack.msgHas(msg.text, `${user}bot`)){
-			getMapping(user)
+			//if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text:_.sample(LoadingMsgs)})
+			if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text:':timer_clock: `hold plz...`'})
+
+			getMapping(user, msg.channel)
 				.then(({mapping, info})=>genMessage(mapping, info))
 				.then((text)=>sendMessage(`${user}bot`, user, msg.channel, text))
 				.catch((err)=>Slack.error(err));
 		}
 	});
 	if(Slack.msgHas(msg.text, 'hivebot')){
-		getMapping('hivebot')
+		getMapping('hivebot', msg.channel)
 			.then(({mapping, info})=>genMessage(mapping, info))
 			.then((text)=>sendMessage('hivebot', 'hivebot', msg.channel, text))
 			.catch((err)=>Slack.error(err));
