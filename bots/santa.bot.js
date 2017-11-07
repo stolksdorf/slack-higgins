@@ -7,6 +7,7 @@ Slack.onMessage((msg)=>{
 			.replace('santabot', '')
 			.replace('Santachat', '')
 			.replace('Santabot', '')
+			.trim()
 		);
 	}
 });
