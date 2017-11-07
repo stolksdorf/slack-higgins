@@ -32,7 +32,6 @@
     "body-parser": "^1.15.2",
     "classnames": "^2.2.5",
     "express": "^4.13.4",
-    "fluent-ffmpeg": "^2.1.2",
     "glob": "^7.0.6",
     "google": "^1.4.0",
     "lodash": "^4.6.1",
@@ -47,8 +46,7 @@
     "string-similarity": "^1.2.0",
     "superagent": "^1.7.2",
     "unofficial-nest-api": "^0.1.4",
-    "xkcd": "^1.1.1",
-    "ytdl-core": "^0.17.1"
+    "xkcd": "^1.1.1"
   },
   "devDependencies": {
     "eslint": "^4.7.1",

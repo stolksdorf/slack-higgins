@@ -3,9 +3,6 @@ const Slack = require('pico-slack');
 const fs = require('fs');
 const config = require('nconf');
 
-const LoadingMsgs = require('./loading.msgs.js');
-console.log(_.sample(LoadingMsgs));
-
 const MARKOV_DEPTH = 6;
 const SEP = '';
 
@@ -83,7 +80,7 @@ const searchMessages = (query, page=1)=>{
 			}
 			return result;
 		});
-}
+};
 
 const hasMapping = (username)=>!!mappings[username];
 
@@ -138,8 +135,7 @@ const sendMessage = (name, icon, channel, {text='', info=false})=>{
 Slack.onMessage((msg)=>{
 	_.each(Slack.users, (user)=>{
 		if(Slack.msgHas(msg.text, `${user}bot`)){
-			//if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text:_.sample(LoadingMsgs)})
-			if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text:':timer_clock: `hold plz...`'})
+			if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text: ':timer_clock: `hold plz...`'});
 
 			getMapping(user, msg.channel)
 				.then(({mapping, info})=>genMessage(mapping, info))
