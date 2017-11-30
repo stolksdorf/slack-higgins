@@ -22,13 +22,10 @@ const jokes = [
 const findJoke = (text)=>{
 	return _.find(jokes, (joke)=>{
 		retutn Slack.msgHas(text, joke.triggers);
-	})
+	}
 }
 
 const ohHai = (msg)=>{
-	//if(Slack.msgHas(msg, ['higgins', 'higgs', 'higgs boson', 'higgerino'], ['hi', 'hello', 'wut up', 'mmm', 'ye'])){
-	//	Slack.send(msg, `Up yours ${msg.user}`);
-	//}
 	const joke = findJoke(msg.text)
 	if(joke){
 		Slack.sendAs('JokeBot', ':chris:', msg, joke.joke);
