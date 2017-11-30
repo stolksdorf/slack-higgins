@@ -3,8 +3,13 @@ const _ = require('lodash');
 
 const jokes = [
 	{
-	triggers: ['feeling really triggered', 'ilu bb'],
-	joke: 'ye',
+	triggers: ['I feel so dumb', 'I\'m an idiot', 'I\'m so dumb'],
+	joke: 'I guess you didn\'t fall too far from the turnip truck.',
+	who: ['chris']
+	},
+	{
+	triggers: ['too hard', 'I give up', 'I don\'t know what I\'m doing'],
+	joke: 'That\'s one tough cookie to crumble!',
 	who: ['chris']
 	},
 	{
@@ -13,7 +18,7 @@ const jokes = [
 	who: ['chris']
 	},
 	{
-	triggers: ['exhausted'],
+	triggers: ['so tired', 'too tired'],
 	joke: 'Last night I dreamed I was a muffler, when I woke up this morning I was exhausted.',
 	who: ['chris']
 	},
