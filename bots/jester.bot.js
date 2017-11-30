@@ -28,6 +28,7 @@ const findJoke = (text)=>{
 const ohHai = (msg)=>{
 	const joke = findJoke(msg.text)
 	if(joke){
+		Slack.log('This is what the msg object looks like', msg);
 		Slack.sendAs('JokeBot', ':chris:', msg, joke.joke);
 	}
 }
