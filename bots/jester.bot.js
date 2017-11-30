@@ -21,7 +21,7 @@ const jokes = [
 
 const findJoke = (text)=>{
 	return _.find(jokes, (joke)=>{
-		retutn Slack.msgHas(text, joke.triggers);
+		return Slack.msgHas(text, joke.triggers);
 	}
 }
 
