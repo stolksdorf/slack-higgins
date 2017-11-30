@@ -30,7 +30,7 @@ const ohHai = (msg)=>{
 	if(joke){
 		Slack.sendAs('JokeBot', ':chris:', msg, joke.joke);
 	}
-	Slack.log(msg, joke.joke);
+	Slack.log(msg, joke);
 }
 
 Slack.onMessage(ohHai);
