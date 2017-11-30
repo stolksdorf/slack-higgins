@@ -6,3 +6,4 @@ const ohHai = (msg)=>{
 	}
 }
 
+Slack.onMessage(ohHai);
