@@ -39,7 +39,7 @@
     "mongoose": "^4.7.0",
     "nconf": "^0.8.4",
     "pico-redis": "^1.0.0",
-    "pico-slack": "^1.3.0",
+    "pico-slack": "^1.3.1",
     "pos": "^0.4.2",
     "request": "~2.69.0",
     "speakeasy-nlp": "^0.2.12",
