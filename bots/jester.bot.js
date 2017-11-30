@@ -9,7 +9,7 @@ const jokes = [
 	},
 	{
 	triggers: 'make me a sandwich',
-	joke: [`Poof! ${msg.user} is a sandwich!`],
+	joke: [`Poof! Chris is a sandwich!`],
 	who: ['chris']
 	},
 	{
