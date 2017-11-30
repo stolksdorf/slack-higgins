@@ -22,7 +22,7 @@ const jokes = [
 const findJoke = (text)=>{
 	return _.find(jokes, (joke)=>{
 		return Slack.msgHas(text, joke.triggers);
-	}
+	})
 }
 
 const ohHai = (msg)=>{
