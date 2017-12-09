@@ -50,6 +50,10 @@ const loadBots = ()=>{
 		});
 };
 
+app.get('/', (req, res)=>{
+	Slack.log('Web Ping');
+	res.send('ping');
+});
 
 Slack.connect(config.get('slack_bot_token'))
 	.then(()=>loadBots())
