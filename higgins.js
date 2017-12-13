@@ -40,8 +40,9 @@ const loadBots = ()=>{
 		.then((bots)=>{
 			_.each(bots, (botpath)=>{
 				try {
-					require(botpath);
+					const router = require(botpath);
 					console.log('loaded', botpath);
+					if(router && !_.isEmpty(router)) app.use(router);
 				} catch (err){
 					console.log(err);
 					Slack.error('Bot Load Error', botpath, err);
