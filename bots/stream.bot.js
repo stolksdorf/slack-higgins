@@ -5,7 +5,7 @@ const MIN = 1000 * 60;
 
 let timers = {};
 const check = (name)=>{
-	if(!timer[name]){
+	if(!timers[name]){
 		Slack.sendAs('streambot', ':overwatch:', 'overwatch', 
 			`*${name}* just started streaming. https://www.twitch.tv/${name}`
 		);
