@@ -6,7 +6,7 @@ let alreadySent = {};
 const isPlaying = (name)=>{
 	if(alreadySent[name]) return;
 	alreadySent[name] = true;
-	setTimeout(()=>alreadySent[name] = false, 1000 * 60 * 30);
+	setTimeout(()=>alreadySent[name] = false, 1000 * 60 * 60);
 	Slack.sendAs('streambot', ':overwatch:', 'overwatch', 
 		     `*${name}* just started streaming. https://www.twitch.tv/${name}`
 	);
