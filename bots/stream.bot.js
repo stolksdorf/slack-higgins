@@ -1,18 +1,23 @@
 const router = require('express').Router();
 const Slack = require('pico-slack');
 
-let alreadySent = {};
+const MIN = 1000 * 60;
 
-const isPlaying = (name)=>{
-	if(alreadySent[name]) return;
-	alreadySent[name] = true;
-	setTimeout(()=>alreadySent[name] = false, 1000 * 60 * 60);
-	Slack.sendAs('streambot', ':overwatch:', 'overwatch', 
-		     `*${name}* just started streaming. https://www.twitch.tv/${name}`
-	);
+let timers = {};
+const check = (name)=>{
+	if(!timer[name]){
+		Slack.sendAs('streambot', ':overwatch:', 'overwatch', 
+			`*${name}* just started streaming. https://www.twitch.tv/${name}`
+		);
+	}
+	clearTimeout(timers[name]);
+	timers[name] = setTimeout(()=>{
+		timers[name] = false;
+	}, 45 * MIN);
 };
+
 router.get('/streambot/:name', (req, res)=>{
-	isPlaying(req.params.name);	
+	check(req.params.name);
 	return res.send('ok');
 });
 
