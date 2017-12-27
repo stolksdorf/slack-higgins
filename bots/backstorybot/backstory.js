@@ -4,15 +4,13 @@ const People = require('./people.js')
 const Life = require('./life.js')
 
 
-module.exports = Object.assign(
+module.exports = {
 	Supplements,
 	People,
 	Life,
-	{
-		npc : (race, gender)=>{
-			const peep = People.person({race, gender});
-			peep.event = Life.event();
-			return peep
-		}
+	npc : (race, gender)=>{
+		const peep = People.person({race, gender});
+		peep.event = Life.event();
+		return peep
 	}
-)
+}

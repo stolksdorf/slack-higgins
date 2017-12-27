@@ -34,6 +34,7 @@ const Life = {
 		return utils.chart(d('1d100'), {
 			'01-10' : ()=>`You suffered a tragedy. ${Life.tradegy()}`,
 			'11-20' : ()=>`You gained a bit of good fortune. ${Life.boon()}`,
+			//TODO: Add in a child
 			'21—30' : ()=>`You fell in love or got married. Your Love: ${People.person({}, true)}`,
 			'31—40' : ()=>`You made an enemy of an adventurer. Your Enemy: ${People.person({occupation: `${Supplement.class()} Adventurer`, relationship: 'Hostile'}, true)}`,
 			'41—50' : ()=>`You made a friend of an adventurer. Your Friend: ${People.person({occupation: `${Supplement.class()} Adventurer`, relationship: 'Friendly'}, true)}`,

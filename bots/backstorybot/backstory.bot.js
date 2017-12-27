@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const Guide = require('./backstory.js');
 
-console.log(Slack);
+console.log(Guide.Life);
 
 const makePeep = (info, title)=>{
 	const result = {
@@ -70,16 +70,20 @@ Slack.onMessage((msg)=>{
 	if(msg.channel != 'dnd') return;
 	if(!Slack.msgHas(msg, ['higs', 'higgins', 'backstorybot', Slack.bot.id])) return;
 
-	let race = _.find(Guide.races, (race)=>Slack.msgHas(msg, race));
+	let race = _.find(Guide.Supplements.races, (race)=>Slack.msgHas(msg, race));
 	let gender = _.find(['Female', 'Male'], (gender)=>Slack.msgHas(msg, gender));
 
 	if(Slack.msgHas(msg, 'family')){
-		const family = Guide.family(race);
+		const family = Guide.People.family(race);
 		return sendFamily(family);
 	}
 
 	if(Slack.msgHas(msg, 'npc')){
 		return sendNPC(Guide.npc(race, gender));
+	}
+
+	if(Slack.msgHas(msg, 'event')){
+		return Slack.send(msg.channel, Guide.Life.event())
 	}
 
 
