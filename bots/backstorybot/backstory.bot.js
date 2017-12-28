@@ -6,7 +6,7 @@ console.log(Guide.Life);
 
 const makePeep = (info, title)=>{
 	const result = {
-		fallback: Guide.description(info),
+		fallback: Guide.People.description(info),
 		color: {
 			Hostile : 'danger',
 			Friendly : 'good',
