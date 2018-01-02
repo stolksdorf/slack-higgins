@@ -23,7 +23,7 @@ const check = (name, game='overwatch')=>{
 };
 
 router.get('/streambot/:name/:game', (req, res)=>{
-	check(req.params.name, req.params.game);
+	check(req.params.name, req.params.game.trim().toLowerCase());
 	return res.send('ok');
 });
 
