@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const Slack = require('pico-slack');
+const config = require('nconf');
 
 const MIN = 1000 * 60;
+const COOLDOWN = config.get('streambot:cooldown_minutes') * MIN;
 
 let timers = {};
 const check = (name, game='overwatch')=>{
@@ -19,7 +21,7 @@ const check = (name, game='overwatch')=>{
 	clearTimeout(timers[name]);
 	timers[name] = setTimeout(()=>{
 		timers[name] = false;
-	}, 30 * MIN);
+	}, COOLDOWN);
 };
 
 router.get('/streambot/:name/:game', (req, res)=>{
