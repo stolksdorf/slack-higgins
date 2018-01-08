@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const Slack = require('pico-slack');
+
+
 const Guide = require('./backstory.js');
 
-console.log(Guide.Life);
-
-const makePeep = (info, title)=>{
+const getAttachment = (info, title)=>{
 	const result = {
 		fallback: Guide.People.description(info),
 		color: {
@@ -40,12 +40,12 @@ const makePeep = (info, title)=>{
 
 const sendFamily = (family)=>{
 	const attachments = [
-		makePeep(family.mother, 'Mother'),
-		makePeep(family.father, 'Father')
+		getAttachment(family.mother, 'Mother'),
+		getAttachment(family.father, 'Father')
 	];
 	_.each(family.siblings, (sibling)=>{
 		const relation = (sibling.gender == 'Male' ? 'Brother' : 'Sister');
-		attachments.push(makePeep(sibling, `${sibling.birthOrder} ${relation}`))
+		attachments.push(getAttachment(sibling, `${sibling.birthOrder} ${relation}`))
 	});
 
 
@@ -56,11 +56,19 @@ const sendFamily = (family)=>{
 		}).catch(()=>{})
 };
 
+const sendMessage = (msg, text='', attachments=[])=>{
+	return Slack.api('chat.postMessage', {
+		channel    : msg.channel,
+		text,
+		attachments: JSON.stringify(attachments)
+	}).catch((err)=>Slack.error(err));
+}
+
 const sendNPC = (npc)=>{
 	return Slack.api('chat.postMessage', {
 		channel    : 'dnd',
 		attachments: JSON.stringify([
-			makePeep(npc)
+			getAttachment(npc)
 		])
 	}).catch(()=>{})
 }

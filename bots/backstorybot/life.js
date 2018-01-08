@@ -7,10 +7,10 @@ const Supplement = require('./supplements.js');
 
 
 const Life = {
-	events : (age)=>{
-		let count = 0;
+	eventsByAge : (age=false)=>{
+		let numOfEvents = 0;
 		if(age){
-			count = utils.chart(age, {
+			numOfEvents = utils.chart(age, {
 				'0-20'  : ()=>1,
 				'21—30' : ()=>d('1d4'),
 				'31—40' : ()=>d('1d6'),
@@ -19,7 +19,7 @@ const Life = {
 				'61-9999' : ()=>d('1dl2'),
 			})
 		}else{
-			count = utils.chart(d('1d100'), {
+			numOfEvents = utils.chart(d('1d100'), {
 				'0l—20' : ()=>1,
 				'21—59' : ()=>d('1d4'),
 				'60—69' : ()=>d('1d6'),
@@ -28,14 +28,19 @@ const Life = {
 				'00' : ()=>d('1dl2'),
 			});
 		}
-		return _.times(count, Life.event);
+		return _.times(numOfEvents, Life.event);
 	},
 	event : ()=>{
 		return utils.chart(d('1d100'), {
 			'01-10' : ()=>`You suffered a tragedy. ${Life.tradegy()}`,
 			'11-20' : ()=>`You gained a bit of good fortune. ${Life.boon()}`,
-			//TODO: Add in a child
-			'21—30' : ()=>`You fell in love or got married. Your Love: ${People.person({}, true)}`,
+			'21—30' : ()=>{
+				let hadChild = '';
+				if(d('1d10') == 1){
+					hadChild = `You also had a child with this person: ${People.person({occupation : 'child'}, true)}`;
+				}
+				return `You fell in love or got married. Your Love: ${People.person({}, true)} ${hadChild}`;
+			},
 			'31—40' : ()=>`You made an enemy of an adventurer. Your Enemy: ${People.person({occupation: `${Supplement.class()} Adventurer`, relationship: 'Hostile'}, true)}`,
 			'41—50' : ()=>`You made a friend of an adventurer. Your Friend: ${People.person({occupation: `${Supplement.class()} Adventurer`, relationship: 'Friendly'}, true)}`,
 			'51-70' : ()=>`You spent time working in a job related to your background. Start the game with an extra ${d('2d6')} gp.`,
@@ -45,7 +50,7 @@ const Life = {
 			'86—90' : ()=>`You fought in a battle. ${Life.war()} Work with your DM to come up with the reason for the battle and the factions involved.`,
 			'91-95' : ()=>`You committed a crime or were wrongly accused of doing so. You were accused of ${Life.crime()}. ${Life.punishment()}`,
 			'96—99' : ()=>`You encountered something magical. ${Life.arcane()}`,
-			'00'    : ()=>`Something truly strange happened to you. ${Life.weirdstuff()}`,
+			'00'    : ()=>`Something truly strange happened to you. ${Life.weirdStuff()}`,
 		})
 	},
 	adventure : ()=>{

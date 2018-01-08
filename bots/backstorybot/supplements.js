@@ -6,7 +6,7 @@ const Names = require('./names.js');
 
 
 const Supplement= {
-	races : [`Human`,`Dwarf`,`Elf`,`Halfling`,`Dragonborn`,`Gnome`,`Half-Elf`,`Half-Orc`,`Tiefling`],
+	races : [`Human`,`Dwarf`,`Elf`,`Halfling`,`Dragonborn`,`Gnome`,`Half-elf`,`Half-orc`,`Tiefling`],
 	classes : [`Barbarian`,`Bard`,`Cleric`,`Druid`,`Fighter`,`Monk`,`Paladin`,`Ranger`,`Rogue`,`Sorcerer`,`Warlock`,`Wizard`],
 
 	familyName : (race)=>Names.familyName(race),
