@@ -684,24 +684,20 @@ const Backgrounds = {
 }
 
 
-
-
-
-
 const Background = {
 	list : ()=>Object.keys(Backgrounds),
 	random : ()=>Background.get(_.sample(Background.list())),
 	get : (name)=>{
 		const bg = Backgrounds[name];
-		const extraFields = _.without(_.keys(bg), 'origin', 'trait', 'ideal', 'bond', 'flaw');
+		const detailFields = _.without(_.keys(bg), 'origin', 'trait', 'ideal', 'bond', 'flaw');
 		return {
-			background : name,
+			name : name,
 			origin : `I became an ${name} because ${_.sample(bg.origin)}`,
 			traits : _.sampleSize(bg.trait, 2),
 			ideal  : _.sample(bg.ideal),
 			bond   : _.sample(bg.bond),
 			flaw   : _.sample(bg.flaw),
-			extra  :  _.reduce(extraFields, (acc, field)=>{
+			details  :  _.reduce(detailFields, (acc, field)=>{
 				if(!acc) acc = {};
 				acc[field] = _.sample(bg[field])
 				return acc;

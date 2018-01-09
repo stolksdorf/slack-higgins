@@ -473,7 +473,7 @@ const Class = {
 	get : (name)=>{
 		const cls = Classes[name];
 		return {
-			class    : name,
+			name    : name,
 			subclass : _.sample(cls.subclass),
 			origin   : `I became an ${name} because ${_.sample(cls.origin)}`,
 			details  : _.mapValues(cls.details, (options)=>_.sample(options))

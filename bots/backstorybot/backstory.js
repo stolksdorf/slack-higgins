@@ -10,6 +10,8 @@ module.exports = {
 	Supplement,
 	People,
 	Life,
+	Class,
+	Background,
 	//TODO: move out
 	npc : (race, gender)=>{
 		const peep = People.person({race, gender});
@@ -20,19 +22,16 @@ module.exports = {
 		defaults.gender     = defaults.gender || Supplement.gender();
 		defaults.race       = defaults.race || Supplement.race();
 		defaults.familyName = defaults.familyName || Supplement.familyName(defaults.race);
-		defaults.class      = defaults.class || _.sample(Class.list());
+		defaults.class      = defaults.class ? Class.get(defaults.class) : Class.random();
+		defaults.background = defaults.background ? Background.get(defaults.background) : Background.random();
 
 		defaults.age = 25;
-		const cls = (defaults.class ? Class.get(defaults.class) : Class.random());
-		delete defaults.class;
 
 		return Object.assign({
-			name : Supplement.name(defaults.gender, defaults.race),
-			alignment    : Supplement.alignment(),
-			background : Background.random(),
+			name      : Supplement.name(defaults.gender, defaults.race),
+			alignment : Supplement.alignment(),
 			events : Life.eventsByAge(defaults.age),
 			family : People.family(defaults.race, defaults.familyName),
-			class : cls
 		}, defaults)
 	}
 }
