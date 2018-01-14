@@ -587,7 +587,7 @@ const Backgrounds = {
 		`I joined the militia to help protect my community from monsters.`,
 		`a relative of mine was a soldier, and I wanted to carry on the family tradition.`,
 		`the local lord forced me to enlist in the army.`,
-		`war ravaged my homeland while I was growing up. Fighting was the only life i ever knew.`,
+		`war ravaged my homeland while I was growing up. Fighting was the only life I ever knew.`,
 		`I wanted fame and fortune, so I joined a mercenary company, selling my sword to the highest bidder.`,
 		`invaders attacked my homeland. It was my duty to take up arms in defense of my people.`,
 		],

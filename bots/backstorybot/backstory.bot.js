@@ -120,12 +120,12 @@ const getCharacter = (race, gender, _cls, bg)=>{
 };
 
 
-const char = getCharacter();
-Slack.api('chat.postMessage', {
-	channel    : 'dnd',
-	text : '',
-	attachments: JSON.stringify(char)
-})
+// const char = getCharacter();
+// Slack.api('chat.postMessage', {
+// 	channel    : 'dnd',
+// 	text : '',
+// 	attachments: JSON.stringify(char)
+// })
 
 
 
