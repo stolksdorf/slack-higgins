@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "eslint": "^4.7.1",
-    "eslint-config-stolksdorf": "^1.0.1"
+    "eslint-config-stolksdorf": "^1.0.1",
+    "nodemon": "^1.14.8"
   }
 }

@@ -3,5 +3,8 @@
 	"slack_bot_token" : "",
 	"command_token" : "",
 	"dropbox_key" : "",
-	"dropbox_secret" : ""
+	"dropbox_secret" : "",
+	"streambot": {
+		"cooldown_minutes": 120
+	}
 }
