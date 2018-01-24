@@ -135,7 +135,7 @@ const sendMessage = (name, icon, channel, {text='', info=false})=>{
 Slack.onMessage((msg)=>{
 	_.each(Slack.users, (user)=>{
 		if(Slack.msgHas(msg.text, `${user}bot`)){
-			if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text: ':timer_clock: `hold plz...`'});
+			//if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text: ':timer_clock: `hold plz...`'});
 
 			getMapping(user, msg.channel)
 				.then(({mapping, info})=>genMessage(mapping, info))
