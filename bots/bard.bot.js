@@ -1,12 +1,12 @@
 const _ = require('lodash');
-// const fetch = require('node-fetch');
+const fetch = require('node-fetch');
 const Slack = require('pico-slack');
 
 // const getWords = async (constraint, word, topic) => {
 
-//   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')
-//   const data = await response.json();
-//   Slack.log(data);
+   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')
+   const data = await response.json();
+   Slack.log(data);
 //   return data[0].word;
 // }
 
@@ -29,7 +29,7 @@ const Slack = require('pico-slack');
 const response = (msg)=>{
   if(!Slack.msgHas(msg.text, 'bardbot', 'poem')) return;
 
-  const poem = makePoem(msg.text)
+  // const poem = makePoem(msg.text)
   Slack.sendAs('BardBot', ':rose:', msg, msg.text);
   Slack.log(msg, msg.text);
 }
