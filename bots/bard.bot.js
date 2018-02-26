@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
 const Slack = require('pico-slack');
 
 // const getWords = async (constraint, word, topic) => {
