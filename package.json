@@ -38,7 +38,7 @@
     "moment": "^2.17.0",
     "mongoose": "^4.7.0",
     "nconf": "^0.8.4",
-    "node-fetch": "^2.0.0",
+    "node-fetch": "^5.5.1",
     "pico-redis": "^1.0.0",
     "pico-slack": "^1.4.0",
     "pos": "^0.4.2",
