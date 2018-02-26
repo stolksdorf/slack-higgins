@@ -4,9 +4,9 @@ const Slack = require('pico-slack');
 
 // const getWords = async (constraint, word, topic) => {
 
-   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')
-   const data = await response.json();
-   Slack.log(data);
+//   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')
+//   const data = await response.json();
+//   Slack.log(data);
 //   return data[0].word;
 // }
 
