@@ -31,5 +31,5 @@ const sendReflectionMessage = ()=>{
 }
 
 
-cron.scheduleJob('* 9 * * 1-5', sendMorningMessage);
-cron.scheduleJob('* 15 * * 1-5', sendReflectionMessage);
+cron.scheduleJob('0 9 * * 1-5', sendMorningMessage);
+cron.scheduleJob('0 15 * * 1-5', sendReflectionMessage);
