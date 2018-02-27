@@ -27,7 +27,7 @@ const sendReflectionMessage = ()=>{
 	peeps.map((peep)=>{
 		setTimeout(()=>{
 			send(peep, _.sample(ReflectionMsgs));
-		}, _.random(0, 100 * mins));
+		}, _.random(0, 100 * MINS));
 	})
 }
 
