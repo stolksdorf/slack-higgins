@@ -9,9 +9,9 @@ const ReflectionMsgs = fs.readFileSync(`${__dirname}/reflection.msgs.txt`, 'utf8
 
 const peeps = [
 	'scott',
-	'katie',
-	'rebabybay',
-	'meggeroni'
+	//'katie',
+	//'rebabybay',
+	//'meggeroni'
 ];
 
 const send = (target, msg)=>Slack.sendAs('reflectionbot', ':seedling:', target, msg);
