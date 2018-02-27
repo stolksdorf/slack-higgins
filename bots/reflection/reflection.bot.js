@@ -23,7 +23,8 @@ const sendMorningMessage = ()=>{
 };
 
 const sendReflectionMessage = ()=>{
-	_.sampleSize(peeps, Math.ceil(peeps.length * 0.8)).map((peep)=>{
+	//_.sampleSize(peeps, Math.ceil(peeps.length * 0.8)).map((peep)=>{
+	peeps.map((peep)=>{
 		setTimeout(()=>{
 			send(peep, _.sample(ReflectionMsgs));
 		}, _.random(0, 100 * mins));
@@ -34,4 +35,4 @@ const sendReflectionMessage = ()=>{
 cron.scheduleJob('0 9 * * 1-5', sendMorningMessage);
 //cron.scheduleJob('0 15 * * 1-5', sendReflectionMessage);
 
-cron.scheduleJob('10 11 * * 1-5', sendReflectionMessage);
+cron.scheduleJob('40 11 * * 1-5', sendReflectionMessage);
