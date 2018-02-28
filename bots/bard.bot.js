@@ -31,7 +31,7 @@ const response = (msg)=>{
   // const poem = getWords('rel_rhy', rose)
   const poem = makePoem(msg.text)
   Slack.sendAs('BardBot', ':rose:', poem);
-  Slack.log(poem);
+  Slack.log(msg.text);
 }
 
 try{
