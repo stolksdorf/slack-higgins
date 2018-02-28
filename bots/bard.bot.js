@@ -29,7 +29,7 @@ const response = (msg)=>{
   if(!Slack.msgHas(msg.text, 'bardbot', 'poem')) return;
   // const poem = getWords('rel_rhy', rose)
   const poem = makePoem(msg.text)
-  Slack.sendAs('BardBot', ':rose:', msg, poem);
+  Slack.sendAs('BardBot', ':rose:', msg, 'poem');
   Slack.log(msg, msg.text, poem);
 }
 
