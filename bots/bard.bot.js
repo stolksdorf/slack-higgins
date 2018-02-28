@@ -22,7 +22,7 @@ const makePoem = async (text)=>{
     getWords('rel_rhy=', words[1])
   ]);
   const poem = [trigger, 'is as the', words[0], 'or the', words[1], '\n', 'even', words[2], 'cannot compare to the', rhymes[0]].join(' ');
-  Slack.log(poem);
+  //Slack.log(poem);
   return poem;
 };
 
@@ -31,7 +31,7 @@ const response = (msg)=>{
   // const poem = getWords('rel_rhy', rose)
   const poem = makePoem(msg.text)
   Slack.sendAs('BardBot', ':rose:', poem);
-  //Slack.log(msg, msg.text, poem);
+  Slack.log(poem);
 }
 
 try{
