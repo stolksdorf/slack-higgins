@@ -33,4 +33,11 @@ const response = (msg)=>{
   // Slack.log(msg, msg.text, poem);
 }
 
-Slack.onMessage(response);
+try{
+  // Code that might fail
+  Slack.onMessage(response);
+}catch(err){
+  // Code that will run when it fails
+  Slack.error(data);
+}
+
