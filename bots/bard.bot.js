@@ -12,6 +12,8 @@ const getWords = async (constraint, word, topic) => {
 const makePoem = async (text)=>{
   const clean = _.split(text, ' ');
   const trigger = _.last(clean);
+  
+  Slack.log("gosh golly gee", trigger);
 
   const words = await Promise.all([
     getWords('rel_syn=', trigger),
