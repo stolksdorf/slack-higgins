@@ -34,7 +34,7 @@ const response = (msg)=>{
   Slack.sendAs('BardBot', ':rose:', poem);
   Slack.log(msg.text, poem);
 }
-Slack.log("message:", msg, "response:", response);
+//Slack.log("message:", msg.text, "response:", response);
 try{
   // Code that might fail
   Slack.onMessage(response);
