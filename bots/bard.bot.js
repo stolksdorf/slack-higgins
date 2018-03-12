@@ -5,7 +5,7 @@ const Slack = require('pico-slack');
 const getWords = async (constraint, word, topic) => {
   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')
   const data = await response.json();
-  //Slack.log(data);
+  Slack.log("get words:", data);
   return data[0].word;
 }
 
@@ -22,7 +22,7 @@ const makePoem = async (text)=>{
     getWords('rel_rhy=', words[1])
   ]);
   const poem = [trigger, 'is as the', words[0], 'or the', words[1], '\n', 'even', words[2], 'cannot compare to the', rhymes[0]].join(' ');
-  //Slack.log(poem);
+  Slack.log("make poem:", poem);
   return poem;
 };
 
