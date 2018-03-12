@@ -27,18 +27,17 @@ const makePoem = async (text)=>{
 };
 
 const response = (msg)=>{
-  const text = msg.text
   if(!Slack.msgHas(text, 'bardbot', 'poem')) return;
   
   //const poem = getWords('rel_rhy', rose)
-  //let poem = makePoem(msg.text)
-  Slack.sendAs('BardBot', ':rose:', makePoem(text));
-  Slack.log(text, makePoem(text));
+  const poem = makePoem(msg.text)
+  Slack.sendAs('BardBot', ':rose:', poem);
+  Slack.log(text, poem);
 }
 
 try{
   // Code that might fail
-  Slack.onMessage(response);
+  Slack.onMessage(response(msg));
 }catch(err){
   // Code that will run when it fails
   Slack.error('you done goofed');
