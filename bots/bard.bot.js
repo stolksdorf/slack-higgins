@@ -12,8 +12,6 @@ const getWords = async (constraint, word, topic) => {
 const makePoem = async (text)=>{
   const clean = _.split(text, ' ');
   const trigger = _.last(clean);
-  
-  Slack.log("gosh golly gee", trigger);
 
   const words = await Promise.all([
     getWords('rel_syn=', trigger),
@@ -33,7 +31,7 @@ const response = (msg)=>{
   
   //const poem = getWords('rel_rhy', rose)
   const poem = makePoem(msg.text);
-  Slack.sendAs('BardBot', ':rose:', poem);
+  Slack.sendAs('BardBot', ':rose:', 'poem');
   Slack.log(msg.text, poem);
 }
 //Slack.log("message:", msg.text, "response:", response);
