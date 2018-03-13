@@ -7,11 +7,11 @@ const jokes = [
 	joke: 'I guess you didn\'t fall too far from the turnip truck.',
 	who: ['chris']
 	},
-	{
-	triggers: ['too hard', 'I give up', 'I don\'t know what I\'m doing'],
-	joke: 'That\'s one tough cookie to crumble!',
-	who: ['chris']
-	},
+// 	{
+// 	triggers: ['too hard', 'I give up', 'I don\'t know what I\'m doing'],
+// 	joke: 'That\'s one tough cookie to crumble!',
+// 	who: ['chris']
+// 	},
 	{
 	triggers: 'make me a sandwich',
 	joke: [`Poof! Chris is a sandwich!`],
