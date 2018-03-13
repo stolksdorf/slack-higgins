@@ -31,11 +31,11 @@
  const response = (msg)=>{
    if(!Slack.msgHas(msg.text, 'bardbot', 'poem')) return;
    //const poem = getWords('rel_rhy', rose)
-   const poem = makePoem(msg.text)
+   const poem = makePoem('hey bardbot poem about cat');
    Slack.sendAs('BardBot', ':rose:', poem);
    Slack.log(msg.text, poem);
  }
- Slack.log(makePoem('hey bardbot poem about cat'));
+ 
  try{
    // Code that might fail
    Slack.onMessage(response);
