@@ -39,7 +39,7 @@ const response = (msg)=>{
 try{
   // Code that might fail
   Slack.onMessage(response);
-  Slack.log(makePoem('bardbot poem gold');
+  Slack.log(makePoem('bardbot poem gold'));
 }catch(err){
    // Code that will run when it fails
   Slack.error('you done goofed');
