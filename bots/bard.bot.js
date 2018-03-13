@@ -22,6 +22,7 @@
    const rhymes = await Promise.all([
      getWords('rel_rhy=', words[1])
    ]);
+   Slack.log(words, rhymes);
    const poem = [trigger, 'is as the', words[0], 'or the', words[1], '\n', 'even', words[2], 'cannot compare to the', rhymes[0]].join(' ');
    Slack.log("make poem:", poem);
    return poem;
