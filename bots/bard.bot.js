@@ -35,10 +35,10 @@ const response = (msg)=>{
   Slack.sendAs('BardBot', ':rose:', poem);
   Slack.log(msg.text, poem);
 }
-Slack.log(makePoem('bardbot poem gold'));
+
 try{
   // Code that might fail
-  Slack.onMessage(response);
+  Slack.onMessage(response, Slack.log('test'));
   
 }catch(err){
    // Code that will run when it fails
