@@ -13,7 +13,8 @@ const peeps = [
 	'rebabybay',
 	'rebaybay',
 	'U0UJZPVC6',
-	'meggeroni'
+	'meggeroni',
+	'mark'
 ];
 
 const send = (target, msg)=>Slack.sendAs('reflectionbot', ':seedling:', target, msg);
