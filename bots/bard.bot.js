@@ -38,7 +38,7 @@ const response = (msg)=>{
 
 try{
   // Code that might fail
-  Slack.onMessage(response, Slack.log('test'));
+  //Slack.onMessage(response, Slack.log('test'));
   
 }catch(err){
    // Code that will run when it fails
