@@ -5,9 +5,13 @@ const nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'n
 
 const send = (channel, text)=>Slack.sendAs('pollbot', 'bar_chart', channel, text);
 
+const timeout = ()=>{
+	return new Promise((resolve, reject)=>setTimeout(resolve, 250));
+};
+
 const addNumVotesToMsg = (evt, opts)=>{
 	return opts.reduce((flow, opt, idx)=>{
-		return flow.then(()=>Slack.react(evt, nums[idx]));
+		return flow.then(()=>Slack.react(evt, nums[idx])).then(()=>timeout();
 	}, Promise.resolve());
 }
 
