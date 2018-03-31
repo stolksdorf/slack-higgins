@@ -11,7 +11,7 @@ const timeout = ()=>{
 
 const addNumVotesToMsg = (evt, opts)=>{
 	return opts.reduce((flow, opt, idx)=>{
-		return flow.then(()=>Slack.react(evt, nums[idx])).then(()=>timeout();
+		return flow.then(()=>Slack.react(evt, nums[idx])).then(()=>timeout());
 	}, Promise.resolve());
 }
 
