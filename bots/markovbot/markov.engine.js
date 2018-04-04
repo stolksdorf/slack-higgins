@@ -10,11 +10,12 @@ const getWeightedRandom = (weights={}, total=0)=>{
 const trim = (key)=>(key.length > MARKOV_DEPTH ? key.slice(-MARKOV_DEPTH) : key);
 const END = '¶';
 module.exports = {
-	updateMapping : (msgs, existingMapping={count:0, totals: {}, weights: {}})=>{
-		const res = existingMapping;
+	updateMapping : (msgs, existingMapping)=>{
+		const res = existingMapping || {msgs:0, letters:0, totals: {}, weights: {}};
 		const encodeMsg = (msg)=>{
 			if(!msg) return;
 			const letters = `${msg}${END}`.split('');
+			res.letters += letters.length;
 			let key = '';
 			letters.map((letter)=>{
 				res.totals[key]  = (res.totals[key] || 0) + 1;
@@ -24,10 +25,10 @@ module.exports = {
 			});
 		};
 		msgs.map(encodeMsg);
-		res.count += msgs.length;
+		res.msgs += msgs.length;
 		return res;
 	},
-	getMessage : (mapping)=>{
+	genMessage : (mapping)=>{
 		const addLetter = (result='')=>{
 			const key = trim(result);
 			const letter = getWeightedRandom(mapping.weights[key], mapping.totals[key]);
