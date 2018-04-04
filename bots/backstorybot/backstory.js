@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const Supplement = require('./supplements.js')
-const People = require('./people.js')
-const Life = require('./life.js')
+const Supplement = require('./supplements.js');
+const People = require('./people.js');
+const Life = require('./life.js');
 const Class = require('./classes.js');
 const Background = require('./background.js');
 
@@ -16,7 +16,7 @@ module.exports = {
 	npc : (race, gender)=>{
 		const peep = People.person({race, gender});
 		peep.event = Life.event();
-		return peep
+		return peep;
 	},
 	character : (defaults = {})=>{
 		defaults.gender     = defaults.gender || Supplement.gender();
@@ -30,8 +30,8 @@ module.exports = {
 		return Object.assign({
 			name      : Supplement.name(defaults.gender, defaults.race),
 			alignment : Supplement.alignment(),
-			events : Life.eventsByAge(defaults.age),
-			family : People.family(defaults.race, defaults.familyName),
-		}, defaults)
+			events    : Life.eventsByAge(defaults.age),
+			family    : People.family(defaults.race, defaults.familyName),
+		}, defaults);
 	}
-}
+};

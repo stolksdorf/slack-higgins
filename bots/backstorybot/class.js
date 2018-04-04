@@ -4,11 +4,11 @@ const utils = require('./utils');
 
 const classes = {
 	barbarian : ()=>{
-		return 'yo'
+		return 'yo';
 	}
 
 
-}
+};
 
 
 module.exports = Object.assign({
@@ -16,4 +16,4 @@ module.exports = Object.assign({
 
 	},
 	classes
-})
+});

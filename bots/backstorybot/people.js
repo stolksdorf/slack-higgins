@@ -32,7 +32,7 @@ const People = {
 
 	//Maybe bump into person
 	description : (p)=>{
-		return `${p.name} ${p.familyName}. A ${p.gender} ${p.race} ${p.occupation}. ${p.status}; ${p.alignment}; Relationship: ${p.relationship}.`
+		return `${p.name} ${p.familyName}. A ${p.gender} ${p.race} ${p.occupation}. ${p.status}; ${p.alignment}; Relationship: ${p.relationship}.`;
 	},
 
 	family : (race='Human', family)=>{
@@ -57,16 +57,16 @@ const People = {
 			home       : Childhood.home(lifestyle),
 			memory     : Childhood.memory(),
 			lifestyle,
-		}
+		};
 	},
 	siblings : (race, familyName)=>{
 		let roll = d('1d10');
 		if(race == 'Elf' || race == 'Dwarf') roll -= 2;
 		const count = utils.chart(roll, {
-			'2' : 0,
-			'3-4' : ()=>d('1d3'),
-			'5-6' : ()=>d('1d4') + 1,
-			'7-8' : ()=>d('1d6') + 2,
+			'2'    : 0,
+			'3-4'  : ()=>d('1d3'),
+			'5-6'  : ()=>d('1d4') + 1,
+			'7-8'  : ()=>d('1d6') + 2,
 			'9-10' : ()=>d('1d8') + 3,
 		});
 		return _.times(count, ()=>{

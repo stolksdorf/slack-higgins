@@ -6,35 +6,35 @@ const Guide = require('./backstory.js');
 
 const makePersonAttachment = (info, title)=>{
 	const result = {
-		mrkdwn_in: ['text'],
-		fallback: Guide.People.description(info),
-		color: {
-			Hostile : 'danger',
-			Friendly : 'good',
+		mrkdwn_in : ['text'],
+		fallback  : Guide.People.description(info),
+		color     : {
+			Hostile     : 'danger',
+			Friendly    : 'good',
 			Indifferent : '#333'
 		}[info.relationship],
-		author_name: title,
-		title: `${info.name} ${info.familyName}`,
-		text: `A ${info.gender} ${info.race} ${info.occupation}. ${info.status}.`,
-		fields: [
+		author_name : title,
+		title       : `${info.name} ${info.familyName}`,
+		text        : `A ${info.gender} ${info.race} ${info.occupation}. ${info.status}.`,
+		fields      : [
 			{
-				title: 'Alignment',
-				value: info.alignment,
-				short: true
+				title : 'Alignment',
+				value : info.alignment,
+				short : true
 			},
 			{
-				title: 'Relationship',
-				value: info.relationship,
-				short: true
+				title : 'Relationship',
+				value : info.relationship,
+				short : true
 			}
 		]
 	};
 	if(info.event){
 		result.fields.push({
-			title: 'Notable Life Event',
-			value: info.event,
-			short: false
-		})
+			title : 'Notable Life Event',
+			value : info.event,
+			short : false
+		});
 	}
 	return result;
 };
@@ -42,10 +42,10 @@ const makePersonAttachment = (info, title)=>{
 const getFamily = (family)=>{
 	const attachments = [
 		{
-			color : '#f1c40f',
-			mrkdwn_in: ['text'],
-			title : 'Your Family',
-			text : `You were born in ${family.birthplace} into a ${family.lifestyle} family. ` +
+			color     : '#f1c40f',
+			mrkdwn_in : ['text'],
+			title     : 'Your Family',
+			text      : `You were born in ${family.birthplace} into a ${family.lifestyle} family. ` +
 					`You were raised by ${family.raisedBy}, and your childhood home was a ${family.home}. ` +
 					`What you remember about growing up: _"${family.memory}"_`
 		},
@@ -54,7 +54,7 @@ const getFamily = (family)=>{
 	];
 	_.each(family.siblings, (sibling)=>{
 		const relation = (sibling.gender == 'Male' ? 'Brother' : 'Sister');
-		attachments.push(makePersonAttachment(sibling, `${sibling.birthOrder} ${relation}`))
+		attachments.push(makePersonAttachment(sibling, `${sibling.birthOrder} ${relation}`));
 	});
 
 	return attachments;
@@ -65,27 +65,27 @@ const getNPC = (race, gender)=>{
 };
 
 const getEvent = ()=>{
-	return { text :  Guide.Life.event() };
+	return {text: Guide.Life.event()};
 };
 
 const getCharacter = (race, gender, _cls, bg)=>{
 	let results = [];
-	const char = Guide.character({race, gender, class : _cls, bg});
+	const char = Guide.character({race, gender, class: _cls, bg});
 
 	results.push({
-		color : '#1abc9c',
+		color       : '#1abc9c',
 		author_name : `${char.name} ${char.familyName}`,
-		text : `A ${char.gender} ${char.race} ${char.background.name} ${char.class.name}`,
-		fields : [
+		text        : `A ${char.gender} ${char.race} ${char.background.name} ${char.class.name}`,
+		fields      : [
 			{
-				title: 'Age',
-				value: char.age,
-				short: true
+				title : 'Age',
+				value : char.age,
+				short : true
 			},
 			{
-				title: 'Alignment',
-				value: char.alignment,
-				short: true
+				title : 'Alignment',
+				value : char.alignment,
+				short : true
 			},
 			{
 				title : 'Notable Life Events',
@@ -96,26 +96,26 @@ const getCharacter = (race, gender, _cls, bg)=>{
 
 	const cls = char.class;
 	results.push({
-		color : '#9b59b6',
-		mrkdwn_in: ['text'],
-		title: `${_.capitalize(cls.name)} - ${cls.subclass}`,
-		text: `${cls.origin}\n` +
-			_.map(cls.details, (text, tag)=>`*Your ${_.capitalize(tag)}*: ${text}`).join('\n'),
+		color     : '#9b59b6',
+		mrkdwn_in : ['text'],
+		title     : `${_.capitalize(cls.name)} - ${cls.subclass}`,
+		text      : `${cls.origin}\n${
+			_.map(cls.details, (text, tag)=>`*Your ${_.capitalize(tag)}*: ${text}`).join('\n')}`,
 	});
 
-	const background = char.background
+	const background = char.background;
 	results.push({
-		color : '#e67e22',
-		mrkdwn_in: ['text'],
-		title: `${_.capitalize(background.name)} background`,
-		text: `${background.origin}\n` +
-			_.map(background.details, (text, tag)=>`*${_.capitalize(tag)}*: ${text}`).join('\n') + '\n' +
+		color     : '#e67e22',
+		mrkdwn_in : ['text'],
+		title     : `${_.capitalize(background.name)} background`,
+		text      : `${background.origin}\n${
+			_.map(background.details, (text, tag)=>`*${_.capitalize(tag)}*: ${text}`).join('\n')}\n` +
 			`*Traits*: ${background.traits.join('\n')}\n` +
 			`*Ideal*: ${background.ideal}\n` +
 			`*Bond*: ${background.bond}\n` +
 			`*Flaw*: ${background.flaw}`,
 	});
-	results = results.concat(getFamily(char.family))
+	results = results.concat(getFamily(char.family));
 	return results;
 };
 
@@ -132,18 +132,18 @@ const getCharacter = (race, gender, _cls, bg)=>{
 Slack.onMessage((msg)=>{
 	if(!Slack.msgHas(msg, ['higs', 'higgins', 'backstorybot', Slack.bot.id])) return;
 
-	let race   = _.find(Guide.Supplement.races, (race)=>Slack.msgHas(msg, race));
-	let gender = _.find(['Female', 'Male'], (gender)=>Slack.msgHas(msg, gender));
-	let cls    = _.find(Guide.Class.list(), (cls)=>Slack.msgHas(msg, cls));
-	let bg     = _.find(Guide.Background.list(), (bg)=>Slack.msgHas(msg, bg));
+	const race   = _.find(Guide.Supplement.races, (race)=>Slack.msgHas(msg, race));
+	const gender = _.find(['Female', 'Male'], (gender)=>Slack.msgHas(msg, gender));
+	const cls    = _.find(Guide.Class.list(), (cls)=>Slack.msgHas(msg, cls));
+	const bg     = _.find(Guide.Background.list(), (bg)=>Slack.msgHas(msg, bg));
 
 	console.log({race, gender, cls, bg});
 
 	const send = (text='', attachments=[])=>{
 		return Slack.api('chat.postMessage', {
-			channel    : msg.channel,
+			channel     : msg.channel,
 			text,
-			attachments: JSON.stringify(attachments),
+			attachments : JSON.stringify(attachments),
 		}).catch((err)=>Slack.error(err));
 	};
 
@@ -159,11 +159,11 @@ Slack.onMessage((msg)=>{
 	}
 
 	if(Slack.msgHas(msg, 'event')){
-		return Slack.send(msg.channel, Guide.Life.event())
+		return Slack.send(msg.channel, Guide.Life.event());
 	}
 	if(Slack.msgHas(msg, 'character')){
 		return send('', getCharacter(race, gender, cls, bg));
 	}
 
 
-})
+});

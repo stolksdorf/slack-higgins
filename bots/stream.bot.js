@@ -3,14 +3,14 @@ const Slack = require('pico-slack');
 
 const MIN = 1000 * 60;
 
-let timers = {};
+const timers = {};
 const check = (name, game='overwatch')=>{
 	if(!timers[name]){
 		if(game == 'overwatch'){
 			Slack.sendAs('streambot', ':overwatch:', 'overwatch',
 				`*${name}* just started streaming Overwatch. https://www.twitch.tv/${name}`
 			);
-		} else{
+		} else {
 			Slack.sendAs('streambot', ':video_game:', 'vidya',
 				`*${name}* just started streaming ${game}. https://www.twitch.tv/${name}`
 			);

@@ -10,7 +10,7 @@ module.exports = {
 			if(key == '00') key = 100;
 			return parseInt(key);
 		});
-		const res = _.find(newMap, (val, threshold)=>num<=threshold)
+		const res = _.find(newMap, (val, threshold)=>num<=threshold);
 		return (typeof res == 'function')
 			? res()
 			: res;
@@ -23,4 +23,4 @@ module.exports = {
 		return _.sum(_.times(count, ()=>_.random(1, size)));
 	}
 
-}
+};

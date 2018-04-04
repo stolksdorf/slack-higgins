@@ -11,7 +11,7 @@ const Characters = {
 	npc : (race, gender)=>{
 		const peep = People.person({race, gender});
 		peep.event = Life.event();
-		return peep
+		return peep;
 	}
 
 

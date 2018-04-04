@@ -10,7 +10,7 @@ const scores = (arr)=>{
 		str : shuff[3],
 		dex : shuff[4],
 		con : shuff[5],
-	}
+	};
 };
 
 module.exports = {
@@ -18,11 +18,11 @@ module.exports = {
 		return scores(_.times(6, ()=>{
 			const rolls = _.times(4, ()=>utils.d('1d6'));
 			const lowest = _.min(rolls);
-			return _.sum(rolls) - lowest
-		}))
+			return _.sum(rolls) - lowest;
+		}));
 	},
 	standard(){
-		return scores([15,14,13,12,10])
+		return scores([15, 14, 13, 12, 10]);
 	},
 
 	pointBuy(){
@@ -106,6 +106,6 @@ module.exports = {
 			[13, 13, 13, 13, 13, 10],
 			[13, 13, 13, 13, 12, 11],
 			[13, 13, 13, 12, 12, 12]
-		]))
+		]));
 	}
 };

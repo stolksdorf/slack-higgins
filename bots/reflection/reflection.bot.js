@@ -31,8 +31,8 @@ const sendReflectionMessage = ()=>{
 		setTimeout(()=>{
 			send(peep, _.sample(ReflectionMsgs));
 		}, _.random(0, 100 * MINS));
-	})
-}
+	});
+};
 
 
 cron.scheduleJob('0 9 * * 1-5', sendMorningMessage);
