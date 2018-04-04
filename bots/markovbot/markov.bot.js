@@ -7,7 +7,10 @@ const aliases = {
 	meg   : 'meggeroni',
 	scoot : 'scott',
 	brock : 'brockdusome',
-	greg  : 'gleaver'
+	greg  : 'gleaver',
+
+	rebaybay : 'rebabybay',
+	rebecca : 'rebabybay',
 };
 
 Slack.onMessage((msg)=>{
