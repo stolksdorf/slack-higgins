@@ -12,9 +12,12 @@ const aliases = {
 	rebaybay : 'rebabybay',
 	rebecca : 'rebabybay',
 };
+const blacklist = [];
 
 Slack.onMessage((msg)=>{
-	MarkovService.addMessage(msg.user, msg.text);
+	if(!msg.isDirect && !blacklist.includes(msg.channel)){
+		MarkovService.addMessage(msg.user, msg.text);
+	}
 	const send = async (user)=>{
 		const newMsg = await MarkovService.getNewMessage(user);
 		Slack.api('chat.postMessage', {
