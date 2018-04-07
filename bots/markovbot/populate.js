@@ -55,7 +55,7 @@ const fetch = async (query, page=1, Messages={})=>{
 			}
 			return acc;
 		}, Messages);
-		if(res.messages.pagination.page < 3){//res.messages.pagination.page_count){
+		if(res.messages.pagination.page < res.messages.pagination.page_count){
 			return fetch(query, page +1, Messages);
 		}
 		return Messages;
