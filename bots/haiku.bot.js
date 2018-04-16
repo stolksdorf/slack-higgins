@@ -10,9 +10,7 @@ const add = (sentence, channel)=>{
 	const syl = syllable(sentence);
 	const count = stored[channel].length;
 
-	if(syl == 5 && count == 0){
-		stored[channel].push(sentence);
-	}else if(syl == 7 && count == 1){
+	if(syl == 7 && count == 1){
 		stored[channel].push(sentence);
 	}else if(syl == 5 && count == 2){
 		const res = stored[channel].concat(sentence);
@@ -20,6 +18,10 @@ const add = (sentence, channel)=>{
 		return res;
 	}else{
 		stored[channel] = [];
+	}
+
+	if(syl == 5 && stored[channel].length == 0){
+		stored[channel].push(sentence);
 	}
 };
 
