@@ -47,6 +47,7 @@
     "speakeasy-nlp": "^0.2.12",
     "string-similarity": "^1.2.0",
     "superagent": "^1.7.2",
+    "syllable": "^3.0.0",
     "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1"
   },
