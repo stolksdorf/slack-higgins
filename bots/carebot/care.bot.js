@@ -31,10 +31,10 @@ const Send = {
 	},
 	found : async (msg, doc)=>{
 		let text = `*${doc.name}*\n${doc.text}`;
-		text = `${text}\n\n_If this was helpful react with a :heart:._\n_If this wasn't accurate or didn't answer your question react with :no_entry:_`;
+		text = `${text}\n\n_If this was helpful react with a :heart:._\n_If this wasn't accurate or didn't answer your question react with :cry:_`;
 		const sent = await CareSend(msg.channel,text);
 		await Slack.react(sent, 'heart');
-		await Slack.react(sent, 'no_entry');
+		await Slack.react(sent, 'cry');
 		Memory[sent.ts] = {
 			msg,
 			doc
@@ -46,7 +46,7 @@ Slack.onReact((msg)=>{
 	const mem = Memory[msg.item.ts];
 	if(mem){
 		if(msg.reaction == 'heart') Send.happy(mem.msg, mem.doc);
-		if(msg.reaction == 'no_entry') Send.notHappy(mem.msg, mem.doc);
+		if(msg.reaction == 'cry') Send.notHappy(mem.msg, mem.doc);
 	}
 });
 

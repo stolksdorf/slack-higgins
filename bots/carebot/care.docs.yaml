@@ -1,5 +1,5 @@
 - name: Vacation Booking
-  tags: [[book, take], [vacation, time off, appointment]]
+  tags: [[book, take], [vacation, time off, appointment, appt, vacay]]
   link: https://sites.google.com/a/thalmic.com/thalmic-intranet/guides/vacation-and-other-time-off
   text: >
     We use ADP tobook time off now.
