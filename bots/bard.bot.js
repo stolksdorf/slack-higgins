@@ -6,7 +6,7 @@ const getWords = async (constraint, word, topic) => {
   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')
   const data = await response.json();
 
-  //Slack.log("get words:", data);
+  console.log("get words:", data);
   return data[0].word;
 }
  
@@ -22,25 +22,35 @@ const makePoem = async (text)=>{
   const rhymes = await Promise.all([
     getWords('rel_rhy=', words[1])
   ]);
-//    Slack.log(words, rhymes);
+   // console.log(words, rhymes);
   const poem = [trigger, 'is as the', words[0], 'or the', words[1], '\n', 'even', words[2], 'cannot compare to the', rhymes[0]].join(' ');
-//    Slack.log("make poem:", poem);
+   // console.log("make poem:", poem);
   return poem;
 };
  
-const response = (msg)=>{
+const response = async (msg)=>{
   if(!Slack.msgHas(msg.text, 'bardbot', 'poem')) return;
-  //const poem = getWords('rel_rhy', rose)
-  const poem = makePoem(msg.text);
-  Slack.sendAs('BardBot', ':rose:', poem);
-  Slack.log(msg.text, poem);
+  
+  const poem = await makePoem(msg.text);
+  Slack.sendAs('BardBot', ':rose:', msg.channel, poem);
+  // console.log(msg.text, poem, "response goes here");
 }
 
 try{
   // Code that might fail
-  //Slack.onMessage(response, Slack.log('test'));
+  Slack.onMessage(response);
+  // console.log("tester")
   
 }catch(err){
    // Code that will run when it fails
   Slack.error('you done goofed');
 }
+//
+
+// Slack.onMessage((msg)=>{
+//   Slack.send(msg.channel, 'hey chris');
+// })
+
+//todo
+//plural handling
+//make makePoem give a poem or false
