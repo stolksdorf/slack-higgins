@@ -51,4 +51,5 @@ const HOURS = 1000 * 60 * 60;
 const sendRandomMessage = ()=>{
 	botSend('bottin-around', _.sample(Slack.users));
 	setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);
-}
+};
+sendRandomMessage();

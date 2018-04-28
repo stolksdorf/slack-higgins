@@ -1,0 +1,15 @@
+- name: Vacation Booking
+  tags: [[book, take], [vacation, time off, appointment, appt, vacay]]
+  link: https://sites.google.com/a/thalmic.com/thalmic-intranet/guides/vacation-and-other-time-off
+  text: >
+    We use ADP tobook time off now.
+    It's pretty cool. More text.
+
+
+- name: Fitness & Wellbeing Benefit
+  tags: [[fitness, wellbeing, gym, ]]
+  link: https://sites.google.com/a/thalmic.com/thalmic-intranet/guides/fitness-reimbursement---what-you-can-submit
+  text: >
+    In the spirit of encouraging employees to live an active and healthy lifestyle, full-time employees are eligible to claim up to a $900 per year Fitness & Wellbeing benefit.
+  more : This is alonger form message with potentially more information and links in it
+

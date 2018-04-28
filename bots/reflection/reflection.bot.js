@@ -8,12 +8,13 @@ const MorningMsgs = fs.readFileSync(`${__dirname}/morning.msgs.txt`, 'utf8').spl
 const ReflectionMsgs = fs.readFileSync(`${__dirname}/reflection.msgs.txt`, 'utf8').split('\n');
 
 const peeps = [
-	'scott',
+	//'scott',
 	'katie',
 	'rebabybay',
 	'rebaybay',
 	'U0UJZPVC6',
 	'meggeroni',
+	'simon',
 	'mark'
 ];
 
