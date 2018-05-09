@@ -14,7 +14,6 @@ const peeps = [
 	'rebaybay',
 	'U0UJZPVC6',
 	'meggeroni',
-	'simon',
 	'mark'
 ];
 
