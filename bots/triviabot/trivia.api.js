@@ -3,7 +3,7 @@ const request = require('superagent');
 
 const Storage = require('pico-redis')('trivia');
 
-const CategoryCache = {};
+let CategoryCache = {};
 
 // takes a string and splits it in to words using ' ', '/', and '-' as delimiters
 // converts to lowercase
@@ -43,11 +43,14 @@ var TriviaApi = {
 	updateStorage : async ()=>Storage.set('categoryCache', CategoryCache),
 
 	getClue : async (categoryId)=>{
+		//await TriviaApi.updateStorage();
+
 		if(!categoryId) categoryId = _.sample(Object.values(TriviaApi.Categories));
-		if(_.isEmpty(CategoryCache)) CategoryCache = await Storage.get('categoryCache');
+		if(_.isEmpty(CategoryCache)) CategoryCache = await Storage.get('categoryCache') || {};
 
 		if(!CategoryCache[categoryId] || !CategoryCache[categoryId].length){
-			await TriviaApi.refreshCategoryPool();
+			console.log('refreshing');
+			await TriviaApi.refreshCategoryPool(categoryId);
 		};
 
 		let clue = CategoryCache[categoryId].splice(_.random(CategoryCache[categoryId].length - 1), 1)[0];
@@ -56,19 +59,26 @@ var TriviaApi = {
 		if(!clue || !clue.answer || !clue.question) clue = await TriviaApi.getQuestion(categoryId);
 		if(!clue.value) clue.value = 400;
 
+		clue.answer = stringToCleanWordArray(clue.answer).join(' ');
+
+		console.log(clue);
+
 		return clue;
 	},
 	refreshCategoryPool : async (categoryId)=>{
 		const fetchQuestions = async (offset = 0, questions = [])=>{
-			return await request.get(`http://jservice.io/api/clues`)
-				.query({ category : categoryId, offset})
+			return await request.get(`http://jservice.io/api/clues?category=${categoryId}&offset=${offset}`)
+				//.query({ category : categoryId, offset})
 				.then((res)=>{
+					//console.log(res.body);
+					console.log('fetched questions!', offset);
 					if(res.body.length){
 						return fetchQuestions(offset + res.body.length, questions.concat(res.body));
 					}else{
 						return questions.concat(res.body);
 					}
-				});
+				})
+				.catch((err)=>console.log(err.toString()));
 		};
 		CategoryCache[categoryId] = await fetchQuestions();
 		TriviaApi.updateStorage();

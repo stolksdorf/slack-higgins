@@ -4,7 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 
 const config = require('nconf')
 	.argv()
@@ -39,9 +39,10 @@ const loadBots = ()=>{
 	})
 		.then((bots)=>{
 			_.each(bots, (botpath)=>{
+				if(botpath !== './bots/triviabot/trivia.bot.js') return;
 				try {
 					const router = require(botpath);
-					console.log('loaded', botpath);
+					console.log('loaded', botpath, router);
 					if(router && !_.isEmpty(router)) app.use(router);
 				} catch (err){
 					console.log(err);
@@ -60,8 +61,7 @@ app.get('/', (req, res)=>{
 
 Slack.connect(config.get('slack_bot_token'))
 	.then(()=>loadBots())
-	.then(()=>loadCmds('./cmds'))
-	.then((cmdRouter)=>app.use(cmdRouter))
+	//.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
 	.then(()=>app.listen(process.env.PORT || 8000))
 	.then(()=>Slack.debug('Rebooted!'))
 	.catch((err)=>Slack.error(err));

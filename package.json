@@ -29,17 +29,17 @@
   },
   "homepage": "https://github.com/stolksdorf/slack-higgins#readme",
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "classnames": "^2.2.5",
-    "express": "^4.13.4",
+    "body-parser": "^1.18.3",
+    "classnames": "^2.2.6",
+    "express": "^4.16.3",
     "glob": "^7.0.6",
     "google": "^1.4.0",
-    "js-yaml": "^3.11.0",
-    "lodash": "^4.6.1",
-    "moment": "^2.17.0",
-    "mongoose": "^4.7.0",
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "mongoose": "^4.13.14",
     "nconf": "^0.8.4",
-    "node-fetch": "^2.0.0",
+    "node-fetch": "^2.1.2",
     "node-schedule": "^1.3.0",
     "pico-redis": "^1.0.0",
     "pico-slack": "^1.4.0",
@@ -47,13 +47,13 @@
     "request": "~2.69.0",
     "speakeasy-nlp": "^0.2.12",
     "string-similarity": "^1.2.0",
-    "superagent": "^1.7.2",
+    "superagent": "^3.8.3",
     "syllable": "^3.0.0",
     "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1"
   },
   "devDependencies": {
-    "eslint": "^4.7.1",
+    "eslint": "^4.19.1",
     "eslint-config-stolksdorf": "^1.0.1"
   }
 }
