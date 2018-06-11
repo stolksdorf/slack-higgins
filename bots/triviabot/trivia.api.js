@@ -1,17 +1,15 @@
 const _ = require('lodash');
 const request = require('superagent');
 
-const Storage = require('slack-microbots/storage').create('trivia');
+const Storage = require('pico-redis')('trivia');
 
-const ClueCache = Storage.get('cluecache') || {};
-
-
+const CategoryCache = {};
 
 // takes a string and splits it in to words using ' ', '/', and '-' as delimiters
 // converts to lowercase
 // removes html tags and punctuation
 // removes trailing 's' or 'es'
-const stringToCleanWordArray = function(string) {
+const stringToCleanWordArray = (string) =>{
 	return _.chain(string)
 		.words(/[^ \/-]+/g)
 		.map((word)=>{
@@ -23,56 +21,61 @@ const stringToCleanWordArray = function(string) {
 
 
 var TriviaApi = {
-	getClue : function(categoryId, cb){
-		var getQuestion = function(){
-			//Remove a random element from the question cache
-			const clue = ClueCache[categoryId].splice(_.random(ClueCache[categoryId].length - 1), 1)[0];
-			Storage.set('cluecache', ClueCache);
-
-			//Check for invalid questions
-			if(!clue || !clue.answer || !clue.question){
-				console.log('invalid question');
-				return getQuestion();
-			}
-			if(!clue.value) clue.value = 400;
-
-			cb(clue);
-		};
-
-		//If we don't have questions in that category, refresh the pool
-		if(!ClueCache[categoryId] || !ClueCache[categoryId].length){
-			return TriviaApi.refreshCategoryPool(categoryId, function(questions){
-				getQuestion();
-			});
-		}
-
-		return getQuestion();
+	Categories : {
+		science            : 25,
+		animals            : 21,
+		water              : 211,
+		nature             : 267,
+		'4 letter words'   : 51,
+		'5 letter words'   : 139,
+		homophones         : 249,
+		food               : 49,
+		rhymes             : 561,
+		'word origins'     : 223,
+		'science & nature' : 218,
+		'before & after'   : 1800,
+		'familiar phrases' : 705,
+		'common bonds'     : 508,
+		'hodgepodge'       : 227,
+		'mythology'        : 680,
 	},
 
-	refreshCategoryPool : function(categoryId, cb){
-		let questions = [];
-		let offset = 0;
+	updateStorage : async ()=>Storage.set('categoryCache', CategoryCache),
 
-		var callCategories = function(){
-			request.get(`http://jservice.io/api/clues?category=${categoryId}&offset=${offset}`)
-				.send()
-				.end(function(err, res){
+	getClue : async (categoryId)=>{
+		if(!categoryId) categoryId = _.sample(Object.values(TriviaApi.Categories));
+		if(_.isEmpty(CategoryCache)) CategoryCache = await Storage.get('categoryCache');
+
+		if(!CategoryCache[categoryId] || !CategoryCache[categoryId].length){
+			await TriviaApi.refreshCategoryPool();
+		};
+
+		let clue = CategoryCache[categoryId].splice(_.random(CategoryCache[categoryId].length - 1), 1)[0];
+		await TriviaApi.updateStorage();
+
+		if(!clue || !clue.answer || !clue.question) clue = await TriviaApi.getQuestion(categoryId);
+		if(!clue.value) clue.value = 400;
+
+		return clue;
+	},
+	refreshCategoryPool : async (categoryId)=>{
+		const fetchQuestions = async (offset = 0, questions = [])=>{
+			return await request.get(`http://jservice.io/api/clues`)
+				.query({ category : categoryId, offset})
+				.then((res)=>{
 					if(res.body.length){
-						offset += res.body.length;
-						questions = _.union(questions, res.body);
-						callCategories();
-					} else {
-						//when we run out of questions, finish the callback
-						ClueCache[categoryId] = questions;
-						Storage.set('cluecache', ClueCache);
-						cb(questions);
+						return fetchQuestions(offset + res.body.length, questions.concat(res.body));
+					}else{
+						return questions.concat(res.body);
 					}
 				});
 		};
-		callCategories();
+		CategoryCache[categoryId] = await fetchQuestions();
+		TriviaApi.updateStorage();
+		return CategoryCache[categoryId];
 	},
 
-	checkAnswer : function(clueAnswer, msg){
+	checkAnswer : (clueAnswer, msg)=>{
 		if(!msg) return false;
 		const dumbWords = ['the', 'their', 'sir', 'its', 'a', 'an', 'and', 'or', 'to', 'thing', 'things'];
 
@@ -86,20 +89,30 @@ var TriviaApi = {
 		});
 
 	},
-
-	//returns a map of category id, name, and poolSize
-	getCategories : function(categoryMap){
-		return _.map(categoryMap, (id, name)=>{
+	getCategories : ()=>{
+		return _.map(TriviaApi.Categories, (id, name)=>{
 			return {
-				id   : id,
-				name : name,
-				size : (ClueCache[id] ? ClueCache[id].length : '???')
+				id,
+				name,
+				size : (CategoryCache[id] ? CategoryCache[id].length : '???')
 			};
 		});
 	},
-
 };
 
 
 
 module.exports = TriviaApi;
+
+
+
+// const getCategoryId = function(msg){
+// 	const result = _.reduce(Categories, function(r, id, name){
+// 		if(_.includes(msg.toLowerCase(), name.toLowerCase())) return id;
+// 		return r;
+// 	}, false);
+
+// 	//If no match, get random category
+// 	if(!result) return _.sample(_.values(Categories));
+// 	return result;
+// };
