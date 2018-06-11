@@ -52,6 +52,7 @@ const increaseScore = async (username, points)=>{
 		_.each(Scores, (score)=>score.points = 0);
 		send(`Congrats ${username}! You've been awarded a :crown: ! https://media.giphy.com/media/WWrf3mWsicNqM/giphy.gif \n\nScores reset!`);
 	};
+	cleanup();
 
 	let Scores = await Storage.get('scores') || {};
 
@@ -88,8 +89,7 @@ Slack.onMessage(async (msg)=>{
 
 	if(isActive()){
 		if(TriviaApi.checkAnswer(activeClue.answer, msg.text)){
-			await increaseScore(msg.user, activeClue.value);
-			return cleanup();
+			return await increaseScore(msg.user, activeClue.value);
 		}else{
 			return Slack.react(msg, 'no_entry_sign');
 		}
