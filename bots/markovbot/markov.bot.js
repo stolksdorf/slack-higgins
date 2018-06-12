@@ -14,7 +14,7 @@ const aliases = {
 	rebaybay : 'rebabybay',
 	rebecca : 'rebabybay',
 };
-const blacklist = [];
+const blacklist = ['trivia-time'];
 
 const botSend = async (channel, user)=>{
 	const msg = await MarkovService.getNewMessage(user);
@@ -31,6 +31,8 @@ const botSend = async (channel, user)=>{
 };
 
 Slack.onMessage((msg)=>{
+if(blacklist.some((channel)=>channel==msg.channel)) return; 
+	
 	if(msg.text == 'populate' && msg.user == 'scott'){
 		return Populate();
 	}
