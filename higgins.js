@@ -6,6 +6,8 @@ const express = require('express');
 const app = express();
 //app.use(bodyParser.json());
 
+process.once('unhandledRejection', (err)=>console.error(err));
+
 const config = require('nconf')
 	.argv()
 	.env({lowerCase: true})
@@ -26,6 +28,7 @@ try {
 }
 
 Slack.setInfo('higgins', ':tophat:');
+Slack.emitter.setMaxListeners(25);
 
 const loadCmds = require('./cmd.loader.js');
 
@@ -39,17 +42,16 @@ const loadBots = ()=>{
 	})
 		.then((bots)=>{
 			_.each(bots, (botpath)=>{
-				if(botpath !== './bots/triviabot/trivia.bot.js') return;
 				try {
 					const router = require(botpath);
-					console.log('loaded', botpath, router);
+					console.log('loaded', botpath);
 					if(router && !_.isEmpty(router)) app.use(router);
 				} catch (err){
 					console.log(err);
 					Slack.error('Bot Load Error', botpath, err);
 				}
 			});
-		});
+		})
 };
 
 
@@ -61,7 +63,7 @@ app.get('/', (req, res)=>{
 
 Slack.connect(config.get('slack_bot_token'))
 	.then(()=>loadBots())
-	//.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
+	.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
 	.then(()=>app.listen(process.env.PORT || 8000))
 	.then(()=>Slack.debug('Rebooted!'))
 	.catch((err)=>Slack.error(err));

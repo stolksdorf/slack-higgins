@@ -23,7 +23,7 @@ const Messages = {
 	},
 	encodeMessages: async (user, msgs)=>{
 		console.log('encoding!', msgs);
-		let mapping = await Messages.getMapping(user);
+		let mapping = await Messages.getMapping(user) || {};
 		Mappings[user] = Markov.updateMapping(cleanMsgs(msgs), mapping);
 		await redis.set(user, Mappings[user]);
 	},
@@ -38,6 +38,7 @@ const Messages = {
 	},
 	getNewMessage: async (user)=>{
 		let mapping = await Messages.getMapping(user);
+		if(!mapping) return false;
 		return {
 			letters : mapping.letters,
 			msgs    : mapping.msgs,
