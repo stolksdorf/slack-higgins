@@ -9,8 +9,8 @@ const storage = {};
 
 
 
-const MAX_SIZE = 5;
-const MAX_AGE = 60;
+const MAX_SIZE = 2;
+const MAX_AGE = 30;
 
 Slack.onMessage((msg)=>{
 	if(!Slack.msgHas(msg.text, 'higgins', 'clean', 'house')) return;
