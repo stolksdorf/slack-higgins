@@ -10,6 +10,7 @@ const aliases = {
 	scoot : 'scott',
 	brock : 'brockdusome',
 	greg  : 'gleaver',
+	jenny : 'jennifer.czekus', 
 
 	rebaybay : 'rebabybay',
 	rebecca : 'rebabybay',
