@@ -10,10 +10,13 @@ const aliases = {
 	scoot : 'scott',
 	brock : 'brockdusome',
 	greg  : 'gleaver',
-	jenny : 'jennifer.czekus', 
+	goog  : 'gleaver',
+	jenny : 'jennifer.czekus',
+	tina  : 'tskoops',
 
+	jenaynay : 'jennifer.czekus',
 	rebaybay : 'rebabybay',
-	rebecca : 'rebabybay',
+	rebecca  : 'rebabybay',
 };
 const blacklist = ['trivia-time'];
 
