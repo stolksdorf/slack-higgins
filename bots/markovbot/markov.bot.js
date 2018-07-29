@@ -13,15 +13,14 @@ const aliases = {
 	goog  : 'gleaver',
 	jenny : 'jennifer.czekus',
 	tina  : 'tskoops',
-
 	jenaynay : 'jennifer.czekus',
 	rebaybay : 'rebabybay',
 	rebecca  : 'rebabybay',
 };
 const blacklist = ['trivia-time'];
 
-const botSend = async (channel, user)=>{
-	const msg = await MarkovService.getNewMessage(user);
+const botSend = async (channel, user, msg)=>{
+	if(!msg) msg = await MarkovService.getNewMessage(user);
 	Slack.api('chat.postMessage', {
 		channel     : channel,
 		username    : `${user}bot`,
@@ -35,8 +34,8 @@ const botSend = async (channel, user)=>{
 };
 
 Slack.onMessage((msg)=>{
-if(blacklist.some((channel)=>channel==msg.channel)) return; 
-	
+if(blacklist.some((channel)=>channel==msg.channel)) return;
+
 	if(msg.text == 'populate' && msg.user == 'scott'){
 		return Populate();
 	}
@@ -54,8 +53,11 @@ if(blacklist.some((channel)=>channel==msg.channel)) return;
 
 /** Random Proc **/
 const HOURS = 1000 * 60 * 60;
-const sendRandomMessage = ()=>{
-	botSend('bottin-around', _.sample(Slack.users));
+const sendRandomMessage = async ()=>{
+	const randomUser = _.sample(Slack.users);
+	const msg = await MarkovService.getNewMessage(randomUser);
+	if(msg.msgs < 50) return sendRandomMessage();
+	botSend('bottin-around', randomUser, msg);
 	setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);
 };
 sendRandomMessage();
