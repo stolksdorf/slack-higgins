@@ -24,8 +24,8 @@ const dayForecast = async ()=>{
 	return request(`https://api.darksky.net/forecast/${config.get('darksky_api')}/${lp.lat},${lp.lng}`)
 		.then((res)=>{
 			return {
-				summary : res.body.daily.summary,
-				rain    : res.body.daily.icon == 'rain',
+				summary : res.body.hourly.summary,
+				rain    : res.body.hourly.icon == 'rain',
 			}
 		})
 };
