@@ -58,7 +58,7 @@ Slack.onMessage(async (msg)=>{
 
 
 // //Setup cronjob to check for rain at 6:30am every day
-// cron.scheduleJob('30 6 * * *', checkForRain);
+cron.scheduleJob('30 6 * * *', checkForRain);
 
 // //Turns off light everyday at 10:30
-// cron.scheduleJob('30 10 * * *', turnLightOff);
+cron.scheduleJob('30 10 * * *', turnLightOff);
