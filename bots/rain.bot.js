@@ -30,8 +30,6 @@ const dayForecast = async ()=>{
 		})
 };
 
-console.log(config.get('ifttt_webhook_key'));
-
 const turnLightOn  = async ()=>request(`https://maker.ifttt.com/trigger/rain_light_on/with/key/${config.get('ifttt_webhook_key')}`);
 const turnLightOff = async ()=>request(`https://maker.ifttt.com/trigger/rain_light_off/with/key/${config.get('ifttt_webhook_key')}`);
 
@@ -54,7 +52,6 @@ Slack.onMessage(async (msg)=>{
 			.then((res)=>console.log(res.body))
 	}
 	if(msg.text.toLowerCase() == 'light off'){
-		console.log('here');
 		turnLightOff()
 			.then((res)=>Slack.msg(msg.channel, res))
 			.catch((res)=>Slack.msg(msg.channel, res))
