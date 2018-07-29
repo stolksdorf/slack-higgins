@@ -52,15 +52,13 @@ Slack.onMessage(async (msg)=>{
 			.then((res)=>console.log(res.body))
 	}
 	if(msg.text.toLowerCase() == 'light off'){
-		turnLightOff()
-			.then((res)=>Slack.msg(msg.channel, res))
-			.catch((res)=>Slack.msg(msg.channel, res))
+		turnLightOff();
 	}
 });
 
 
-//Setup cronjob to check for rain at 6:30am every day
-cron.scheduleJob('30 6 * * *', checkForRain);
+// //Setup cronjob to check for rain at 6:30am every day
+// cron.scheduleJob('30 6 * * *', checkForRain);
 
-//Turns off light everyday at 10:30
-cron.scheduleJob('30 10 * * *', turnLightOff);
+// //Turns off light everyday at 10:30
+// cron.scheduleJob('30 10 * * *', turnLightOff);
