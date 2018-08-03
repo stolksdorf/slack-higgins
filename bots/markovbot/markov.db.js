@@ -72,7 +72,7 @@ const MappingModel = DB.sequelize.define('Mapping', {
 	user : {
 		type : DB.Sequelize.TEXT,
 		allowNull : false,
-		isUnique : true,
+		unique : true,
 	},
 	msgs : {
 		type : DB.Sequelize.INTEGER,
@@ -107,7 +107,10 @@ const MarkovDB = {
 
 	async saveMapping(user, mapping) {
 		await MarkovDB.initialize();
+		const start = Date.now();
+		console.log(`[MarkovDB]: Beginning upsert for '${user}'.`);
 		await MappingModel.upsert(MarkovDB.convertToDb(user, mapping));
+		console.log(`[MarkovDB]: Finished upsert for '${user}'. Took ${Date.now() - start}ms.`);
 	},
 
 	convertToDb(user, mapping) {
