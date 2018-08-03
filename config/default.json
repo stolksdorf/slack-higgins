@@ -5,5 +5,6 @@
 	"dropbox_key" : "",
 	"dropbox_secret" : "",
 	"darksky_api" : "",
-	"ifttt_webhook_key" : ""
+	"ifttt_webhook_key" : "",
+	"database_url": "postgres://postgres:postgres@127.0.0.1:5433/Higgins"
 }
