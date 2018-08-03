@@ -23,9 +23,13 @@ const Messages = {
 	},
 	encodeMessages: async (user, msgs)=>{
 		//console.log('encoding!', msgs);
-		let mapping = await Messages.getMapping(user) || {};
-		Mappings[user] = Markov.updateMapping(cleanMsgs(msgs), mapping);
-		await redis.set(user, Mappings[user]);
+		try {
+			let mapping = await Messages.getMapping(user) || {};
+			Mappings[user] = Markov.updateMapping(cleanMsgs(msgs), mapping);
+			await redis.set(user, Mappings[user]);
+		} catch (err) {
+			console.error(`Encountered error while trying to encode messages.`, {user, msgs}, err)
+		}
 	},
 	addMessage: (user, msg)=>{
 		if(timers[user]) clearTimeout(timers[user]);
