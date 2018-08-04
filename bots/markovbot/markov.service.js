@@ -28,7 +28,7 @@ const Messages = {
 			Mappings[user] = Markov.updateMapping(cleanMsgs(msgs), mapping);
 			await MarkovDB.saveMapping(user, Mappings[user]);
 		} catch (err) {
-			console.error(`Encountered error while trying to encode messages.`, {user, msgs})
+			console.error(`Encountered error while trying to encode messages.`, {user, msgs}, err)
 		}
 	},
 	addMessage: (user, msg)=>{

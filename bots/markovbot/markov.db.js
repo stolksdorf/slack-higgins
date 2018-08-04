@@ -106,15 +106,34 @@ const MarkovDB = {
 	},
 
 	async saveMapping(user, mapping) {
-		await MarkovDB.initialize();
-		const start = Date.now();
-		console.log(`[MarkovDB]: Beginning upsert for '${user}'.`);
-		await MappingModel.upsert(MarkovDB.convertToDb(user, mapping));
-		console.log(`[MarkovDB]: Finished upsert for '${user}'. Took ${Date.now() - start}ms.`);
+		try {
+    		await MarkovDB.initialize();
+    		const start = Date.now();
+    		console.log(`[MarkovDB]: Beginning upsert for '${user}'.`);
+//    		await MappingModel.upsert(_.assign({ user }, mapping));
+    		await DB.sequelize.query(`
+    			INSERT INTO "Markov"."Mappings" (id, "user", msgs, letters, weights, totals, created_at, updated_at)
+    				VALUES (DEFAULT, :user, :msgs, :letters, :weights, :totals, now(), now())
+    			ON CONFLICT ("user") DO UPDATE SET
+    				msgs = EXCLUDED.msgs,
+    				letters = EXCLUDED.letters,
+    				weights = EXCLUDED.weights,
+    				totals = EXCLUDED.totals,
+    				updated_at = EXCLUDED.updated_at
+    		`, { replacements: MarkovDB.convertToDb(user, mapping) });
+    		console.log(`[MarkovDB]: Finished upsert for '${user}'. Took ${Date.now() - start}ms.`);
+		} catch (err) {
+			console.error(`Encountered error while trying to save mapping for user '${user}':`, err)
+		}
 	},
 
 	convertToDb(user, mapping) {
-		return _.assign({}, mapping, { user });
+//		return _.assign({}, mapping, { user });
+		return _.extend({}, mapping, {
+			user,
+			weights: JSON.stringify(mapping.weights),
+			totals: JSON.stringify(mapping.totals)
+		});
 	},
 
 	convertFromDb(mapping) {
