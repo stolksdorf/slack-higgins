@@ -19,14 +19,13 @@ const aliases = {
 };
 const iconAliases = {
 	'jennifer.czekus' : 'jenny',
-	'scott' : '+1'
 };
 
 const blacklist = ['trivia-time'];
 
 const botSend = async (channel, user, msg)=>{
-	if(!msg) msg = await MarkovService.getNewMessage(user);
 	const icon = iconAliases[user] || user;
+	if(!msg) msg = await MarkovService.getNewMessage(user);
 	Slack.api('chat.postMessage', {
 		channel     : channel,
 		username    : `${user}bot`,
@@ -42,7 +41,7 @@ const botSend = async (channel, user, msg)=>{
 Slack.onMessage((msg)=>{
 if(blacklist.some((channel)=>channel==msg.channel)) return;
 
-	if(msg.text == 'populate' && msg.user == 'scott'){
+	if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
 		return Populate();
 	}
 
