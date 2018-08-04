@@ -8,9 +8,12 @@ const app = express();
 
 
 
-const config = require('nconf')
+const config = require('pico-conf')
 	.argv()
-	.env({lowerCase: true})
+	.env()
+	.add(require('./config/default.js'))
+	.defaults(require('./config/default.js'))
+
 	.file('environment', {file: `config/${process.env.NODE_ENV}.json`})
 	.file('defaults', {file: 'config/default.json'});
 

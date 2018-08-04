@@ -1,5 +1,5 @@
 const Slack = require('pico-slack');
-const config = require('nconf');
+const config = require('pico-conf');
 const cron = require('node-schedule');
 const request = require('superagent');
 
@@ -21,7 +21,7 @@ const lp = {
 
 
 const dayForecast = async ()=>{
-	return request(`https://api.darksky.net/forecast/${config.get('darksky_api')}/${lp.lat},${lp.lng}`)
+	return request(`https://api.darksky.net/forecast/${config.get('rainbot.darksky_api')}/${lp.lat},${lp.lng}`)
 		.then((res)=>{
 			return {
 				summary : res.body.hourly.summary,
@@ -30,14 +30,14 @@ const dayForecast = async ()=>{
 		})
 };
 
-const turnLightOn  = async ()=>request(`https://maker.ifttt.com/trigger/rain_light_on/with/key/${config.get('ifttt_webhook_key')}`);
-const turnLightOff = async ()=>request(`https://maker.ifttt.com/trigger/rain_light_off/with/key/${config.get('ifttt_webhook_key')}`);
+const turnLightOn  = async ()=>request(`https://maker.ifttt.com/trigger/rain_light_on/with/key/${config.get('rainbot.ifttt_webhook_key')}`);
+const turnLightOff = async ()=>request(`https://maker.ifttt.com/trigger/rain_light_off/with/key/${config.get('rainbot.ifttt_webhook_key')}`);
 
 
 const checkForRain = async ()=>{
 	const forecast = await dayForecast();
-	Slack.log(`Rain status: ${forecast.rain}`);
-	if(forecast.rain) await turnLightOn();
+	Slack.log(`Rain status: ${forecast.willRain}`);
+	if(forecast.willRain) await turnLightOn();
 };
 
 Slack.onMessage(async (msg)=>{
@@ -47,7 +47,7 @@ Slack.onMessage(async (msg)=>{
 	// Diagnostics
 	if(msg.text.toLowerCase() == 'rain check'){
 		const forecast = await dayForecast();
-		Slack.msg(msg.channel, `${forecast.summary}. Rain Status: ${forecast.rain}`);
+		Slack.msg(msg.channel, `${forecast.summary}. Rain Status: ${forecast.willRain}`);
 		turnLightOn()
 			.then((res)=>console.log(res.body))
 	}

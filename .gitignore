@@ -7,9 +7,8 @@ build/*
 architecture.json
 
 # Ignore sensitive stuff
-/config/*
-!/config/default.json
-config.json
+/config/local.js
+/config/local.json
 
 
 node_modules

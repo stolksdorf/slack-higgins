@@ -1,5 +1,5 @@
 const Slack = require('pico-slack');
-const config = require('nconf');
+const config = require('pico-conf');
 const _ = require('lodash');
 
 const files = [];

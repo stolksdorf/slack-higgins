@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const Slack = require('pico-slack');
 const fs = require('fs');
-const config = require('nconf');
+const config = require('pico-conf');
 
 const MARKOV_DEPTH = 6;
 const SEP = '';

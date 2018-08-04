@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const MarkovService = require('./markov.service.js');
 
-const Populate = require('./populate.js')
+const Populate = require('./populate.script.js')
 
 const aliases = {
 	dave  : 'david',
