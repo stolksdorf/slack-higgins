@@ -97,6 +97,9 @@ const MappingModel = DB.sequelize.define('Mapping', {
 	schema : 'Markov',
 });
 
+let timer;
+const Backlog = {};
+
 const MarkovDB = {
 	async getMapping(user) {
 		await MarkovDB.initialize();
@@ -105,23 +108,37 @@ const MarkovDB = {
 		return MarkovDB.convertFromDb(mapping);
 	},
 
-	async saveMapping(user, mapping) {
+	saveMapping(user, mapping) {
+		Backlog[user] = mapping;
+		MarkovDB.enqueueUpdate();
+	},
+
+	enqueueUpdate() {
+		if (!timer) timer = setTimeout(MarkovDB.persistBacklog, 20000);
+	},
+
+	async persistBacklog() {
 		try {
     		await MarkovDB.initialize();
-    		const start = Date.now();
-    		console.log(`[MarkovDB]: Beginning upsert for '${user}'.`);
-//    		await MappingModel.upsert(_.assign({ user }, mapping));
-    		await DB.sequelize.query(`
-    			INSERT INTO "Markov"."Mappings" (id, "user", msgs, letters, weights, totals, created_at, updated_at)
-    				VALUES (DEFAULT, :user, :msgs, :letters, :weights, :totals, now(), now())
-    			ON CONFLICT ("user") DO UPDATE SET
-    				msgs = EXCLUDED.msgs,
-    				letters = EXCLUDED.letters,
-    				weights = EXCLUDED.weights,
-    				totals = EXCLUDED.totals,
-    				updated_at = EXCLUDED.updated_at
-    		`, { replacements: MarkovDB.convertToDb(user, mapping) });
-    		console.log(`[MarkovDB]: Finished upsert for '${user}'. Took ${Date.now() - start}ms.`);
+    		_.each(Backlog, async (mapping, user) => {
+        		const start = Date.now();
+        		console.log(`[MarkovDB]: Beginning upsert for '${user}'.`);
+    //    		await MappingModel.upsert(_.assign({ user }, mapping));
+        		await DB.sequelize.query(`
+        			INSERT INTO "Markov"."Mappings" (id, "user", msgs, letters, weights, totals, created_at, updated_at)
+        				VALUES (DEFAULT, :user, :msgs, :letters, :weights, :totals, now(), now())
+        			ON CONFLICT ("user") DO UPDATE SET
+        				msgs = EXCLUDED.msgs,
+        				letters = EXCLUDED.letters,
+        				weights = EXCLUDED.weights,
+        				totals = EXCLUDED.totals,
+        				updated_at = EXCLUDED.updated_at
+        		`, { replacements: MarkovDB.convertToDb(user, mapping) });
+        		console.log(`[MarkovDB]: Finished upsert for '${user}'. Took ${Date.now() - start}ms.`);
+    		});
+    		
+    		timer = null;
+    		Backlog = {};
 		} catch (err) {
 			console.error(`Encountered error while trying to save mapping for user '${user}':`, err)
 		}
