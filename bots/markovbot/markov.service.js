@@ -28,13 +28,13 @@ const Messages = {
 			Mappings[user] = Markov.updateMapping(cleanMsgs(msgs), mapping);
 			MarkovDB.saveMapping(user + '1', Mappings[user]);
 			MarkovDB.saveMapping(user + '2', Mappings[user]);
-//			MarkovDB.saveMapping(user + '3', Mappings[user]);
-//			MarkovDB.saveMapping(user + '4', Mappings[user]);
-//			MarkovDB.saveMapping(user + '5', Mappings[user]);
-//			MarkovDB.saveMapping(user + '6', Mappings[user]);
-//			MarkovDB.saveMapping(user + '7', Mappings[user]);
-//			MarkovDB.saveMapping(user + '8', Mappings[user]);
-//			MarkovDB.saveMapping(user + '9', Mappings[user]);
+			MarkovDB.saveMapping(user + '3', Mappings[user]);
+			MarkovDB.saveMapping(user + '4', Mappings[user]);
+			MarkovDB.saveMapping(user + '5', Mappings[user]);
+			MarkovDB.saveMapping(user + '6', Mappings[user]);
+			MarkovDB.saveMapping(user + '7', Mappings[user]);
+			MarkovDB.saveMapping(user + '8', Mappings[user]);
+			MarkovDB.saveMapping(user + '9', Mappings[user]);
 			MarkovDB.saveMapping(user, Mappings[user]);
 		} catch (err) {
 			console.error(`Encountered error while trying to encode messages.`, {user, msgs}, err)
