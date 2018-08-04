@@ -17,14 +17,20 @@ const aliases = {
 	rebaybay : 'rebabybay',
 	rebecca  : 'rebabybay',
 };
+const iconAliases = {
+	'jennifer.czekus' : 'jenny',
+	'scott' : '+1'
+};
+
 const blacklist = ['trivia-time'];
 
 const botSend = async (channel, user, msg)=>{
 	if(!msg) msg = await MarkovService.getNewMessage(user);
+	const icon = iconAliases[user] || user;
 	Slack.api('chat.postMessage', {
 		channel     : channel,
 		username    : `${user}bot`,
-		icon_emoji  : `:${user}:`,
+		icon_emoji  : `:${icon}:`,
 		attachments : JSON.stringify([{
 			pretext   : msg.text,
 			mrkdwn_in : ['pretext'],
