@@ -98,7 +98,7 @@ const MappingModel = DB.sequelize.define('Mapping', {
 });
 
 let timer;
-const Backlog = {};
+let Backlog = {};
 
 const MarkovDB = {
 	async getMapping(user) {
@@ -110,42 +110,47 @@ const MarkovDB = {
 
 	saveMapping(user, mapping) {
 		Backlog[user] = mapping;
-		MarkovDB.enqueueUpdate();
+		MarkovDB.enqueueBatch();
 	},
 
-	enqueueUpdate() {
-		if (!timer) timer = setTimeout(MarkovDB.persistBacklog, 20000);
+	enqueueBatch() {
+		if (!timer) timer = setTimeout(MarkovDB.persistBacklog, 30000);
 	},
 
 	async persistBacklog() {
 		try {
-    		await MarkovDB.initialize();
-    		_.each(Backlog, async (mapping, user) => {
-        		const start = Date.now();
-        		console.log(`[MarkovDB]: Beginning upsert for '${user}'.`);
-    //    		await MappingModel.upsert(_.assign({ user }, mapping));
-        		await DB.sequelize.query(`
-        			INSERT INTO "Markov"."Mappings" (id, "user", msgs, letters, weights, totals, created_at, updated_at)
-        				VALUES (DEFAULT, :user, :msgs, :letters, :weights, :totals, now(), now())
-        			ON CONFLICT ("user") DO UPDATE SET
-        				msgs = EXCLUDED.msgs,
-        				letters = EXCLUDED.letters,
-        				weights = EXCLUDED.weights,
-        				totals = EXCLUDED.totals,
-        				updated_at = EXCLUDED.updated_at
-        		`, { replacements: MarkovDB.convertToDb(user, mapping) });
-        		console.log(`[MarkovDB]: Finished upsert for '${user}'. Took ${Date.now() - start}ms.`);
-    		});
+			let index = 0;
+    		const replacements = _.reduce(Backlog, (acc, mapping, user) => {
+    			let row = MarkovDB.convertToDb(user, mapping);
+    			row = _.mapKeys(row, (value, key) => `${key}${index}`);
+    			index++;
+    			return _.assign(acc, row);
+    		}, {});
+    		const insertRows = _.times(_.size(Backlog), _.template('(DEFAULT, :user${i}, :msgs${i}, :letters${i}, :weights${i}, :totals${i}, now(), now())', { variable: 'i' })).join(',\n\t\t\t\t\t');
     		
     		timer = null;
     		Backlog = {};
+    		
+    		await MarkovDB.initialize();
+    		const start = Date.now();
+    		console.log(`[MarkovDB]: Beginning upsert for '<a bunch of users>'.`);
+			await DB.sequelize.query(`
+				INSERT INTO "Markov"."Mappings" (id, "user", msgs, letters, weights, totals, created_at, updated_at) VALUES
+					${ insertRows }
+				ON CONFLICT ("user") DO UPDATE SET
+					msgs = EXCLUDED.msgs,
+					letters = EXCLUDED.letters,
+					weights = EXCLUDED.weights,
+					totals = EXCLUDED.totals,
+					updated_at = EXCLUDED.updated_at;
+			`, { replacements });
+			console.log(`[MarkovDB]: Finished upsert for '<a bunch of users>'. Took ${Date.now() - start}ms.`);
 		} catch (err) {
-			console.error(`Encountered error while trying to save mapping for user '${user}':`, err)
+			console.error(`Encountered error while trying to persist backlog.:`, err)
 		}
 	},
 
 	convertToDb(user, mapping) {
-//		return _.assign({}, mapping, { user });
 		return _.extend({}, mapping, {
 			user,
 			weights: JSON.stringify(mapping.weights),
