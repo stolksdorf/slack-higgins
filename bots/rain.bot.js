@@ -25,7 +25,7 @@ const dayForecast = async ()=>{
 		.then((res)=>{
 			return {
 				summary : res.body.hourly.summary,
-				rain    : res.body.hourly.icon == 'rain',
+				rain    : res.body.hourly.icon == 'rain' || res.body.hourly.icon == 'thunderstorm',
 			}
 		})
 };
