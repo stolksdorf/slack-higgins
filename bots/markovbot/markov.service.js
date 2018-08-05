@@ -4,7 +4,6 @@ const MarkovDB = require('./markov.db.js');
 const MIN = 60 * 1000;
 const DEBOUNCE = 0.1 * MIN;
 
-let Mappings = {};
 let msgCache = {}, timers = {};
 
 const cleanMsgs = (msgs)=>{
@@ -17,27 +16,23 @@ const cleanMsgs = (msgs)=>{
 };
 
 const Messages = {
-	getMapping: async (user)=>{
-		if(!Mappings[user]) Mappings[user] = await MarkovDB.getMapping(user);
-		return Mappings[user];
-	},
 	encodeMessages: async (user, msgs)=>{
 		console.log('encoding!', msgs);
 		try {
-			let mapping = await Messages.getMapping(user);
-			Mappings[user] = Markov.updateMapping(cleanMsgs(msgs), mapping);
-			MarkovDB.saveMapping(user + '1', Mappings[user]);
-			MarkovDB.saveMapping(user + '2', Mappings[user]);
-			MarkovDB.saveMapping(user + '3', Mappings[user]);
-			MarkovDB.saveMapping(user + '4', Mappings[user]);
-			MarkovDB.saveMapping(user + '5', Mappings[user]);
-			MarkovDB.saveMapping(user + '6', Mappings[user]);
-			MarkovDB.saveMapping(user + '7', Mappings[user]);
-			MarkovDB.saveMapping(user + '8', Mappings[user]);
-			MarkovDB.saveMapping(user + '9', Mappings[user]);
-			MarkovDB.saveMapping(user, Mappings[user]);
+			let mapping = await MarkovDB.getMapping(user);
+			mapping = Markov.updateMapping(cleanMsgs(msgs), mapping);
+			MarkovDB.saveMapping(user + '1', mapping);
+			MarkovDB.saveMapping(user + '2', mapping);
+			MarkovDB.saveMapping(user + '3', mapping);
+			MarkovDB.saveMapping(user + '4', mapping);
+			MarkovDB.saveMapping(user + '5', mapping);
+			MarkovDB.saveMapping(user + '6', mapping);
+			MarkovDB.saveMapping(user + '7', mapping);
+			MarkovDB.saveMapping(user + '8', mapping);
+			MarkovDB.saveMapping(user + '9', mapping);
+			MarkovDB.saveMapping(user, mapping);
 		} catch (err) {
-			console.error(`Encountered error while trying to encode messages.`, {user, msgs}, err)
+			console.error(`Encountered error while trying to encode messages.`, {user, msgs}, err);
 		}
 	},
 	addMessage: (user, msg)=>{
@@ -50,8 +45,7 @@ const Messages = {
 		}, DEBOUNCE);
 	},
 	getNewMessage: async (user)=>{
-		let mapping = await Messages.getMapping(user);
-		if(!mapping) return false;
+		let mapping = await MarkovDB.getMapping(user);
 		return {
 			letters : mapping.letters,
 			msgs    : mapping.msgs,
