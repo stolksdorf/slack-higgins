@@ -44,43 +44,42 @@ const convertFromDb = (mapping) => {
 };
 
 let timer;
-let Backlog = {};
-let Mappings = {};
+let Backlog = [];
+let Cache = {};
 
 const MarkovDB = {
 	async getMapping(user) {
-		if(!Mappings[user]) {
+		if(!Cache[user]) {
     		await MarkovDB.initialize();
     		const mapping = await MappingModel.findOne({ where: { user }});
-    		Mappings[user] = convertFromDb(mapping);
+    		Cache[user] = convertFromDb(mapping);
 		}
-		return Mappings[user];
+		return Cache[user];
 	},
 
 	saveMapping(user, mapping) {
-		Mappings[user] = mapping;
-		// TODO: Since we now have the cache, replace the Backlog with a simple array of usernames.
-		Backlog[user] = mapping;
+		Cache[user] = mapping;
+		Backlog.push(user);
 		MarkovDB.enqueueBatchUpdate();
 	},
 
 	enqueueBatchUpdate() {
-		if (!timer) timer = setTimeout(MarkovDB.persistBacklog, 30000);
+		if (!timer) timer = setTimeout(MarkovDB.persistBacklog, 1000);
 	},
 
 	async persistBacklog() {
 		try {
-			let index = 0;
-    		const replacements = _.reduce(Backlog, (acc, mapping, user) => {
-    			let row = convertToDb(user, mapping);
+			const users = _.uniq(Backlog);
+			
+    		const replacements = _.reduce(users, (acc, user, index) => {
+    			let row = convertToDb(user, Cache[user]);
     			row = _.mapKeys(row, (value, key) => `${key}${index}`);
-    			index++;
     			return _.assign(acc, row);
     		}, {});
-    		const insertRows = _.times(_.size(Backlog), _.template('(DEFAULT, :user${i}, :msgs${i}, :letters${i}, :weights${i}, :totals${i}, now(), now())', { variable: 'i' })).join(',\n\t\t\t\t\t');
+    		const insertRows = _.times(users.length, _.template('(DEFAULT, :user${i}, :msgs${i}, :letters${i}, :weights${i}, :totals${i}, now(), now())', { variable: 'i' })).join(',\n\t\t\t\t\t');
     		
     		timer = null;
-    		Backlog = {};
+    		Backlog = [];
     		
     		await MarkovDB.initialize();
     		const start = Date.now();
