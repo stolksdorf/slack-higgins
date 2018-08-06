@@ -17,19 +17,10 @@ const cleanMsgs = (msgs)=>{
 
 const Messages = {
 	encodeMessages: async (user, msgs)=>{
-		console.log('encoding!', msgs);
+		//console.log('encoding!', msgs);
 		try {
 			let mapping = await MarkovDB.getMapping(user);
 			mapping = Markov.updateMapping(cleanMsgs(msgs), mapping);
-			MarkovDB.saveMapping(user + '1', mapping);
-			MarkovDB.saveMapping(user + '2', mapping);
-			MarkovDB.saveMapping(user + '3', mapping);
-			MarkovDB.saveMapping(user + '4', mapping);
-			MarkovDB.saveMapping(user + '5', mapping);
-			MarkovDB.saveMapping(user + '6', mapping);
-			MarkovDB.saveMapping(user + '7', mapping);
-			MarkovDB.saveMapping(user + '8', mapping);
-			MarkovDB.saveMapping(user + '9', mapping);
 			MarkovDB.saveMapping(user, mapping);
 		} catch (err) {
 			console.error(`Encountered error while trying to encode messages.`, {user, msgs}, err);
