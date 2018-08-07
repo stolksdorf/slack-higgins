@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const DB = require('../../db.js');
+const redis = require('pico-redis')('markov');
 
-// Only allow DB upserts once every 3 seconds.
+// Only allow DB upserts once every 5 minutes.
 const MIN = 60 * 1000;
-const BATCH_DELAY = 0.05 * MIN;
+const BATCH_DELAY = 5 * MIN;
 
 const MappingModel = DB.sequelize.define('Mapping', {
 	user : {
@@ -53,9 +54,10 @@ let Cache = {};
 const MarkovDB = {
 	async getMapping(user) {
 		if(!Cache[user]) {
-			await MarkovDB.initialize();
-			const mapping = await MappingModel.findOne({ where: { user }});
-			Cache[user] = convertFromDb(mapping);
+			//await MarkovDB.initialize();
+			//const mapping = await MappingModel.findOne({ where: { user }});
+			//Cache[user] = convertFromDb(mapping);
+			Cache[user] = await redis.get(user) || { msgs:0, letters:0, totals: {}, weights: {} };
 		}
 		return Cache[user];
 	},
@@ -63,6 +65,8 @@ const MarkovDB = {
 	saveMapping(user, mapping) {
 		Cache[user] = mapping;
 		Backlog.push(user);
+
+		redis.set(user, mapping);
 
 		// Saving is expensive, so we don't want to do it too often.  Updating the cache (which we've done) is enough in most cases.
 		MarkovDB.enqueueBatchUpdate();
