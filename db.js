@@ -8,6 +8,8 @@ const DB = {
 	connect(url, options = {}) {
 		delete require('pg').native;
 
+		if (options.dialect_options) options.dialectOptions = options.dialect_options;
+
 		const dbOptions = _.defaultsDeep({}, options, {
 			dialect : 'postgres',
 			logging : false,
