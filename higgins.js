@@ -16,6 +16,7 @@ const config = require('nconf')
 
 const Slack = require('pico-slack');
 const Redis = require('pico-redis');
+const DB = require('./db.js');
 
 try {
 	Redis.connect();
@@ -25,6 +26,12 @@ try {
 	});
 } catch (e){
 
+}
+
+try {
+	DB.connect(config.get('database_url'), config.get('db'));
+} catch (err) {
+	console.error('Error connecting to postgres', err);
 }
 
 Slack.setInfo('higgins', ':tophat:');

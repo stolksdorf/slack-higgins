@@ -1,10 +1,9 @@
-const redis = require('pico-redis')('markov');
 const Markov = require('./markov.engine.js');
+const MarkovDB = require('./markov.db.js');
 
 const MIN = 60 * 1000;
 const DEBOUNCE = 0.1 * MIN;
 
-let Mappings = {};
 let msgCache = {}, timers = {};
 
 const cleanMsgs = (msgs)=>{
@@ -17,15 +16,15 @@ const cleanMsgs = (msgs)=>{
 };
 
 const Messages = {
-	getMapping: async (user)=>{
-		if(!Mappings[user]) Mappings[user] = await redis.get(user);
-		return Mappings[user];
-	},
 	encodeMessages: async (user, msgs)=>{
 		//console.log('encoding!', msgs);
-		let mapping = await Messages.getMapping(user) || {};
-		Mappings[user] = Markov.updateMapping(cleanMsgs(msgs), mapping);
-		await redis.set(user, Mappings[user]);
+		try {
+			let mapping = await MarkovDB.getMapping(user);
+			mapping = Markov.updateMapping(cleanMsgs(msgs), mapping);
+			MarkovDB.saveMapping(user, mapping);
+		} catch (err) {
+			console.error(`Encountered error while trying to encode messages.`, {user, msgs}, err);
+		}
 	},
 	addMessage: (user, msg)=>{
 		if(timers[user]) clearTimeout(timers[user]);
@@ -37,8 +36,7 @@ const Messages = {
 		}, DEBOUNCE);
 	},
 	getNewMessage: async (user)=>{
-		let mapping = await Messages.getMapping(user);
-		if(!mapping) return false;
+		let mapping = await MarkovDB.getMapping(user);
 		return {
 			letters : mapping.letters,
 			msgs    : mapping.msgs,
