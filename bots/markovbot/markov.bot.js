@@ -63,7 +63,7 @@ const getRandomUser = async ()=>{
 	populatedUsers = [];
 	await Promise.all(_.map(Slack.users, async (name)=>{
 		const count = await MarkovService.getMessageCount(name);
-		if(count > 50) populatedUsers.push(name);
+		if(count > 8) populatedUsers.push(name);
 	}));
 	return _.sample(populatedUsers);
 };
