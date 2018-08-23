@@ -57,11 +57,22 @@ if(blacklist.some((channel)=>channel==msg.channel)) return;
 });
 
 /** Random Proc **/
+let populatedUsers = false;
+const getRandomUser = async ()=>{
+	if(Array.isArray(populatedUsers)) return _.sample(populatedUsers);
+	populatedUsers = [];
+	await Promise.all(_.map(Slack.users, async (name)=>{
+		const count = await MarkovService.getMessageCount(name);
+		if(count > 50) populatedUsers.push(name);
+	}));
+	return _.sample(populatedUsers);
+};
+
 const HOURS = 1000 * 60 * 60;
 const sendRandomMessage = async ()=>{
-	const randomUser = _.sample(Slack.users);
+	const randomUser = getRandomUser();
+	if(!randomUser) return;
 	const msg = await MarkovService.getNewMessage(randomUser);
-	if(msg.msgs < 50) return sendRandomMessage();
 	botSend('bottin-around', randomUser, msg);
 	setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);
 };

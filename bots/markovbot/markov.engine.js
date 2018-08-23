@@ -1,6 +1,6 @@
 const MARKOV_DEPTH = 6;
 const getWeightedRandom = (weights={}, total=0)=>{
-	const rand = Math.floor(Math.random() * total);
+	const rand = Math.random() * total;
 	let current = 0;
 	return Object.keys(weights).find((key)=>{
 		current += weights[key];

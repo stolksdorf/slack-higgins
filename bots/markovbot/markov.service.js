@@ -43,5 +43,9 @@ const Messages = {
 			text    : await Markov.genMessage(mapping),
 		};
 	},
+	getMessageCount: async(user)=>{
+		const mapping = await MarkovDB.getMapping(user);
+		return mapping.msgs;
+	}
 };
 module.exports = Messages;

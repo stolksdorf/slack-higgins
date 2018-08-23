@@ -6,7 +6,7 @@ const express = require('express');
 const app = express();
 //app.use(bodyParser.json());
 
-process.once('unhandledRejection', (err)=>console.error(err));
+
 
 const config = require('nconf')
 	.argv()
@@ -17,6 +17,8 @@ const config = require('nconf')
 const Slack = require('pico-slack');
 const Redis = require('pico-redis');
 const DB = require('./db.js');
+
+process.on('unhandledRejection', Slack.error);
 
 try {
 	Redis.connect();
