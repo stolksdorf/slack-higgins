@@ -76,7 +76,7 @@ const MarkovDB = {
 
 	async persistBacklog() {
 		try {
-			const users = _.uniq(Backlog);
+			const users = _.filter(_.uniq(Backlog));
 			Backlog = [];
 
 			// One insert row per dirty user, using indexed replacement params.
@@ -106,7 +106,7 @@ const MarkovDB = {
 			`;
 
 			await DB.sequelize.query(sql, { replacements }).catch((err) => {
-				console.error(`[MarkovDB]: Encountered error while PERSISTING backlog:`, err.message, err, 'Participants:', users, 'SQL:', sql, 'Replacements:', replacements);
+				console.error(`[MarkovDB]: Encountered error while PERSISTING backlog:`, err.message, 'Participants:', users, 'Replacements:', _.omit(replacements, ['totals', 'weights']), 'Stack Trace:', err);
 			});
 
 			const executionTime = Date.now() - start;

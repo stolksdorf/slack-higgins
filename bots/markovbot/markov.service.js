@@ -17,7 +17,7 @@ const cleanMsgs = (msgs)=>{
 
 const Messages = {
 	encodeMessages: async (user, msgs)=>{
-		//console.log('encoding!', msgs);
+		if (!user) console.log('encoding!', user, msgs);
 		try {
 			let mapping = await MarkovDB.getMapping(user);
 			mapping = Markov.updateMapping(cleanMsgs(msgs), mapping);
