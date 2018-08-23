@@ -57,7 +57,7 @@ const MarkovDB = {
 			//await MarkovDB.initialize();
 			//const mapping = await MappingModel.findOne({ where: { user }});
 			//Cache[user] = convertFromDb(mapping);
-			Cache[user] = await redis.get(user) || { msgs:0, letters:0, totals: {}, weights: {} };
+			Cache[user] = await redis.get(user) || { msgs: 0, letters: 0, totals: {}, weights: {} };
 		}
 		return Cache[user];
 	},
@@ -104,13 +104,16 @@ const MarkovDB = {
 					totals = EXCLUDED.totals,
 					updated_at = EXCLUDED.updated_at;
 			`;
-			await DB.sequelize.query(sql, { replacements });
+
+			await DB.sequelize.query(sql, { replacements }).catch((err) => {
+				console.error(`[MarkovDB]: Encountered error while PERSISTING backlog:`, err.message, err, 'Participants:', users, 'SQL:', sql, 'Replacements:', replacements);
+			});
 
 			const executionTime = Date.now() - start;
 			const querySize = JSON.stringify(replacements).length;
 			console.log(`[MarkovDB]: Finished upsert! Size ~= ${querySize.toLocaleString()} bytes; Time = ${executionTime.toLocaleString()}ms; Participants = ('${users.join("', '")}').`);
 		} catch (err) {
-			console.error(`[MarkovDB]: Encountered error while trying to persist backlog:`, err)
+			console.error(`[MarkovDB]: Encountered error while PREPARING to persist backlog:`, err.message, err);
 		}
 	},
 
