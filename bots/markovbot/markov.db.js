@@ -44,7 +44,7 @@ const convertToDb = (user, mapping) => {
 };
 
 const convertFromDb = (mapping) => {
-	if (!mapping) return {msgs:0, letters:0, totals: {}, weights: {}};
+	if (!mapping) return { msgs:0, letters:0, totals: {}, weights: {} };
 	return _.pick(mapping.toJSON(), ['msgs', 'letters', 'totals', 'weights']);
 };
 
@@ -110,7 +110,7 @@ const MarkovDB = {
 			const querySize = JSON.stringify(replacements).length;
 			console.log(`[MarkovDB]: Finished upsert! Size ~= ${querySize.toLocaleString()} bytes; Time = ${executionTime.toLocaleString()}ms; Participants = ('${users.join("', '")}').`);
 		} catch (err) {
-			console.error(`Encountered error while trying to persist backlog:`, err)
+			console.error(`[MarkovDB]: Encountered error while trying to persist backlog:`, err)
 		}
 	},
 
