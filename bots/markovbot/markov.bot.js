@@ -30,11 +30,11 @@ const botSend = async (channel, user, msg)=>{
 		channel     : channel,
 		username    : `${user}bot`,
 		icon_emoji  : `:${icon}:`,
-		attachments : JSON.stringify([{
+		attachments : [{
 			pretext   : msg.text,
 			mrkdwn_in : ['pretext'],
 			footer    : `built with ${msg.msgs} messages, using ${msg.letters} letters.`
-		}])
+		}]
 	});
 };
 
@@ -70,7 +70,7 @@ const getRandomUser = async ()=>{
 
 const HOURS = 1000 * 60 * 60;
 const sendRandomMessage = async ()=>{
-	const randomUser = getRandomUser();
+	const randomUser = await getRandomUser();
 	if(!randomUser) return;
 	const msg = await MarkovService.getNewMessage(randomUser);
 	botSend('bottin-around', randomUser, msg);
