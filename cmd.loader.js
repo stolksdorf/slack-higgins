@@ -49,7 +49,7 @@ module.exports = (cmdFolder)=>{
 							(error)=>{
 								return res.status(200).send(_.assign({
 									'response_type' : 'ephemeral',
-								}, formatResponse(err)));
+								}, formatResponse(error)));
 							}
 						);
 					} catch (err){
