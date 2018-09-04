@@ -44,7 +44,7 @@ const convertToDb = (user, mapping) => {
 };
 
 const convertFromDb = (mapping) => {
-	if (!mapping) return { msgs:0, letters:0, totals: {}, weights: {} };
+	if (!mapping) return { msgs: 0, letters: 0, totals: {}, weights: {} };
 	return _.pick(mapping.toJSON(), ['msgs', 'letters', 'totals', 'weights']);
 };
 

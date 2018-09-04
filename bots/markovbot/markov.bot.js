@@ -11,9 +11,9 @@ const aliases = {
 	brock : 'brockdusome',
 	greg  : 'gleaver',
 	goog  : 'gleaver',
-	jenny : 'jennifer.czekus',
+	'jennifer.czekus' : 'jenny',
 	tina  : 'tskoops',
-	jenaynay : 'jennifer.czekus',
+	jenaynay : 'jenny',
 	rebaybay : 'rebabybay',
 	rebecca  : 'rebabybay',
 };
