@@ -1,0 +1,116 @@
+const Slack = require('pico-slack');
+const NSAPI = require('./nationstates.api.js');
+
+const Nations = require('./nations.js');
+
+const send = (text)=>Slack.sendAs('nationbot', 'earth_africa', 'nation-states', text);
+
+const colors = ["#d35400", "#16a085", "#8e44ad", 'good', 'bad'];
+const nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+const timeout = ()=>new Promise((resolve, reject)=>setTimeout(resolve, 500));
+const addNumVotesToMsg = (evt, opts)=>{
+	return opts.reduce((flow, opt, idx)=>{
+		return flow.then(()=>Slack.react(evt, nums[idx])).then(()=>timeout());
+	}, Promise.resolve()).then(()=>evt);
+};
+
+
+// Every day around 3-6, get the activity of the day. filter for new legislation, and print it
+// https://www.nationstates.net/page=activity/view=region.the_coolsville_commonwealth
+
+// shuffle all users, then every few hours pick the next user in order and fetch their next issue
+// Get flag url???
+
+const higginsNames = ()=>{
+	return [
+		Slack.bot.id,
+		'higgins', 'hizzle', 'h-dawg', 'higs', 'higgs', 'boson', 'good sir',
+		'higgles', 'higgers', 'old chap', 'old boy', 'higgings', 'higgidy'
+	];
+}
+
+const getIssue = (user)=>{
+	NSAPI.fetchIssues(user)
+		.then((issues)=>{
+			if(issues.length == 0) return Send.caughtUp(user);
+			Send.issue(user, issues[0]);
+		})
+		.catch(Send.error)
+}
+
+
+
+let memory = {};
+
+const Send = {
+	caughtUp : (user)=>{
+		send(`${user} has no available issues`);
+	},
+	issue : (user, issue)=>{
+		const nation = Nations[user];
+
+		return send({
+			text : `A new issue on the docket! @${user}`,
+			attachments: [
+				{
+					fallback    : issue.title,
+					color       : "#bdc3c7",
+					title       : issue.title,
+					title_link  : issue.link,
+					text        : issue.text,
+					thumb_url   : nation.flag_url,
+					footer      : nation.nation,
+					footer_icon : nation.flag_url
+				}
+			].concat(issue.options.map((opt, idx)=>{
+				return {
+					color : colors[idx],
+					title : `:${nums[idx]}:`,
+					text  : opt.text
+				}
+			}))
+		})
+			.then((evt)=>addNumVotesToMsg(evt, issue.options))
+			.then((evt)=>{
+				memory[evt.message.ts] = {
+					issueId : issue.id,
+					options : issue.options,
+					user
+				};
+			})
+			.catch(Send.error)
+	},
+	success : (result, headlines)=>{
+		send(`The Talking Point: ${result}.`);
+	},
+	error : (err)=>{
+		Slack.error(err);
+		send('Something went wrong. Let scott know.');
+	}
+}
+
+
+Slack.onMessage((msg)=>{
+	console.log(msg.text);
+	if(msg.channel !== 'nation-states') return;
+
+	if(Slack.msgHas(msg.text, higginsNames(), ['issue', 'issues', 'nation', 'docket', 'people'])){
+		getIssue(msg.user)
+	}
+});
+
+Slack.onReact((evt)=>{
+	if(!memory[evt.item.ts] || memory[evt.item.ts].user !== evt.user) return;
+	const entry = memory[evt.item.ts];
+	const idx = nums.findIndex((num)=>num==evt.reaction);
+
+	if(idx == -1) return;
+	NSAPI.respondToIssue(entry.user, entry.issueId, entry.options[idx].id)
+		.then((res)=>{
+			Send.success(res.result, res.headlines);
+		})
+		.catch(Send.error)
+	delete memory[evt.item.ts];
+});
+
+

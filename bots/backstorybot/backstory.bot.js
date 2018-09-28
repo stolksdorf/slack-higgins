@@ -130,6 +130,7 @@ const getCharacter = (race, gender, _cls, bg)=>{
 
 
 Slack.onMessage((msg)=>{
+	if(msg.channel !== 'dnd') return;
 	if(!Slack.msgHas(msg, ['higs', 'higgins', 'backstorybot', Slack.bot.id])) return;
 
 	const race   = _.find(Guide.Supplement.races, (race)=>Slack.msgHas(msg, race));
