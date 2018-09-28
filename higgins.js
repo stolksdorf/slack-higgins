@@ -29,7 +29,7 @@ try {
 }
 
 try {
-	DB.connect(config.get('database_url'), config.get('db'));
+	DB.connect(config.get('database_url'), config.get('db', true));
 } catch (err) {
 	console.error('Error connecting to postgres', err);
 }
