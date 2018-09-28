@@ -1,6 +1,6 @@
 const MARKOV_DEPTH = 6;
 const getWeightedRandom = (weights={}, total=0)=>{
-	const rand = Math.random() * total;
+	const rand = Math.floor(Math.random() * total);
 	let current = 0;
 	return Object.keys(weights).find((key)=>{
 		current += weights[key];
@@ -32,6 +32,7 @@ module.exports = {
 		const addLetter = (result='')=>{
 			const key = trim(result);
 			const letter = getWeightedRandom(mapping.weights[key], mapping.totals[key]);
+			console.log(letter);
 			if(!letter || letter == END) return result;
 			return addLetter(result + letter);
 		};
