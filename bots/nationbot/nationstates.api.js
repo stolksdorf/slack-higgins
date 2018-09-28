@@ -17,7 +17,7 @@ module.exports = {
 			.set('X-Password', Nations[user].password)
 			.set('User-Agent', "scott.tolksdorf@gmail.com")
 			.query({
-				nation: Nations[user].nation,
+				nation: Nations[user].id,
 				q : 'issues'
 			})
 			.then((res)=>{
@@ -31,6 +31,7 @@ module.exports = {
 						id : issue.$.id,
 						title : issue.TITLE[0],
 						text : issue.TEXT[0],
+						link : `https://www.nationstates.net/page=show_dilemma/dilemma=${issue.$.id}`,
 						options : issue.OPTION.map((opt)=>{
 							return {
 								id : opt.$.id,
@@ -47,7 +48,7 @@ module.exports = {
 			.set('X-Password', Nations[user].password)
 			.set('User-Agent', "scott.tolksdorf@gmail.com")
 			.query({
-				nation: Nations[user].nation,
+				nation: Nations[user].id,
 				c : 'issue',
 				issue : issueId,
 				option : optionId
@@ -56,6 +57,12 @@ module.exports = {
 				if(res.text.indexOf('<ERROR>') !== -1) throw res.text;
 				return res;
 			})
-
+			.then(parse)
+			.then((json)=>{
+				return {
+					result    : json.NATION.ISSUE[0].DESC,
+					headlines : json.NATION.ISSUE[0].HEADLINES[0].HEADLINE
+				}
+			})
 	}
 }

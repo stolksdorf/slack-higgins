@@ -32,7 +32,6 @@ module.exports = {
 		const addLetter = (result='')=>{
 			const key = trim(result);
 			const letter = getWeightedRandom(mapping.weights[key], mapping.totals[key]);
-			console.log(letter);
 			if(!letter || letter == END) return result;
 			return addLetter(result + letter);
 		};

@@ -8,7 +8,7 @@ module.exports = {
 		darksky_api : '',
 		ifttt_webhook_key : ''
 	},
-	nationstates : {
+	nationstates_pwd : {
 
 	}
 }
