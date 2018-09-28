@@ -73,7 +73,7 @@ const sendRandomMessage = async ()=>{
 	const randomUser = await getRandomUser();
 	if(!randomUser) return;
 	const msg = await MarkovService.getNewMessage(randomUser);
-	botSend('bottin-around', randomUser, msg);
+	if(msg) botSend('bottin-around', randomUser, msg);
 	setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);
 };
 sendRandomMessage();
