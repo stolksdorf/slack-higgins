@@ -101,7 +101,7 @@ Slack.onMessage((msg)=>{
 			res = getRoll(msg.text);
 		}
 	} catch (e){
-		return Slack.error(e);
+		//return Slack.error(e);
 	}
 
 	let response = res.text;
