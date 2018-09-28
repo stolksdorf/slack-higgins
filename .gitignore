@@ -2,13 +2,7 @@
 logs
 *.log
 
-#Ignore our built files
-build/*
-architecture.json
 
 # Ignore sensitive stuff
-/config/local.js
-/config/local.json
-
-
+/config/local.*
 node_modules

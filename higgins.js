@@ -6,16 +6,11 @@ const express = require('express');
 const app = express();
 //app.use(bodyParser.json());
 
-
-
 const config = require('pico-conf')
 	.argv()
 	.env()
-	.add(require('./config/default.js'))
+	.file(`config/${process.env.NODE_ENV}.js`)
 	.defaults(require('./config/default.js'))
-
-	.file('environment', {file: `config/${process.env.NODE_ENV}.json`})
-	.file('defaults', {file: 'config/default.json'});
 
 const Slack = require('pico-slack');
 const Redis = require('pico-redis');
