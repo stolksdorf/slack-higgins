@@ -16,7 +16,7 @@ const aliases = {
 	jenaynay : 'jenny',
 	rebabybay : 'rebaybay',
 	rebecca  : 'rebaybay',
-	sarah : 'sarahellen.wbot',
+	sarah : 'sarahellen.w',
 };
 const iconAliases = {
 	brockdusome : 'broccoli',
