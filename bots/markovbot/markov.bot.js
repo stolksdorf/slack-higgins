@@ -14,11 +14,15 @@ const aliases = {
 	'jennifer.czekus' : 'jenny',
 	tina  : 'tskoops',
 	jenaynay : 'jenny',
-	rebaybay : 'rebabybay',
-	rebecca  : 'rebabybay',
+	rebabybay : 'rebaybay',
+	rebecca  : 'rebaybay',
+	sarah : 'sarahellen.wbot',
 };
 const iconAliases = {
-	'jennifer.czekus' : 'jenny',
+	brockdusome : 'broccoli',
+	slackbot : 'slack',
+	david : 'mariachi_dave',
+	'sarahellen.w' : 'sarah',
 };
 
 const blacklist = ['trivia-time'];
