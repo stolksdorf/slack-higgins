@@ -1,5 +1,6 @@
 const Slack = require('pico-slack');
 const NSAPI = require('./nationstates.api.js');
+const cron = require('node-schedule');
 
 const Nations = require('./nations.js');
 

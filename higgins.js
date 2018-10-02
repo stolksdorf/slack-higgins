@@ -55,7 +55,7 @@ const loadBots = ()=>{
 					console.log('loaded', botpath);
 					if(router && !_.isEmpty(router)) app.use(router);
 				} catch (err){
-					console.log(err);
+					console.log(botpath, err);
 					Slack.error('Bot Load Error', botpath, err);
 				}
 			});
