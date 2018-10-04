@@ -54,6 +54,9 @@ Slack.onMessage(async (msg)=>{
 	if(msg.text.toLowerCase() == 'light off'){
 		turnLightOff();
 	}
+	if(msg.text.toLowerCase() == 'light on'){
+		turnLightOn();
+	}
 });
 
 

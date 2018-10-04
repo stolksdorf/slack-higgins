@@ -92,11 +92,14 @@ const Send = {
 
 
 Slack.onMessage((msg)=>{
-	console.log(msg.text);
 	if(msg.channel !== 'nation-states') return;
 
 	if(Slack.msgHas(msg.text, higginsNames(), ['issue', 'issues', 'nation', 'docket', 'people'])){
 		getIssue(msg.user)
+	}
+
+	if(msg.text.toLowerCase() == 'proc'){
+		procRandomNation();
 	}
 });
 
@@ -117,6 +120,7 @@ Slack.onReact((evt)=>{
 
 const procRandomNation = ()=>{
 	const nation = _.sample(Nations);
+	Slack.log(nation);
 	if(!nation.password) return procRandomNation();
 	getIssue(nation.ruler);
 };
