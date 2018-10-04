@@ -1,7 +1,7 @@
 const Slack = require('pico-slack');
 const NSAPI = require('./nationstates.api.js');
 const cron = require('node-schedule');
-
+const _ = require('lodash');
 const Nations = require('./nations.js');
 
 const send = (text)=>Slack.sendAs('nationbot', 'earth_africa', 'nation-states', text);
