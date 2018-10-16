@@ -28,6 +28,13 @@ module.exports = {
 		flag_url : 'https://www.nationstates.net/images/flags/Default.png',
 		password : config.get('nationstates_pwd:christian', true)
 	},
+	rebaybay : {
+		ruler    : 'rebaybay',
+		id       : 'new_rebaybia',
+		nation   : 'The Most Serene Republic of New Rebaybia',
+		flag_url : 'https://www.nationstates.net/images/flags/uploads/new_rebaybia__240938.jpg',
+		password : config.get('nationstates_pwd:rebabybay', true)
+	},
 	rebabybay : {
 		ruler    : 'rebabybay',
 		id       : 'new_rebaybia',

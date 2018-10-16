@@ -103,6 +103,7 @@ Slack.onMessage((msg)=>{
 	} catch (e){
 		//return Slack.error(e);
 	}
+	if(!res) return;
 
 	let response = res.text;
 	if(res.rolls.length > 1){

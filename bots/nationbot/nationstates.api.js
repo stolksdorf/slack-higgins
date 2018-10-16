@@ -26,20 +26,24 @@ module.exports = {
 			})
 			.then(parse)
 			.then((json)=>{
-				return json.NATION.ISSUES[0].ISSUE.map((issue)=>{
-					return {
-						id : issue.$.id,
-						title : issue.TITLE[0],
-						text : issue.TEXT[0],
-						link : `https://www.nationstates.net/page=show_dilemma/dilemma=${issue.$.id}`,
-						options : issue.OPTION.map((opt)=>{
-							return {
-								id : opt.$.id,
-								text : opt._
-							}
-						})
-					}
-				});
+				try{
+					return json.NATION.ISSUES[0].ISSUE.map((issue)=>{
+						return {
+							id : issue.$.id,
+							title : issue.TITLE[0],
+							text : issue.TEXT[0],
+							link : `https://www.nationstates.net/page=show_dilemma/dilemma=${issue.$.id}`,
+							options : issue.OPTION.map((opt)=>{
+								return {
+									id : opt.$.id,
+									text : opt._
+								}
+							})
+						}
+					});
+				}catch(err){
+					return [];
+				}
 			})
 	},
 	respondToIssue : async (user, issueId, optionId)=>{

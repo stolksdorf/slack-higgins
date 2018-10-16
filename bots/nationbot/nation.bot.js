@@ -118,8 +118,12 @@ Slack.onReact((evt)=>{
 });
 
 
+const randomNations = _.shuffle(Nations);
+let index = 0;
+
 const procRandomNation = ()=>{
-	const nation = _.sample(Nations);
+	index = (index + 1) % randomNations.length;
+	const nation = randomNations[index];
 	Slack.log(nation);
 	if(!nation.password) return procRandomNation();
 	getIssue(nation.ruler);
