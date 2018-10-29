@@ -49,9 +49,10 @@ const Send = {
 	},
 	issue : (user, issue)=>{
 		const nation = Nations[user];
+		const userId = _.findKey(Slack.users, _.matches(user));
 
 		return send({
-			text : `A new issue on the docket! @${user}`,
+			text : `A new issue on the docket! <@${userId}>`,
 			attachments: [
 				{
 					fallback    : issue.title,
