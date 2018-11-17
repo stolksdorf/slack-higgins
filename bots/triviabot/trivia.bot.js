@@ -102,6 +102,8 @@ const sendScoreboard = async ()=>{
 Slack.onMessage(async (msg)=>{
 	if(msg.channel !== 'trivia-time') return;
 
+	if(isScoreboardRequest(msg)) return sendScoreboard();
+
 	if(isActive()){
 		someoneHasTried = true;
 		if(TriviaApi.checkAnswer(activeClue.answer, msg.text)){
@@ -112,7 +114,6 @@ Slack.onMessage(async (msg)=>{
 	}
 
 	if(isTriviaRequest(msg)) return askQuestion();
-	if(isScoreboardRequest(msg)) return sendScoreboard();
 });
 
 
