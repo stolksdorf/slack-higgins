@@ -13,7 +13,16 @@ const stringToCleanWordArray = (string) =>{
 	return _.chain(string)
 		.words(/[^ \/-]+/g)
 		.map((word)=>{
-			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '').replace(/s$/, '');
+			return word.toLowerCase().replace(/<[^>]*>/g, '').replace(/\W+/g, '')
+		})
+		.map((word)=>{
+			if(word[word.length-1] == 's'){
+				const secLast = word[word.length-2]
+				if(secLast !== 'u' && secLast !== 'i'&& secLast !== 's'){
+					return word.replace(/s$/, '');
+				}
+			}
+			return word;
 		})
 		.filter()
 		.value();
@@ -125,4 +134,4 @@ module.exports = TriviaApi;
 // 	//If no match, get random category
 // 	if(!result) return _.sample(_.values(Categories));
 // 	return result;
-// };
+// };.replace(/s$/, '');
