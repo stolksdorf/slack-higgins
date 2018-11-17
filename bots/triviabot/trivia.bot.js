@@ -31,6 +31,7 @@ const send = (msg)=>Slack.send('trivia-time', msg);
 
 
 const askQuestion = async (clue)=>{
+	if(activeClue) return;
 	if(!clue) clue = await TriviaApi.getClue();
 	someoneHasTried = false;
 	activeClue = clue;
@@ -49,8 +50,8 @@ const cleanup = ()=>{
 	clearTimeout(timer);
 	if(AUTO_PROC && someoneHasTried){
 		setTimeout(()=>{
-			send('`Auto-proccing a new question in 5 secs`')
-			setTimeout(askQuestion, 5000);
+			send('`Auto-proccing a new question in 8 secs`')
+			setTimeout(askQuestion, 8000);
 		}, 500);
 	}
 };
@@ -78,9 +79,8 @@ const increaseScore = async (username, points)=>{
 
 	if(Scores[username].points >= CROWN_THRESHOLD){
 		awardCrown();
-		sendScoreboard();
 	}else{
-		await send(`Correct! Good job ${username}! You been awarded ${points} points`);
+		await send(`Correct! Good job :${username}:! You been awarded ${points} points`);
 	}
 
 	await Storage.set('scores', Scores);
