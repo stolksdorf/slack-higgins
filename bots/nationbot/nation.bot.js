@@ -130,9 +130,9 @@ const procRandomNation = ()=>{
 	getIssue(nation.ruler);
 };
 
-cron.scheduleJob('0 11 * * *', procRandomNation);
-cron.scheduleJob('30 13 * * *', procRandomNation);
-cron.scheduleJob('0 16 * * *', procRandomNation);
-cron.scheduleJob('30 20 * * *', procRandomNation);
+// cron.scheduleJob('0 11 * * *', procRandomNation);
+// cron.scheduleJob('30 13 * * *', procRandomNation);
+// cron.scheduleJob('0 16 * * *', procRandomNation);
+// cron.scheduleJob('30 20 * * *', procRandomNation);
 
 
