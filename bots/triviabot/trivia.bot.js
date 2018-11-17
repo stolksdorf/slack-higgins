@@ -4,10 +4,12 @@ const Storage = require('pico-redis')('trivia');
 const TriviaApi = require('./trivia.api.js');
 
 const CROWN_THRESHOLD = 10000;
+const AUTO_PROC = true;
 
 
 let activeClue = null;
 let timer;
+let someoneHasTried = false;
 
 
 const higginsNames = [
@@ -28,9 +30,11 @@ const isCategoriesRequest = (msg)=>Slack.msgHas(msg.text, higginsNames, ['catego
 const send = (msg)=>Slack.send('trivia-time', msg);
 
 
-const askQuestion = (clue)=>{
+const askQuestion = async (clue)=>{
+	if(!clue) clue = await TriviaApi.getClue();
+	someoneHasTried = false;
 	activeClue = clue;
-	send(`The category is *${clue.category.title}* worth ${clue.value} points!\n${clue.question}`);
+	await send(`The category is *${clue.category.title}* worth ${clue.value} points!\n${clue.question}`);
 	timer = setTimeout(()=>{
 		send('Times nearly up!');
 		timer = setTimeout(()=>{
@@ -43,6 +47,12 @@ const askQuestion = (clue)=>{
 const cleanup = ()=>{
 	activeClue = null;
 	clearTimeout(timer);
+	if(AUTO_PROC && someoneHasTried){
+		setTimeout(()=>{
+			send('`Auto-proccing a new question in 2 secs`')
+			setTimeout(askQuestion, 2000);
+		}, 300);
+	}
 };
 
 
@@ -52,7 +62,6 @@ const increaseScore = async (username, points)=>{
 		_.each(Scores, (score)=>score.points = 0);
 		send(`Congrats ${username}! You've been awarded a :crown: ! https://media.giphy.com/media/WWrf3mWsicNqM/giphy.gif \n\nScores reset!`);
 	};
-	cleanup();
 
 	let Scores = await Storage.get('scores') || {};
 
@@ -74,6 +83,7 @@ const increaseScore = async (username, points)=>{
 	await Storage.set('scores', Scores);
 
 	sendScoreboard();
+	cleanup();
 };
 
 
@@ -92,6 +102,7 @@ Slack.onMessage(async (msg)=>{
 	if(msg.channel !== 'trivia-time') return;
 
 	if(isActive()){
+		someoneHasTried = true;
 		if(TriviaApi.checkAnswer(activeClue.answer, msg.text)){
 			return await increaseScore(msg.user, activeClue.value);
 		}else{
@@ -99,7 +110,7 @@ Slack.onMessage(async (msg)=>{
 		}
 	}
 
-	if(isTriviaRequest(msg)) return askQuestion(await TriviaApi.getClue());
+	if(isTriviaRequest(msg)) return askQuestion();
 	if(isScoreboardRequest(msg)) return sendScoreboard();
 });
 
