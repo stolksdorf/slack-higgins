@@ -78,13 +78,12 @@ const increaseScore = async (username, points)=>{
 
 	if(Scores[username].points >= CROWN_THRESHOLD){
 		awardCrown();
+		sendScoreboard();
 	}else{
 		await send(`Correct! Good job ${username}! You been awarded ${points} points`);
 	}
 
 	await Storage.set('scores', Scores);
-
-	sendScoreboard();
 
 };
 
