@@ -49,9 +49,9 @@ const cleanup = ()=>{
 	clearTimeout(timer);
 	if(AUTO_PROC && someoneHasTried){
 		setTimeout(()=>{
-			send('`Auto-proccing a new question in 2 secs`')
-			setTimeout(askQuestion, 2000);
-		}, 300);
+			send('`Auto-proccing a new question in 5 secs`')
+			setTimeout(askQuestion, 5000);
+		}, 500);
 	}
 };
 
@@ -62,6 +62,8 @@ const increaseScore = async (username, points)=>{
 		_.each(Scores, (score)=>score.points = 0);
 		send(`Congrats ${username}! You've been awarded a :crown: ! https://media.giphy.com/media/WWrf3mWsicNqM/giphy.gif \n\nScores reset!`);
 	};
+
+	cleanup();
 
 	let Scores = await Storage.get('scores') || {};
 
@@ -83,7 +85,7 @@ const increaseScore = async (username, points)=>{
 	await Storage.set('scores', Scores);
 
 	sendScoreboard();
-	cleanup();
+
 };
 
 
