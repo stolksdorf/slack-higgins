@@ -13,7 +13,7 @@ Slack.onMessage(async (msg)=>{
 		if(lower.startsWith('as') && lower.indexOf(':') !== -1){
 			const peep = between(lower, 'as ', ' in ');
 			const channel = between(lower, ' in ', ':');
-			const message = msg.text.split(':')[1].trim();
+			const message = msg.text.replace(msg.text.split(':')[0]+':', '').trim();
 			Slack.sendAs(peep, peep.replace('bot', ''), channel, message)
 				.then(()=>{
 					Slack.send(msg.user, `${peep}\n${channel}\n${message}`)
