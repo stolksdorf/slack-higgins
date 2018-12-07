@@ -8,7 +8,7 @@
     "lint:dry": "eslint *.js **/*.{js,jsx}",
     "start": "node higgins.js",
     "test": "nodemon higgins.js",
-    "dev": "nodemon higgins.js",
+    "dev": "nodemon --verbose --delay 1 higgins.js",
     "dev:scotch": "nodemon bots/scotchbot/scotch.bot.js",
     "logs": "heroku logs -t --app=slack-higgins"
   },
