@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const Slack = require('pico-slack');
 const Storage = require('pico-redis')('trivia');
-const TriviaApi = require('./trivia.api.js');
+//const TriviaApi = require('./jservice.api.js');
+const TriviaApi = require('./triviafyi.api.js');
 
 const CROWN_THRESHOLD = 10000;
 const AUTO_PROC = true;
