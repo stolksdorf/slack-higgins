@@ -32,12 +32,10 @@ const TriviaAPI = {
 			.then((res)=>cheerio.load(res.text))
 			.then(($)=>{
 				return {
-					category : {
-						title : 'triviafyi'
-					},
+					category : { title : 'triviafyi' },
 					question : $('a.query-title-link').text().trim(),
-					answer : $('.su-spoiler-content').text().trim(),
-					value : 400
+					answer   : $('.su-spoiler-content').text().trim(),
+					value    : 400
 				}
 			});
 	},

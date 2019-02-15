@@ -9,7 +9,7 @@ const AUTO_PROC = true;
 
 
 let activeClue = null;
-let timer;
+let timer, autoProcTimer;
 let someoneHasTried = false;
 
 
