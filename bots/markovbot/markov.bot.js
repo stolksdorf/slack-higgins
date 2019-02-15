@@ -80,4 +80,4 @@ const sendRandomMessage = async ()=>{
 	if(msg) botSend('bottin-around', randomUser, msg);
 	setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);
 };
-sendRandomMessage();
+setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);
