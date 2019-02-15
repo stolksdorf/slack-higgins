@@ -10,5 +10,6 @@ module.exports = {
 	},
 	nationstates_pwd : {
 
-	}
+	},
+	github_token : ''
 }
