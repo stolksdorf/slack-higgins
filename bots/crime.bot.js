@@ -33,7 +33,7 @@ const updateCrimeGist = async (newContent)=>{
 };
 
 Slack.onMessage((msg)=>{
-	if(Slack.msgHas(msg.text, '#20crimeteen')){
+	if(Slack.msgHas(msg.text, ['#20crimeteen', '#twentycrimeteen'])){
 		updateCrimeGist(`[${(new Date()).toLocaleDateString()}] ${msg.user}: ${msg.text}`)
 			.then(()=>{
 				Slack.sendAs('crimebot', 'police_car', msg.channel, `<https://gist.github.com/stolksdorf/24d22dfeecc3d02e419cad8739e8b672|#20crimeteen!>`)
