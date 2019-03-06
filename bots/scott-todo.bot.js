@@ -1,8 +1,14 @@
 const Slack = require('pico-slack');
 const {format} = require('date-fns');
 
-Object.prototype.map=function (fn){ return Object.keys(this).map((key,idx,src)=>fn(this[key],key,idx,src))};
-Object.prototype.reduce=function(fn, init){ return Object.keys(this).reduce((a,key,idx,src)=>fn(a,this[key],key,idx,src),init);}
+Object.defineProperty(Object.prototype, 'map', {
+	enumerable: false,
+	value: function (fn){ return Object.keys(this).map((key,idx,src)=>fn(this[key],key,idx,src))}
+});
+Object.defineProperty(Object.prototype, 'reduce', {
+	enumerable: false,
+	value: function(fn, init){ return Object.keys(this).reduce((a,key,idx,src)=>fn(a,this[key],key,idx,src),init);}
+});
 
 // https://api.slack.com/methods/files.upload
 
