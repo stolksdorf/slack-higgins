@@ -9,7 +9,6 @@
     "start": "node higgins.js",
     "test": "nodemon higgins.js",
     "dev": "nodemon --verbose --delay 1 higgins.js",
-    "dev:scotch": "nodemon bots/scotchbot/scotch.bot.js",
     "logs": "heroku logs -t --app=slack-higgins"
   },
   "repository": {
@@ -36,7 +35,7 @@
     "express": "^4.16.4",
     "glob": "^7.1.3",
     "google": "^1.4.0",
-    "js-yaml": "^3.12.0",
+    "js-yaml": "^3.13.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "mongoose": "^4.13.17",
@@ -45,6 +44,7 @@
     "nsapi": "^0.1.15",
     "pg": "^7.7.1",
     "pico-conf": "^1.5.1",
+    "pico-gist": "^1.0.1",
     "pico-redis": "^1.0.0",
     "pico-slack": "^1.4.5",
     "pos": "^0.4.2",

@@ -1,5 +1,9 @@
+const config = require('pico-conf');
 const Slack = require('pico-slack');
 const syllable = require('syllable');
+const Gist = require('pico-gist')(config.get('github_token'));
+
+const GistId = 'a6ceae1ba9192e372a6682d214665b56';
 
 const getSentences = (str)=>str.match(/([^\.!\?]+[\.!\?]+)|([^\.!\?]+$)/g);
 
@@ -32,6 +36,10 @@ Slack.onMessage((msg)=>{
 		const haiku = add(sentence.trim(), msg.channel);
 		if(haiku){
 			Slack.sendAs('haikubot', ':cherry_blossom:', msg.channel, haiku.map((line)=>`_${line}_`).join('\n'));
+			Gist.append(GistId, {
+				haikus : `\n\n\`[in #${msg.channel} on ${(new Date()).toLocaleDateString()} at ${(new Date()).toLocaleTimeString()}]\`\n`
+					+ haiku.map((line)=>`> _${line}_`).join('\n>\n')
+			})
 		}
 	});
-})
+});
