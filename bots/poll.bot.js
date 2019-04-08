@@ -15,8 +15,8 @@ Slack.onMessage((msg)=>{
 	if(Slack.msgHas(msg, 'how', ['make', 'do', 'create'], 'poll')){
 		send(msg.channel, 'To create a poll, make a message in the following format: \n `poll: [My question]? [option 1], [option 2], ...`');
 	}
-	if(msg.text.indexOf('poll:') == 0){
-		let [question, options] = msg.text.replace('poll:', '').split('?');
+	if(msg.text.indexOf('poll:') == 0 || msg.text.indexOf('Poll:') == 0){
+		let [question, options] = msg.text.slice(5).split('?');
 		options = options.split(',').map((opt)=>opt.trim());
 		const opts = options.map((opt, idx)=>`:${nums[idx]}: ${opt}`).join('\n');
 		send(msg.channel, `*${question}?*\n${opts}`)
