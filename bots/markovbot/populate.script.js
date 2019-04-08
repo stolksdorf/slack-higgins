@@ -3,6 +3,8 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const MarkovService = require('./markov.service.js');
 
+//DEPRICATE
+
 const SafeChannels = [
 	'1861',
 	'arts-and-crafts',

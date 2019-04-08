@@ -2,7 +2,9 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const MarkovService = require('./markov.service.js');
 
-const Populate = require('./populate.script.js')
+//const Populate = require('./populate.script.js')
+
+//Bump these to config files
 
 const aliases = {
 	dave  : 'david',
@@ -43,15 +45,17 @@ const botSend = async (channel, user, msg)=>{
 };
 
 Slack.onMessage((msg)=>{
-if(blacklist.some((channel)=>channel==msg.channel)) return;
+	if(blacklist.some((channel)=>channel==msg.channel)) return;
 
-	if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
-		return Populate();
-	}
+	// if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
+	// 	return Populate();
+	// }
 
 	if(!msg.isDirect && !blacklist.includes(msg.channel)){
 		MarkovService.addMessage(msg.user, msg.text);
 	}
+
+	//Bump out to another file
 	_.map(Slack.users, (user)=>{
 		if(Slack.msgHas(msg.text, `${user}bot`)) botSend(msg.channel, user);
 	});
