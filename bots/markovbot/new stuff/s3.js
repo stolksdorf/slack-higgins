@@ -11,7 +11,7 @@ const upload = async (name, content)=>{
 	return new Promise((resolve, reject)=>{
 		S3.putObject({
 			Bucket : config.get('markov.bucket_name'),
-			Key    : name,
+			Key    : `${name}.map`,
 			Body   : content,
 		}, (err, data)=>err ? reject(err) : resolve(data));
 	})
@@ -21,7 +21,7 @@ const fetch = async (name)=>{
 	return new Promise((resolve, reject)=>{
 		S3.getObject({
 			Bucket : config.get('markov.bucket_name'),
-			Key    : name
+			Key    : `${name}.map`,
 		}, (err, data)=>err ? reject(err) : resolve(data));
 	})
 	.then((data)=>data.Body.toString());

@@ -11,5 +11,12 @@ module.exports = {
 	nationstates_pwd : {
 
 	},
-	github_token : ''
+	github_token : '',
+	markov : {
+		bucket_name: 'coolsville-markov'
+	},
+	s3 : {
+		access : '',
+		secret : ''
+	}
 }
