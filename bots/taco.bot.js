@@ -25,6 +25,8 @@ const getUsersFromMessage = (msg)=>{
 		.filter((user)=>!!user);
 };
 
+const send = (channel, msg)=>Slack.sendAs('burritobot', ':burrito:', channel, msg);
+
 
 const awardTaco = async (bestower, recipient, channel, message, numTacos = 1)=>{
 	if(bestower === recipient) return Send.naughtyMessage(bestower);
@@ -41,7 +43,7 @@ const awardTaco = async (bestower, recipient, channel, message, numTacos = 1)=>{
 	Send.award(bestower, recipient, channel, message, numTacos);
 	await Gist.append(GistId, {
 		taco_history : [{
-			bestower, recipient, channel, message,
+			bestower, recipient, channel,
 			tacos : numTacos,
 			ts : (new Date()).toLocaleString()
 		}]
@@ -52,20 +54,20 @@ const awardTaco = async (bestower, recipient, channel, message, numTacos = 1)=>{
 
 const Send = {
 	naughtyMessage : (user)=>{
-		Slack.sendAs('tacobot', ':taco:', user, `Hey! I see you trying to give tacos to yourself! Naughty! :ribbon:`);
+		send(user, `Hey! I see you trying to give burrito to yourself! Naughty! :ribbon:`);
 	},
 	tacoLimit : (user)=>{
-		Slack.sendAs('tacobot', ':taco:', user, `:rotating_light: You've hit your taco limit of ${TACO_LIMIT} today. :rotating_light:`);
+		send(user, `:rotating_light: You've hit your burrito limit of ${TACO_LIMIT} today. :rotating_light:`);
 	},
 	award : (bestower, recipient, channel, message, numTacos)=>{
-		Slack.sendAs('tacobot', ':taco:', TacoChannel,
-			`${bestower} has given ${recipient} a whooping ${numTacos} :taco: for this gem in #${channel}:\n> ${message}`
+		send(TacoChannel,
+			`${bestower} has given ${recipient} a whooping ${numTacos} :burrito: for this gem in #${channel}:\n> ${message}`
 		)
 	}
 };
 
 Slack.onMessage((msg)=>{
-	const tacoCount = (msg.text.match(/:taco:/g) || []).length;
+	const tacoCount = (msg.text.match(/:burrito:/g) || []).length;
 	if(tacoCount === 0) return;
 
 	getUsersFromMessage(msg.text).reduce((prom, user)=>{
@@ -74,7 +76,7 @@ Slack.onMessage((msg)=>{
 });
 
 Slack.onReact((react)=>{
-	if(react.reaction == 'taco'){
+	if(react.reaction == 'burrito'){
 		fetchMessage(react.item.channel, react.item.ts)
 			.then((msg)=>awardTaco(react.user, Slack.users[msg.user], react.channel, msg.text))
 			.catch(()=>{})
