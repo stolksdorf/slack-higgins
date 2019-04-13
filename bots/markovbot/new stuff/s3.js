@@ -1,4 +1,4 @@
-const config = require('../../config');
+const config = require('../../../config');
 const AWS = require('aws-sdk');
 
 AWS.config.update({
@@ -33,7 +33,10 @@ const encode = async ()=>{
 };
 
 
-
+// put the cron job in here
+// have a function to clear out cache
+// add to cache
+// upload user to S3
 
 
 
