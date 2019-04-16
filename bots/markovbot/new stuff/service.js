@@ -1,23 +1,40 @@
-const Storage = require('./s3.js');
+const Storage = require('./storage.js');
 const Engine = require('./engine.js');
 
+const MIN = 60;
 
-let markovInfo = {};
-const cachedFragements = {};
+const generateMessage = async (user)=>{
+	const mapping = await Storage.getMapping(user);
+	return Engine.generateMessage(mapping);
+};
 
+const encodeMessage = (user, message)=>{
+	const fragments = Engine.generateFragments(message);
+	Storage.addFragments(user, fragments);
+};
 
-addToCache
-uploadCache
+const backup = async ()=>{
+	const users = Storage.getStoredUsers();
+	return users.reduce((prom, user)=>{
+		return prom
+			.then(()=>{
+				console.log('backing up', user);
+				return Storage.backupUser(user)
+			})
+			.then(()=>console.log('done!'))
+	}, Promise.resolve());
+};
 
-generateMessage : (user)=>{
-
+const startTimedBackup = (timer = 10*MIN)=>{
+	setTimeout(()=>{
+		backup();
+		startTimedBackup(timer);
+	},timer)
 }
 
-
-
-
-
-
-
-// generateAMessage(user)
-// encodeAMessage(user, message)
+module.exports = {
+	generateMessage,
+	encodeMessage,
+	backup,
+	startTimedBackup
+}

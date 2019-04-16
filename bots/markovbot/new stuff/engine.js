@@ -9,18 +9,15 @@ const SEQ_DIV = '⇢';
 const WEIGHT_DIV = '˲';
 const VAL_DIV = '।';
 
-const weightedRandom = (weights={}, total=0)=>{
-	const rand = Math.floor(Math.random() * total);
-	let current = 0;
-	const keys = Object.keys(weights);
-	if(keys.length == 1) return keys[0]
-	return keys.find((key)=>{
-		const passes = current >= rand;
-		current += weights[key];
-		return passes;
-	});
-};
+
 const trim = (key)=>(key.length > MARKOV_DEPTH ? key.slice(-MARKOV_DEPTH) : key);
+
+
+const utils = {
+
+
+};
+
 
 const mergeWeights = (weights1={}, weights2={})=>{
 	return reduce(weights2, (acc, weight, letter)=>{
@@ -45,8 +42,21 @@ const decodeFragment = (line)=>{
 		weights : {}
 	});
 };
+const mergeFragments = (frags1, frags2)=>{
+	return frags2.reduce((acc , weights, seq)=>{
+		if(acc[seq]){
+			acc[seq] = mergeWeights(acc[seq], weights);
+		}else{
+			acc[seq] = weights;
+		}
+		return acc;
+	}, frags1);
+};
 
-const extendMapping = (seq, weights, mapping='')=>{
+
+
+
+const addFragmentToMapping = (mapping='', seq, weights)=>{
 	const entry = findEntry(mapping, seq);
 	if(entry){
 		return mapping.substr(0, entry.start)
@@ -56,6 +66,13 @@ const extendMapping = (seq, weights, mapping='')=>{
 
 	return (mapping?(mapping+'\n'):'') + encodeFragment(seq, weights);
 }
+
+const extendMapping = (mapping='',fragments)=>{
+	return fragments.reduce((acc, weights, seq)=>{
+		return Engine.extendMapping(mapping, seq, weights);
+	}, mapping);
+}
+
 
 
 const findEntry = (mapping, sequence)=>{
@@ -68,7 +85,6 @@ const findEntry = (mapping, sequence)=>{
 	})
 };
 
-//TODO: re-work for multiple depths?
 const generateFragments = (msg)=>{
 	let frags = {};
 	(msg+END).split('').reduce((seq, letter)=>{
@@ -83,6 +99,17 @@ const generateFragments = (msg)=>{
 
 
 const generateMessage = (mapping)=>{
+	const weightedRandom = (weights={}, total=0)=>{
+		const rand = Math.floor(Math.random() * total);
+		let current = 0;
+		const keys = Object.keys(weights);
+		if(keys.length == 1) return keys[0]
+		return keys.find((key)=>{
+			const passes = current >= rand;
+			current += weights[key];
+			return passes;
+		});
+	};
 	const addLetter = (msg='')=>{
 		const sequence = trim(msg);
 		const entry = findEntry(mapping, sequence);
@@ -96,12 +123,13 @@ const generateMessage = (mapping)=>{
 
 
 module.exports = {
-	findEntry,
-	weightedRandom,
-	mergeWeights,
+	// findEntry,
+	// weightedRandom,
+	// mergeWeights,
 
 
 	generateFragments,
 	generateMessage,
+	mergeFragments,
 	extendMapping,
 }

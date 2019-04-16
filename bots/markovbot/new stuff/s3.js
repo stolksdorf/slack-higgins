@@ -25,50 +25,7 @@ const fetch = async (name)=>{
 		}, (err, data)=>err ? reject(err) : resolve(data));
 	})
 	.then((data)=>data.Body.toString());
-	//TODO: potentially parse out data here
 };
-
-const encode = async ()=>{
-
-};
-
-
-// put the cron job in here
-// have a function to clear out cache
-// add to cache
-// upload user to S3
-
-
-
-/*
-	encode mutliple messages into a buffer
-	then merge that buffer with an existing mapping
-
-
-*/
-
-
-/*
-upload('test-key.biz', 'updated text').then((doot)=>{
-	console.log(doot);
-});
-
-fetch('test-key.biz').then((data)=>{
-	console.log(data);
-});
-*/
-
-
-/*
-use regex to find the line that starts with the sequence.
-use a sequence terminating character?
-extract out the weights and calculate the total
-use that to generate the next letter, and repeat
-toss out the file once you are done
-
-*/
-
-
 
 module.exports = {
 	fetch,
