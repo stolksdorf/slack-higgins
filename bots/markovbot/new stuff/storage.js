@@ -5,6 +5,7 @@ let fragmentCache = {};
 let mappingCache = {};
 
 const fetchMapping = async (user)=>{
+	console.log('fethcing', user);
 	const mapping = await S3.fetch(user);
 	mappingCache[user] = mapping;
 	return mapping;

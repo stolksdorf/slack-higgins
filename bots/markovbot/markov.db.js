@@ -1,39 +1,39 @@
 const _ = require('lodash');
-const DB = require('../../db.js');
+//const DB = require('../../db.js');
 const redis = require('pico-redis')('markov');
 
 // Only allow DB upserts once every 5 minutes.
 const MIN = 60 * 1000;
 const BATCH_DELAY = 5 * MIN;
 
-const MappingModel = DB.sequelize.define('Mapping', {
-	user : {
-		type : DB.Sequelize.TEXT,
-		allowNull : false,
-		unique : true,
-	},
-	msgs : {
-		type : DB.Sequelize.INTEGER,
-		allowNull : false,
-	},
-	letters : {
-		type : DB.Sequelize.INTEGER,
-		allowNull : false,
-	},
-	weights : {
-		type : DB.Sequelize.JSONB,
-		allowNull : false,
-		defaultValue : {},
-	},
-	// TODO: Try adding some indexes and see if we can realistically remove this.
-	totals : {
-		type : DB.Sequelize.JSONB,
-		allowNull : false,
-		defaultValue : {},
-	},
-}, {
-	schema : 'Markov',
-});
+// const MappingModel = DB.sequelize.define('Mapping', {
+// 	user : {
+// 		type : DB.Sequelize.TEXT,
+// 		allowNull : false,
+// 		unique : true,
+// 	},
+// 	msgs : {
+// 		type : DB.Sequelize.INTEGER,
+// 		allowNull : false,
+// 	},
+// 	letters : {
+// 		type : DB.Sequelize.INTEGER,
+// 		allowNull : false,
+// 	},
+// 	weights : {
+// 		type : DB.Sequelize.JSONB,
+// 		allowNull : false,
+// 		defaultValue : {},
+// 	},
+// 	// TODO: Try adding some indexes and see if we can realistically remove this.
+// 	totals : {
+// 		type : DB.Sequelize.JSONB,
+// 		allowNull : false,
+// 		defaultValue : {},
+// 	},
+// }, {
+// 	schema : 'Markov',
+// });
 
 const convertToDb = (user, mapping) => {
 	return _.extend({}, mapping, {
@@ -120,8 +120,8 @@ const MarkovDB = {
 	initialized: false,
 	async initialize() {
 		if (MarkovDB.initialized) return;
-		await DB.sequelize.createSchema('"Markov"');
-		await MappingModel.sync();
+		//await DB.sequelize.createSchema('"Markov"');
+		//await MappingModel.sync();
 		MarkovDB.initialized = true;
 	},
 };

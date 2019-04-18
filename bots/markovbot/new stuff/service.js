@@ -1,7 +1,7 @@
 const Storage = require('./storage.js');
 const Engine = require('./engine.js');
 
-const MIN = 60;
+const MIN = 60 * 1000;
 
 const generateMessage = async (user)=>{
 	const mapping = await Storage.getMapping(user);
@@ -15,6 +15,7 @@ const encodeMessage = (user, message)=>{
 
 const backup = async ()=>{
 	const users = Storage.getStoredUsers();
+	Slack.log('Backing up', users);
 	return users.reduce((prom, user)=>{
 		return prom
 			.then(()=>{
@@ -27,6 +28,7 @@ const backup = async ()=>{
 
 const startTimedBackup = (timer = 10*MIN)=>{
 	setTimeout(()=>{
+
 		backup();
 		startTimedBackup(timer);
 	},timer)
@@ -36,5 +38,7 @@ module.exports = {
 	generateMessage,
 	encodeMessage,
 	backup,
-	startTimedBackup
+	startTimedBackup,
+
+	migrate : require('./migration.js')
 }

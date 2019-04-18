@@ -44,12 +44,20 @@ const botSend = async (channel, user, msg)=>{
 	});
 };
 
+const service = require('./new stuff/service.js');
+
+//migrate('scott').then(()=>Slack.msg('scott', 'done!'));
+
+
 Slack.onMessage((msg)=>{
 	if(blacklist.some((channel)=>channel==msg.channel)) return;
 
-	// if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
-	// 	return Populate();
-	// }
+	if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
+		return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));
+	}
+	if(msg.isDirect && msg.text == 'test' && msg.user == 'scott'){
+		return service.generateMessage('scott').then((message)=>Slack.msg('scott', message));
+	}
 
 	if(!msg.isDirect && !blacklist.includes(msg.channel)){
 		MarkovService.addMessage(msg.user, msg.text);
