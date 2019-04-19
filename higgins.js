@@ -25,12 +25,12 @@ try {
 }
 
 
-//const DB = require('./db.js');
-// try {
-// 	DB.connect(config.get('database_url'), config.get('db', true));
-// } catch (err) {
-// 	console.error('Error connecting to postgres', err);
-// }
+const DB = require('./db.js');
+try {
+	DB.connect(config.get('database_url'), config.get('db', true));
+} catch (err) {
+	console.error('Error connecting to postgres', err);
+}
 
 Slack.setInfo('higgins', ':tophat:');
 Slack.emitter.setMaxListeners(25);

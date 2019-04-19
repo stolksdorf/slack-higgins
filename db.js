@@ -1,5 +1,3 @@
-//TODO: Potentially remove
-
 const _ = require('lodash');
 const Sequelize = require('sequelize');
 
