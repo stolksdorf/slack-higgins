@@ -62,6 +62,7 @@ const findEntry = (mapping, sequence)=>{
 	let end = mapping.indexOf('\n', start);
 	if(end === -1) end = mapping.length;
 	const line = mapping.substring(start, end);
+	if(!line || line.indexOf(SEQ_DIV) === -1) return false;
 	return Object.assign(decodeFragment(line), {
 		start,end
 	});
