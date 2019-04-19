@@ -27,9 +27,9 @@ const iconAliases = {
 	'sarahellen.w' : 'sarah',
 };
 
-const blacklist = ['trivia-time'];
+const blacklist = ['trivia-time', 'bottin-around'];
 
-const botSend = async (channel, user, msg)=>{
+const botSend = async (channel, user, msg='')=>{
 	const icon = iconAliases[user] || user;
 	if(!msg) msg = await MarkovService.getNewMessage(user);
 	Slack.api('chat.postMessage', {
@@ -44,13 +44,35 @@ const botSend = async (channel, user, msg)=>{
 	});
 };
 
+
 const service = require('./new stuff/service.js');
 
 //migrate('scott').then(()=>Slack.msg('scott', 'done!'));
 
+service.startTimedBackup(3 * 60 * 1000);
+
 
 Slack.onMessage((msg)=>{
 	if(blacklist.some((channel)=>channel==msg.channel)) return;
+
+	////// TESTING
+
+	if(Slack.msgHas(msg.text, `scottbot`)){
+		return service.generateMessage('scott')
+			.then((genMessage)=>{
+				botSend(msg.channel, 'scott', {text: genMessage})
+			});
+	}
+
+	if(msg.user == 'scott'){
+		if(msg.isDirect){
+			if(msg.text == 'populate') return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));
+		}
+		return service.encodeMessage('scott', msg.text);
+	}
+
+	////////////
+
 
 	if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
 		return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));

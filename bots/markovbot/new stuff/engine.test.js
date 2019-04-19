@@ -4,6 +4,13 @@ const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key
 
 const engine = require('./engine.js');
 
+// const sampleMapping =
+// `[msgs:340,letters:1234]
+// seq⇢a।4
+// hello⇢a।3˲b।6˲c।6˲6।7
+// test⇢a।4`;
+
+
 const sampleMapping =
 `seq⇢a।4
 hello⇢a।3˲b।6˲c।6˲6।7

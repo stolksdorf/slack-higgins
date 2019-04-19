@@ -1,6 +1,9 @@
 const Storage = require('./storage.js');
 const Engine = require('./engine.js');
 
+
+const formatNumber = (num)=>num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
 const MIN = 60 * 1000;
 
 const generateMessage = async (user)=>{
@@ -14,8 +17,7 @@ const encodeMessage = (user, message)=>{
 };
 
 const backup = async ()=>{
-	const users = Storage.getStoredUsers();
-	Slack.log('Backing up', users);
+	const users = Storage.getStoredUsers() || [];
 	return users.reduce((prom, user)=>{
 		return prom
 			.then(()=>{
@@ -28,11 +30,22 @@ const backup = async ()=>{
 
 const startTimedBackup = (timer = 10*MIN)=>{
 	setTimeout(()=>{
-
 		backup();
 		startTimedBackup(timer);
 	},timer)
-}
+};
+
+
+// const generateFormattedMessage = async (user)=>{
+// 	const text = await generateMessage(user);
+// 	const info = await Storage.getInfo(user);
+
+// 	return {
+// 		text,
+// 		msgCount : info.msgCount,
+// 		letterCount : info.letterCount,
+// 	};
+// }
 
 module.exports = {
 	generateMessage,

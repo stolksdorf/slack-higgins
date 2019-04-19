@@ -24,7 +24,6 @@ const addFragments = (user, fragments)=>{
 	fragmentCache[user] = Engine.mergeFragments(fragmentCache[user], fragments);
 };
 
-
 const backupUser = async (user)=>{
 	if(!fragmentCache[user] && !mappingCache[user]) return;
 
@@ -39,12 +38,15 @@ const backupUser = async (user)=>{
 	await S3.upload(user, mappingCache[user]);
 	delete fragmentCache[user];
 	delete mappingCache[user];
-}
+};
 
 module.exports = {
-	getStoredUsers : ()=>(new Set([].concat(Object.keys(fragmentCache), Object.keys(mappingCache)))).values(),
+	getStoredUsers : ()=>{
+		const users = [].concat(Object.keys(fragmentCache), Object.keys(mappingCache));
+		return [...new Set(users)];
+	},
 
 	getMapping,
 	addFragments,
-	backupUser,
+	backupUser
 }

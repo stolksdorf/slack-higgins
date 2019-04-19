@@ -87,8 +87,8 @@ const extendMapping = (mapping='', fragments={})=>{
 	}, mapping);
 }
 
-const mergeFragments = (frags1, frags2)=>{
-	return frags2.reduce((acc , weights, seq)=>{
+const mergeFragments = (frags1={}, frags2={})=>{
+	return reduce(frags2, (acc , weights, seq)=>{
 		if(acc[seq]){
 			acc[seq] = mergeWeights(acc[seq], weights);
 		}else{
@@ -112,7 +112,6 @@ const generateFragments = (msg)=>{
 
 
 const generateMessage = (mapping)=>{
-
 	const addLetter = (msg='')=>{
 		const sequence = trim(msg);
 		const entry = findEntry(mapping, sequence);
@@ -122,6 +121,13 @@ const generateMessage = (mapping)=>{
 		return addLetter(msg + letter);
 	};
 	return addLetter();
+};
+
+const getCounts = async (mapping)=>{
+	return {
+		msgCount : 0,
+		letterCount : 0
+	}
 };
 
 
@@ -135,7 +141,7 @@ module.exports = {
 		addFragmentToMapping
 	},
 
-
+	getCounts,
 	generateFragments,
 	generateMessage,
 	mergeFragments,
