@@ -39,11 +39,8 @@ const createTodoPost = async ()=>{
 }
 
 Slack.onMessage((msg)=>{
-	console.log(msg);
 	if(msg.isDirect && msg.text == 'todo'){
 		createTodoPost()
 			.then(()=>Slack.msg(msg.channel, "Done!"));
 	}
-
-
 });

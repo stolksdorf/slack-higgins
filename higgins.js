@@ -43,7 +43,7 @@ const loadActions = require('./action.loader.js');
 
 const loadBots = ()=>{
 	return new Promise((resolve, reject)=>{
-		glob('./bots/**/*.bot.js', {}, (err, files)=>{
+		glob('./bots/**/*.bot.js', {ignore: './bots/disabled/**'}, (err, files)=>{
 			if(err) return reject(err);
 			return resolve(files);
 		});
