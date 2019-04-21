@@ -1,11 +1,8 @@
 const redis = require('pico-redis')('markov');
 const Engine = require('./engine.js');
-const Storage = require('./storage.js');
 const S3 = require('./s3.js');
 
 const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key),init);
-
-
 const sequence = async (arr, func)=>{
 	return arr.reduce((prom, val, key)=>{
 		return prom.then(()=>func(val, key))
@@ -14,10 +11,15 @@ const sequence = async (arr, func)=>{
 
 
 module.exports = async (users)=>{
+	let newStats = {};
+
 	return sequence(users, async (user)=>{
 		console.log('exttracitng redis', user);
 		const data = await redis.get(user);
-		Storage.cacheStats(user, data.msgs, data.letters);
+		newStats[user] = {
+			msgCount : data.msgs,
+			letterCount : data.letters
+		};
 
 		const size = Object.keys(data.weights).length
 		let idx = 0;
@@ -27,8 +29,8 @@ module.exports = async (users)=>{
 			return acc + Engine.utils.encodeFragment(seq, weights) + '\n'
 		},'');
 
-		await S3.upload(`${user}.map`, newMapping);
+		await S3.upload(`${user}.map`, newMapping.slice(0, -1));
 		console.log('Uploaded to S3');
 	})
-	.then(()=>Storage.backupStats())
+	.then(()=>S3.upload('stats.json', JSON.stringify(newStats, null, '  ')))
 }
