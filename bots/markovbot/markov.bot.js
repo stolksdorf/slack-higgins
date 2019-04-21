@@ -84,7 +84,13 @@ Slack.onMessage((msg)=>{
 
 	if(msg.user == 'scott'){
 		if(msg.isDirect){
-			if(msg.text == 'populate') return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));
+			if(msg.text == 'migrate'){
+				try{
+					return service.migrate(['scott']).then(()=>Slack.msg('scott', 'done!'));
+				}catch(err){
+					Slack.log(err)
+				}
+			}
 			if(msg.text == 'backup') return service.backup();
 		}
 		return service.encodeMessage('scott', msg.text);
@@ -93,12 +99,12 @@ Slack.onMessage((msg)=>{
 	////////////
 
 
-	if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
-		return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));
-	}
-	if(msg.isDirect && msg.text == 'test' && msg.user == 'scott'){
-		return service.generateMessage('scott').then((message)=>Slack.msg('scott', message));
-	}
+	// if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
+	// 	return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));
+	// }
+	// if(msg.isDirect && msg.text == 'test' && msg.user == 'scott'){
+	// 	return service.generateMessage('scott').then((message)=>Slack.msg('scott', message));
+	// }
 
 	if(!msg.isDirect && !blacklist.includes(msg.channel)){
 		MarkovService.addMessage(msg.user, msg.text);

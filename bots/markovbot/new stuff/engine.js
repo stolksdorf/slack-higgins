@@ -77,7 +77,6 @@ const utils = {
 	},
 };
 
-///////////////////////
 
 const extendMapping = (mapping='', fragments={})=>{
 	return reduce(fragments, (acc, weights, seq)=>{

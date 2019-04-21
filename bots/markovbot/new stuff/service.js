@@ -39,7 +39,6 @@ const backup = async ()=>{
 
 
 const startTimedBackup = (timer = 10*MIN)=>{
-	console.log('starting');
 	setTimeout(()=>{
 		backup();
 		startTimedBackup(timer);
