@@ -14,87 +14,82 @@ const trim = (key)=>(key.length > MARKOV_DEPTH ? key.slice(-MARKOV_DEPTH) : key)
 
 
 const utils = {
+	mergeWeights : (weights1={}, weights2={})=>{
+		return reduce(weights2, (acc, weight, letter)=>{
+			acc[letter] = (acc[letter] || 0) + weight;
+			return acc;
+		}, weights1);
+	},
+
+	encodeFragment : (seq, weights)=>{
+		return `${seq}${SEQ_DIV}${map(weights, (w,l)=>`${l}${VAL_DIV}${w}`).join(WEIGHT_DIV)}`;
+	},
+
+	decodeFragment : (line)=>{
+		const [seq, data] = line.split(SEQ_DIV);
+		return data.split(WEIGHT_DIV).reduce((acc, field)=>{
+			const [letter, weight] = field.split(VAL_DIV);
+			acc.total += Number(weight);
+			acc.weights[letter] = Number(weight);
+			return acc;
+		}, {
+			seq,
+			total   : 0,
+			weights : {}
+		});
+	},
 
 
-};
+	addFragmentToMapping : (mapping='', seq, weights)=>{
+		const entry = utils.findEntry(mapping, seq);
+		if(entry){
+			return mapping.substr(0, entry.start)
+				+ utils.encodeFragment(seq, utils.mergeWeights(entry.weights, weights))
+				+ mapping.substr(entry.end)
+		}
 
+		return (mapping?(mapping+'\n'):'') + utils.encodeFragment(seq, weights);
+	},
 
-const mergeWeights = (weights1={}, weights2={})=>{
-	return reduce(weights2, (acc, weight, letter)=>{
-		acc[letter] = (acc[letter] ? acc[letter] : 0) + weight;
-		return acc;
-	}, weights1);
-}
+	findEntry : (mapping, sequence)=>{
+		if(!mapping) return false;
+		const start = mapping.indexOf(`${sequence}${SEQ_DIV}`);
+		if(start === -1) return false;
+		let end = mapping.indexOf('\n', start);
+		if(end === -1) end = mapping.length;
+		const line = mapping.substring(start, end);
+		if(!line || line.indexOf(SEQ_DIV) === -1) return false;
+		return Object.assign(utils.decodeFragment(line), {
+			start,end
+		});
+	},
 
-const encodeFragment = (seq, weights)=>{
-	return `${seq}${SEQ_DIV}${map(weights, (w,l)=>`${l}${VAL_DIV}${w}`).join(WEIGHT_DIV)}`;
-};
-const decodeFragment = (line)=>{
-	const [seq, data] = line.split(SEQ_DIV);
-	return data.split(WEIGHT_DIV).reduce((acc, field)=>{
-		const [letter, weight] = field.split(VAL_DIV);
-		acc.total += Number(weight);
-		acc.weights[letter] = Number(weight);
-		return acc;
-	}, {
-		seq,
-		total : 0,
-		weights : {}
-	});
-};
-
-
-const addFragmentToMapping = (mapping='', seq, weights)=>{
-	const entry = findEntry(mapping, seq);
-	if(entry){
-		return mapping.substr(0, entry.start)
-			+ encodeFragment(seq, mergeWeights(entry.weights, weights))
-			+ mapping.substr(entry.end)
-	}
-
-	return (mapping?(mapping+'\n'):'') + encodeFragment(seq, weights);
-};
-
-const findEntry = (mapping, sequence)=>{
-	if(!mapping) return false;
-	const start = mapping.indexOf(`${sequence}${SEQ_DIV}`);
-	if(start === -1) return false;
-	let end = mapping.indexOf('\n', start);
-	if(end === -1) end = mapping.length;
-	const line = mapping.substring(start, end);
-	if(!line || line.indexOf(SEQ_DIV) === -1) return false;
-	return Object.assign(decodeFragment(line), {
-		start,end
-	});
-};
-
-const weightedRandom = (weights={}, total=0)=>{
-	const rand = Math.floor(Math.random() * total);
-	let current = 0;
-	const keys = Object.keys(weights);
-	if(keys.length == 1) return keys[0]
-	return keys.find((key)=>{
-		const passes = current >= rand;
-		current += weights[key];
-		return passes;
-	});
+	weightedRandom : (weights={}, total=0)=>{
+		const rand = Math.floor(Math.random() * total);
+		let current = 0;
+		const keys = Object.keys(weights);
+		if(keys.length == 1) return keys[0]
+		return keys.find((key)=>{
+			const passes = current >= rand;
+			current += weights[key];
+			return passes;
+		});
+	},
 };
 
 ///////////////////////
 
 const extendMapping = (mapping='', fragments={})=>{
 	return reduce(fragments, (acc, weights, seq)=>{
-		return addFragmentToMapping(acc, seq, weights);
+		return utils.addFragmentToMapping(acc, seq, weights);
 	}, mapping);
 }
 
 const mergeFragments = (frags1={}, frags2={})=>{
 	return reduce(frags2, (acc , weights, seq)=>{
-		if(acc[seq]){
-			acc[seq] = mergeWeights(acc[seq], weights);
-		}else{
-			acc[seq] = weights;
-		}
+		acc[seq] = acc[seq]
+			? utils.mergeWeights(acc[seq], weights)
+			: weights
 		return acc;
 	}, frags1);
 };
@@ -103,9 +98,7 @@ const generateFragments = (msg)=>{
 	let frags = {};
 	(msg+END).split('').reduce((seq, letter)=>{
 		frags[seq] = frags[seq] || {};
-		frags[seq][letter] = frags[seq][letter]
-			? frags[seq][letter] + 1
-			: 1;
+		frags[seq][letter] = (frags[seq][letter] || 0) + 1;
 		return trim(seq + letter);
 	}, '')
 	return frags;
@@ -115,34 +108,17 @@ const generateFragments = (msg)=>{
 const generateMessage = (mapping)=>{
 	const addLetter = (msg='')=>{
 		const sequence = trim(msg);
-		const entry = findEntry(mapping, sequence);
+		const entry = utils.findEntry(mapping, sequence);
 		if(!entry) return msg;
-		const letter = weightedRandom(entry.weights, entry.total);
+		const letter = utils.weightedRandom(entry.weights, entry.total);
 		if(!letter || letter == END) return msg;
 		return addLetter(msg + letter);
 	};
 	return addLetter();
 };
 
-const getCounts = async (mapping)=>{
-	return {
-		msgCount : 0,
-		letterCount : 0
-	}
-};
-
-
 module.exports = {
-	utils : {
-		encodeFragment,
-		decodeFragment,
-		findEntry,
-		weightedRandom,
-		mergeWeights,
-		addFragmentToMapping
-	},
-
-	getCounts,
+	utils,
 	generateFragments,
 	generateMessage,
 	mergeFragments,

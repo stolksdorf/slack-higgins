@@ -1,34 +1,45 @@
 const Storage = require('./storage.js');
 const Engine = require('./engine.js');
 
-
-const formatNumber = (num)=>num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-
 const MIN = 60 * 1000;
+
+
 
 const generateMessage = async (user)=>{
 	const mapping = await Storage.getMapping(user);
-	return Engine.generateMessage(mapping);
+	const stats = await Storage.getStats(user);
+	return {
+		text        : Engine.generateMessage(mapping),
+		msgCount    : stats[user].msgCount,
+		letterCount : stats[user].letterCount,
+	};
 };
 
 const encodeMessage = (user, message)=>{
 	const fragments = Engine.generateFragments(message);
-	Storage.addFragments(user, fragments);
+	Storage.cacheFragments(user, fragments);
+	Storage.cacheStats(user, 1, message.length);
 };
 
 const backup = async ()=>{
-	const users = Storage.getStoredUsers() || [];
-	return users.reduce((prom, user)=>{
+	console.log('starting backup');
+	return Storage.getStoredUsers().reduce((prom, user)=>{
 		return prom
 			.then(()=>{
 				console.log('backing up', user);
 				return Storage.backupUser(user)
 			})
 			.then(()=>console.log('done!'))
-	}, Promise.resolve());
+	}, Promise.resolve())
+	.then(()=>{
+		return Storage.backupStats();
+	})
+	.then(()=>console.log('finished!'));
 };
 
+
 const startTimedBackup = (timer = 10*MIN)=>{
+	console.log('starting');
 	setTimeout(()=>{
 		backup();
 		startTimedBackup(timer);

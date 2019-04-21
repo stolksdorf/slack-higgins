@@ -7,27 +7,38 @@ AWS.config.update({
 });
 const S3 = new AWS.S3();
 
-const upload = async (name, content)=>{
+const upload = async (filename, content)=>{
 	return new Promise((resolve, reject)=>{
 		S3.putObject({
 			Bucket : config.get('markov.bucket_name'),
-			Key    : `${name}.map`,
+			Key    : filename,
 			Body   : content,
 		}, (err, data)=>err ? reject(err) : resolve(data));
-	})
+	});
 };
 
-const fetch = async (name)=>{
+const fetch = async (filename)=>{
 	return new Promise((resolve, reject)=>{
 		S3.getObject({
 			Bucket : config.get('markov.bucket_name'),
-			Key    : `${name}.map`,
+			Key    : filename,
 		}, (err, data)=>err ? reject(err) : resolve(data));
 	})
-	.then((data)=>data.Body.toString());
+	.then((data)=>data.Body.toString())
+	.catch((err)=>{
+		if(err.code == 'NoSuchKey') return '';
+		throw err;
+	})
 };
 
 module.exports = {
 	fetch,
 	upload
-}
+};
+
+
+fetch('doot.map')
+	.then(console.log)
+	.catch((err)=>{
+		console.log('err', err.code);
+	})

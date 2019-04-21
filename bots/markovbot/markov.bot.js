@@ -2,6 +2,9 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const MarkovService = require('./markov.service.js');
 
+
+const formatNumber = (num)=>num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
 //const Populate = require('./populate.script.js')
 
 //Bump these to config files
@@ -27,7 +30,7 @@ const iconAliases = {
 	'sarahellen.w' : 'sarah',
 };
 
-const blacklist = ['trivia-time', 'bottin-around'];
+const blacklist = ['trivia-time'];
 
 const botSend = async (channel, user, msg='')=>{
 	const icon = iconAliases[user] || user;
@@ -39,7 +42,22 @@ const botSend = async (channel, user, msg='')=>{
 		attachments : [{
 			pretext   : msg.text,
 			mrkdwn_in : ['pretext'],
-			footer    : `built with ${msg.msgs} messages, using ${msg.letters} letters.`
+			footer    : `built with ${formatNumber(msg.msgs)} messages, using ${formatNumber(msg.letters)} letters.`
+		}]
+	});
+};
+
+
+const newBotSend = async (channel, user)=>{
+	const msg = await service.generateMessage(user);
+	Slack.api('chat.postMessage', {
+		channel     : channel,
+		username    : `${user}bot`,
+		icon_emoji  : `:${iconAliases[user] || user}:`,
+		attachments : [{
+			pretext   : msg.text,
+			mrkdwn_in : ['pretext'],
+			footer    : `built with ${formatNumber(msg.msgCount)} messages, using ${formatNumber(msg.letterCount)} letters.`
 		}]
 	});
 };
@@ -60,13 +78,14 @@ Slack.onMessage((msg)=>{
 	if(Slack.msgHas(msg.text, `scottbot`)){
 		return service.generateMessage('scott')
 			.then((genMessage)=>{
-				botSend(msg.channel, 'scott', {text: genMessage})
+				newBotSend(msg.channel, 'scott')
 			});
 	}
 
 	if(msg.user == 'scott'){
 		if(msg.isDirect){
 			if(msg.text == 'populate') return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));
+			if(msg.text == 'backup') return service.backup();
 		}
 		return service.encodeMessage('scott', msg.text);
 	}
