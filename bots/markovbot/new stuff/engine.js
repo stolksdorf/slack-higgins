@@ -4,7 +4,12 @@ const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key
 
 const MARKOV_DEPTH = 6;
 
-const END = '¶';
+//TODO: Change all the characters to be invisible, non-used unicode,
+//Weight pairs can be done by a single character, then number, just need a weight divider
+// Require a end fragment character, and remove the new lines
+
+
+const END_SEQ = '¶';
 const SEQ_DIV = '⇢';
 const WEIGHT_DIV = '˲';
 const VAL_DIV = '।';
@@ -95,7 +100,7 @@ const mergeFragments = (frags1={}, frags2={})=>{
 
 const generateFragments = (msg)=>{
 	let frags = {};
-	(msg+END).split('').reduce((seq, letter)=>{
+	(msg+END_SEQ).split('').reduce((seq, letter)=>{
 		frags[seq] = frags[seq] || {};
 		frags[seq][letter] = (frags[seq][letter] || 0) + 1;
 		return trim(seq + letter);
@@ -110,7 +115,7 @@ const generateMessage = (mapping)=>{
 		const entry = utils.findEntry(mapping, sequence);
 		if(!entry) return msg;
 		const letter = utils.weightedRandom(entry.weights, entry.total);
-		if(!letter || letter == END) return msg;
+		if(!letter || letter == END_SEQ) return msg;
 		return addLetter(msg + letter);
 	};
 	return addLetter();

@@ -25,7 +25,6 @@ module.exports = async (users)=>{
 		let idx = 0;
 
 		const newMapping = reduce(data.weights, (acc, weights, seq)=>{
-			console.log(Math.round(idx++/size*100*100)/100);
 			return acc + Engine.utils.encodeFragment(seq, weights) + '\n'
 		},'');
 

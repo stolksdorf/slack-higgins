@@ -3,12 +3,13 @@ const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key
 
 
 const engine = require('./engine.js');
+const utils = engine.utils;
+
 
 // const sampleMapping =
-// `[msgs:340,letters:1234]
-// seq⇢a।4
-// hello⇢a।3˲b।6˲c।6˲6।7
-// test⇢a।4`;
+// 	utils.encodeFragment('seq', {a:4}) +
+// 	utils.encodeFragment('hello', {a:3, b:6, c:6, '6':7}) +
+// 	utils.encodeFragment('test', {a:4});
 
 
 const sampleMapping =
@@ -18,18 +19,32 @@ test⇢a।4`;
 
 
 test.group('utils', (test)=>{
+
+	test.group('encode & decode', (test)=>{
+		test('base', (t)=>{
+			const weights = {a:35,'6':7,' ':234564,'':34};
+			const res = utils.decodeFragment(utils.encodeFragment('test', weights));
+			t.is(res, {
+				seq : 'test',
+				weights,
+				total: 234640
+			})
+		})
+	});
+
+
 	test.group('weightedRandom', (test)=>{
 		test('one option', (t)=>{
-			const res = engine.utils.weightedRandom({a:1}, 1);
+			const res = utils.weightedRandom({a:1}, 1);
 			t.is(res, 'a');
-			const res2 = engine.utils.weightedRandom({a:100}, 100);
+			const res2 = utils.weightedRandom({a:100}, 100);
 			t.is(res2, 'a');
 		});
 
 		test('gets a', (t)=>{
 			let res, count=0;
 			while(res != 'a'){
-				res = engine.utils.weightedRandom({a:1, b:2}, 3);
+				res = utils.weightedRandom({a:1, b:2}, 3);
 				if(count++ > 100) t.fail();
 			}
 			t.pass();
@@ -37,7 +52,7 @@ test.group('utils', (test)=>{
 		test('gets b', (t)=>{
 			let res, count=0;
 			while(res != 'b'){
-				res = engine.utils.weightedRandom({a:1, b:2}, 3);
+				res = utils.weightedRandom({a:1, b:2}, 3);
 				if(count++ > 100) t.fail();
 			}
 			t.pass();
@@ -46,7 +61,7 @@ test.group('utils', (test)=>{
 
 
 	test('findEntry', (t)=>{
-		const res = engine.utils.findEntry(sampleMapping, 'hello');
+		const res = utils.findEntry(sampleMapping, 'hello');
 
 		t.is(res.total, 22);
 		t.type(res.total, 'number');
@@ -55,22 +70,22 @@ test.group('utils', (test)=>{
 		t.type(res.weights.a, 'number');
 		t.is(res.weights['6'], 7);
 
-		const nope = engine.utils.findEntry(sampleMapping, 'does not exist');
+		const nope = utils.findEntry(sampleMapping, 'does not exist');
 		t.no(nope);
 	});
 
 	test.group('addFragmentToMapping', (test)=>{
 
 		test('empty', (t)=>{
-			const map = engine.utils.addFragmentToMapping('', 'test', {a:4, b:5});
-			const line = engine.utils.decodeFragment(map);
+			const map = utils.addFragmentToMapping('', 'test', {a:4, b:5});
+			const line = utils.decodeFragment(map);
 			t.is(line, {seq: 'test', weights : {a:4, b:5}, total : 9})
 		})
 		test('add multiple frags', (t)=>{
-			let map = engine.utils.addFragmentToMapping('', 'test', {a:4, b:5});
-			map = engine.utils.addFragmentToMapping(map, 'test', {a:1, c:5});
-			map = engine.utils.addFragmentToMapping(map, 'test2', {c:6});
-			const lines = map.split('\n').map(engine.utils.decodeFragment);
+			let map = utils.addFragmentToMapping('', 'test', {a:4, b:5});
+			map = utils.addFragmentToMapping(map, 'test', {a:1, c:5});
+			map = utils.addFragmentToMapping(map, 'test2', {c:6});
+			const lines = map.split('\n').map(utils.decodeFragment);
 
 			t.is(lines[0], { seq: 'test', total: 15, weights: { a: 5, b: 5, c: 5 } })
 			t.is(lines[1], { seq: 'test2', total: 6, weights: { c: 6 } })
@@ -80,7 +95,7 @@ test.group('utils', (test)=>{
 
 
 	test('mergeWeights', (t)=>{
-		const res = engine.utils.mergeWeights({b:1, c:3}, {b:1, a:1});
+		const res = utils.mergeWeights({b:1, c:3}, {b:1, a:1});
 		t.is(res.a,1);
 		t.is(res.b,2);
 		t.is(res.c,3);
@@ -114,7 +129,7 @@ test.group('extend mapping', (test)=>{
 	});
 	test('nonempty mapping', (t)=>{
 		const map = engine.extendMapping(sampleMapping, {'hello': {a:1, d:8}});
-		const lines = map.split('\n').map(engine.utils.decodeFragment);
+		const lines = map.split('\n').map(utils.decodeFragment);
 
 		t.is(lines[0].seq, 'seq');
 		t.is(lines[0].weights, {a:4});
@@ -128,7 +143,7 @@ test.group('extend mapping', (test)=>{
 
 	test('multiple fragments', (t)=>{
 		const map = engine.extendMapping(sampleMapping, {'hello': {a:1, d:8}, 'test': {a:1, b:5}});
-		const lines = map.split('\n').map(engine.utils.decodeFragment);
+		const lines = map.split('\n').map(utils.decodeFragment);
 
 		t.is(lines[1].seq, 'hello');
 		t.is(lines[1].weights, { '6': 7, a: 4, b: 6, c: 6, d: 8 });
