@@ -1,6 +1,6 @@
 const Slack = require('pico-slack');
 const request = require('superagent');
-const format = require('date-fns/format');
+const datefns = require('date-fns');
 const cron = require('node-schedule');
 
 //https://coolsville.slack.com/files/U0VAY0TN2/FJ4KWP0EA/image.png
@@ -8,15 +8,15 @@ const cron = require('node-schedule');
 const nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
 const getDate = ()=>{
+	//const date = datefns.subDays(new Date(), 1);
 	const date = new Date();
-	return format(date, 'YYYY/MM/DD');
+	return datefns.format(date, 'YYYY/MM/DD');
 };
 
 const NUM_TO_SHOW = 5;
 
 
 const getTopArticles = async ()=>{
-	console.log(getDate());
 	return request.get(`https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/${getDate()}`)
 		.then((res)=>res.body.items[0].articles)
 		.then((articles)=>{
@@ -30,8 +30,6 @@ const getTopArticles = async ()=>{
 		.then((articles)=>articles.slice(0, NUM_TO_SHOW))
 }
 
-
-
 const run = ()=>{
 	getTopArticles()
 		.then((articles)=>{
@@ -43,3 +41,17 @@ const run = ()=>{
 		})
 }
 cron.scheduleJob('11 15 * * *', run)
+
+//---------------------------
+
+cron.scheduleJob('5 * * * *', ()=>{
+	console.log('checking');
+	getTopArticles()
+		.then((articles)=>{
+			Slack.send('scott', `worked!\n\n${JSON.stringify(articles)}`)
+		})
+		.catch((err)=>{
+			Slack.send('scott', `broken \n\n ${err.toString()}`)
+		})
+})
+
