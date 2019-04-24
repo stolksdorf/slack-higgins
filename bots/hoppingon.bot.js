@@ -15,7 +15,7 @@ const hopping = [
 	'unfrocking','unlocking','unstopping','whopping','eavesdropping'
 ];
 
-const on = [
+let on = [
 	'aeon','baton','baun','beyond','blond','bon',
 	'bonne','braun','brawn','bron','bronze','chian',
 	'chiffon','chron','con','craun','cron','dawn',
@@ -25,13 +25,20 @@ const on = [
 	'personne','phon','pon','pond','pron','respond',
 	'salon','spawn','spon','swan','thereupon','tron',
 	'upon','wilsonian','won','yuan'
-]
+];
+on = on.concat(on.map((word)=>`${word}s`));
 
 const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
 
 
 Slack.onMessage((msg)=>{
-	if(msg.channel == 'overwatch' && Slack.msgHas(msg.text, ['hopping on', 'hop on'])){
+	if(msg.channel == 'overwatch' && Slack.msgHas(msg.text, ['hopping on', 'hop on', 'hoppin on'])){
 		Slack.sendAs('chrisbot', 'chris', 'overwatch', `${rand(hopping)} ${rand(on)}!`);
+	}
+	if(msg.channel == 'overwatch' && msg.user == 'chris'){
+		if(Slack.msgHas(msg.text, hopping, on)){
+			Slack.react(msg, ":howdareyou");
+			Slack.sendAs('chrisbot', 'chris', 'overwatch', `_*Ahem.*_`);
+		}
 	}
 })
