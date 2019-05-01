@@ -11,7 +11,7 @@ const cron = require('node-schedule');
 
 const nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
-const NUM_TO_SHOW = 5;
+const NUM_TO_SHOW = 7;
 
 
 const getTopArticles = async (date)=>{
@@ -34,11 +34,16 @@ const run = (date = new Date())=>{
 			const msg = articles.map((art, idx)=>{
 				return `:${nums[idx]}: *<https://en.wikipedia.org/wiki/${art.article}|${art.article}>* (_views: ${art.views}_)`;
 			}).join('\n')
-			Slack.sendAs('wikibot', 'wikipedia', 'hmmm', `Here's the most searched articles on wikipedia for ${datefns.format(date, 'MMM Do')}\n\n${msg}`
-				+ '\n\n Place your bets on what you think is happening! :monocle:')
+			Slack.send('hmmm', `Here's the most searched articles on wikipedia for ${datefns.format(date, 'MMM Do')}\n\n${msg}`
+				+ '\n\n Place your bets on what you think is happening! :monocle:', {
+					username: 'wikibot',
+					icon_emoji: 'wikipedia',
+					unfurl_links:false,
+					unfurl_media:false
+				})
 		})
 		.catch((err)=>{
 			return run(datefns.subDays(date, 1))
 		})
 }
-cron.scheduleJob('11 15 * * *', run)
+cron.scheduleJob('11 15 * * 5', run)
