@@ -9,10 +9,18 @@ const MARKOV_DEPTH = 6;
 // Require a end fragment character, and remove the new lines
 
 
-const END_SEQ = '¶';
-const SEQ_DIV = '⇢';
-const WEIGHT_DIV = '˲';
-const VAL_DIV = '।';
+// const END_SEQ = '¶';
+// const SEQ_DIV = '⇢';
+// const WEIGHT_DIV = '˲';
+// const ENTRY_DIV='/'
+
+//https://www.compart.com/en/unicode/category/Zs
+
+const END_SEQ =String.fromCharCode(28);
+const SEQ_DIV =String.fromCharCode(29);
+const ENTRY_DIV=String.fromCharCode(30);
+const WEIGHT_DIV =String.fromCharCode(31);
+
 
 
 const trim = (key)=>(key.length > MARKOV_DEPTH ? key.slice(-MARKOV_DEPTH) : key);
@@ -27,21 +35,56 @@ const utils = {
 	},
 
 	encodeFragment : (seq, weights)=>{
-		return `${seq}${SEQ_DIV}${map(weights, (w,l)=>`${l}${VAL_DIV}${w}`).join(WEIGHT_DIV)}`;
+		return `${seq}${SEQ_DIV}${map(weights, (w,l)=>`${l}${w}`).join(WEIGHT_DIV)}${ENTRY_DIV}`;
 	},
 
-	decodeFragment : (line)=>{
-		const [seq, data] = line.split(SEQ_DIV);
+	// decodeFragment : (line)=>{ //rename to :entry
+	// 	const [seq, data] = line.split(SEQ_DIV);
+	// 	return data.split(WEIGHT_DIV).reduce((acc, field)=>{
+	// 		const [letter, weight] = field.split(VAL_DIV);
+	// 		acc.total += Number(weight);
+	// 		acc.weights[letter] = Number(weight);
+	// 		return acc;
+	// 	}, {
+	// 		seq,
+	// 		total   : 0,
+	// 		weights : {}
+	// 	});
+	// },
+
+	decodeFragment : (entry)=>{
+
+		//console.log(entry);
+		const [seq, data] = entry.replace(ENTRY_DIV, '').split(SEQ_DIV);
+
+		if(!data) return;
+
+		//console.log([seq, data]);
+
 		return data.split(WEIGHT_DIV).reduce((acc, field)=>{
-			const [letter, weight] = field.split(VAL_DIV);
-			acc.total += Number(weight);
-			acc.weights[letter] = Number(weight);
+
+			const letter = field[0];
+			const weight = Number(field.substr(1));
+			acc.total += weight;
+			acc.weights[letter] = weight;
 			return acc;
 		}, {
 			seq,
 			total   : 0,
 			weights : {}
 		});
+	},
+
+
+	findEntry : (mapping, sequence)=>{
+		if(!mapping) return false;
+		const start = mapping.indexOf(`${sequence}${SEQ_DIV}`);
+		if(start === -1) return false;
+		let end = mapping.indexOf(ENTRY_DIV, start);
+		if(end === -1) return false;
+		const entry = mapping.substring(start, end);
+		if(!entry || entry.indexOf(SEQ_DIV) === -1) return false;
+		return Object.assign(utils.decodeFragment(entry), {start,end});
 	},
 
 
@@ -53,21 +96,13 @@ const utils = {
 				+ mapping.substr(entry.end)
 		}
 
-		return (mapping?(mapping+'\n'):'') + utils.encodeFragment(seq, weights);
+		return mapping + utils.encodeFragment(seq, weights);
 	},
 
-	findEntry : (mapping, sequence)=>{
-		if(!mapping) return false;
-		const start = mapping.indexOf(`${sequence}${SEQ_DIV}`);
-		if(start === -1) return false;
-		let end = mapping.indexOf('\n', start);
-		if(end === -1) end = mapping.length;
-		const line = mapping.substring(start, end);
-		if(!line || line.indexOf(SEQ_DIV) === -1) return false;
-		return Object.assign(utils.decodeFragment(line), {
-			start,end
-		});
+	decodeMapping : (mapping)=>{
+
 	},
+
 
 	weightedRandom : (weights={}, total=0)=>{
 		const rand = Math.floor(Math.random() * total);
@@ -85,6 +120,7 @@ const utils = {
 
 const extendMapping = (mapping='', fragments={})=>{
 	return reduce(fragments, (acc, weights, seq)=>{
+
 		return utils.addFragmentToMapping(acc, seq, weights);
 	}, mapping);
 }

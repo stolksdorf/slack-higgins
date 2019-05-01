@@ -5,6 +5,8 @@ const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key
 const engine = require('./engine.js');
 const utils = engine.utils;
 
+const ENTRY_DIV=String.fromCharCode(30);
+
 
 // const sampleMapping =
 // 	utils.encodeFragment('seq', {a:4}) +
@@ -12,17 +14,24 @@ const utils = engine.utils;
 // 	utils.encodeFragment('test', {a:4});
 
 
-const sampleMapping =
-`seq⇢a।4
-hello⇢a।3˲b।6˲c।6˲6।7
-test⇢a।4`;
+// const sampleMapping =
+// `seq⇢a।4
+// hello⇢a।3˲b।6˲c।6˲6।7
+// test⇢a।4`;
+
+let sampleMapping = '';
+sampleMapping = utils.addFragmentToMapping(sampleMapping, 'seq', {a:4});
+sampleMapping = utils.addFragmentToMapping(sampleMapping, 'hello', {a:3,b:6,c:6, '6':7});
+sampleMapping = utils.addFragmentToMapping(sampleMapping, 'test', {a:4});
 
 
 test.group('utils', (test)=>{
 
 	test.group('encode & decode', (test)=>{
 		test('base', (t)=>{
-			const weights = {a:35,'6':7,' ':234564,'':34};
+			const weights = {a:35,'6':7,' ':234564,'$':34};
+			//console.log(utils.encodeFragment('test', weights));
+
 			const res = utils.decodeFragment(utils.encodeFragment('test', weights));
 			t.is(res, {
 				seq : 'test',
@@ -81,11 +90,18 @@ test.group('utils', (test)=>{
 			const line = utils.decodeFragment(map);
 			t.is(line, {seq: 'test', weights : {a:4, b:5}, total : 9})
 		})
-		test('add multiple frags', (t)=>{
+		test.only('add multiple frags', (t)=>{
 			let map = utils.addFragmentToMapping('', 'test', {a:4, b:5});
 			map = utils.addFragmentToMapping(map, 'test', {a:1, c:5});
 			map = utils.addFragmentToMapping(map, 'test2', {c:6});
-			const lines = map.split('\n').map(utils.decodeFragment);
+
+
+			const entry1 = utils.findEntry(map, 'test');
+			const entry = utils.findEntry(map, 'test2');
+			const lines = map.split(ENTRY_DIV).map(utils.decodeFragment);
+
+			console.log(map);
+			console.log(lines);
 
 			t.is(lines[0], { seq: 'test', total: 15, weights: { a: 5, b: 5, c: 5 } })
 			t.is(lines[1], { seq: 'test2', total: 6, weights: { c: 6 } })
@@ -129,7 +145,7 @@ test.group('extend mapping', (test)=>{
 	});
 	test('nonempty mapping', (t)=>{
 		const map = engine.extendMapping(sampleMapping, {'hello': {a:1, d:8}});
-		const lines = map.split('\n').map(utils.decodeFragment);
+		const lines = map.split(ENTRY_DIV).map(utils.decodeFragment);
 
 		t.is(lines[0].seq, 'seq');
 		t.is(lines[0].weights, {a:4});
@@ -143,7 +159,7 @@ test.group('extend mapping', (test)=>{
 
 	test('multiple fragments', (t)=>{
 		const map = engine.extendMapping(sampleMapping, {'hello': {a:1, d:8}, 'test': {a:1, b:5}});
-		const lines = map.split('\n').map(utils.decodeFragment);
+		const lines = map.split(ENTRY_DIV).map(utils.decodeFragment);
 
 		t.is(lines[1].seq, 'hello');
 		t.is(lines[1].weights, { '6': 7, a: 4, b: 6, c: 6, d: 8 });
