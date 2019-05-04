@@ -23,6 +23,11 @@ const encodeMessage = (user, message)=>{
 
 const backup = async ()=>{
 	console.log('starting backup');
+	if(Storage.getStoredUsers().length == 0){
+		console.log('nothing to back up');
+		return ;
+	}
+
 	return Storage.getStoredUsers().reduce((prom, user)=>{
 		Slack.log(`backing up ${user}`)
 		return prom

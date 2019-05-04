@@ -24,11 +24,9 @@ module.exports = async (users)=>{
 		const size = Object.keys(data.weights).length
 		let idx = 0;
 
-		const newMapping = reduce(data.weights, (acc, weights, seq)=>{
-			return acc + Engine.utils.encodeFragment(seq, weights) + '\n'
-		},'');
+		const newMapping = Engine.extendMapping('', data.weights);
 
-		await S3.upload(`${user}.map`, newMapping.slice(0, -1));
+		await S3.upload(`${user}.map`, newMapping);
 		console.log('Uploaded to S3');
 	})
 	.then(()=>S3.upload('stats.json', JSON.stringify(newStats, null, '  ')))
