@@ -53,16 +53,9 @@ const utils = {
 	// },
 
 	decodeFragment : (entry)=>{
-
-		//console.log(entry);
 		const [seq, data] = entry.replace(ENTRY_DIV, '').split(SEQ_DIV);
-
 		if(!data) return;
-
-		//console.log([seq, data]);
-
 		return data.split(WEIGHT_DIV).reduce((acc, field)=>{
-
 			const letter = field[0];
 			const weight = Number(field.substr(1));
 			acc.total += weight;
@@ -74,7 +67,6 @@ const utils = {
 			weights : {}
 		});
 	},
-
 
 	findEntry : (mapping, sequence)=>{
 		if(!mapping) return false;
@@ -99,8 +91,15 @@ const utils = {
 		return mapping + utils.encodeFragment(seq, weights);
 	},
 
+	//NOTE: Used mostly for testing
 	decodeMapping : (mapping)=>{
-
+		return reduce(mapping.split(ENTRY_DIV), (res, entry)=>{
+			if(entry){
+				const frag = utils.decodeFragment(entry);
+				res[frag.seq] = frag;
+			}
+			return res;
+		}, {});
 	},
 
 

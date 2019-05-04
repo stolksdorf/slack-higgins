@@ -2,7 +2,6 @@ const _ = require('lodash');
 const Slack = require('pico-slack');
 const MarkovService = require('./markov.service.js');
 
-
 const formatNumber = (num)=>num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 
 //const Populate = require('./populate.script.js')
@@ -67,7 +66,7 @@ const service = require('./new stuff/service.js');
 
 //migrate('scott').then(()=>Slack.msg('scott', 'done!'));
 
-service.startTimedBackup(3 * 60 * 1000);
+service.startTimedBackup(3);
 
 
 Slack.onMessage((msg)=>{

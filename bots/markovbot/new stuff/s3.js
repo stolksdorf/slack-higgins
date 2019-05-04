@@ -8,6 +8,7 @@ AWS.config.update({
 const S3 = new AWS.S3();
 
 const upload = async (filename, content)=>{
+	console.log(`S3 UPLOAD: ${filename}`);
 	return new Promise((resolve, reject)=>{
 		S3.putObject({
 			Bucket : config.get('markov.bucket_name'),
@@ -18,6 +19,7 @@ const upload = async (filename, content)=>{
 };
 
 const fetch = async (filename)=>{
+	console.log(`S3 FETCH: ${filename}`);
 	return new Promise((resolve, reject)=>{
 		S3.getObject({
 			Bucket : config.get('markov.bucket_name'),
@@ -35,10 +37,3 @@ module.exports = {
 	fetch,
 	upload
 };
-
-
-fetch('doot.map')
-	.then(console.log)
-	.catch((err)=>{
-		console.log('err', err.code);
-	})

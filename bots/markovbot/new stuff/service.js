@@ -24,6 +24,7 @@ const encodeMessage = (user, message)=>{
 const backup = async ()=>{
 	console.log('starting backup');
 	return Storage.getStoredUsers().reduce((prom, user)=>{
+		Slack.log(`backing up ${user}`)
 		return prom
 			.then(()=>{
 				console.log('backing up', user);
@@ -32,17 +33,18 @@ const backup = async ()=>{
 			.then(()=>console.log('done!'))
 	}, Promise.resolve())
 	.then(()=>{
+		Slack.log('backing up stats')
 		return Storage.backupStats();
 	})
 	.then(()=>console.log('finished!'));
 };
 
 
-const startTimedBackup = (timer = 10*MIN)=>{
+const startTimedBackup = (timer = 10)=>{
 	setTimeout(()=>{
 		backup();
-		startTimedBackup(timer);
-	},timer)
+		startTimedBackup(timer * MIN);
+	}, timer)
 };
 
 
