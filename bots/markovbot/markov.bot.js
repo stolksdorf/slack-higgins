@@ -66,7 +66,7 @@ const service = require('./new stuff/service.js');
 
 //migrate('scott').then(()=>Slack.msg('scott', 'done!'));
 
-service.startTimedBackup(3);
+service.startTimedBackup(10);
 
 
 Slack.onMessage((msg)=>{

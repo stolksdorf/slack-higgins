@@ -3,6 +3,9 @@ const Engine = require('./engine.js');
 
 const MIN = 60 * 1000;
 
+//TODO: Remove when done testing
+const Slack = require('pico-slack')
+
 
 
 const generateMessage = async (user)=>{
@@ -22,34 +25,33 @@ const encodeMessage = (user, message)=>{
 };
 
 const backup = async ()=>{
-	console.log('starting backup');
+	Slack.log('starting backup');
 	if(Storage.getStoredUsers().length == 0){
-		console.log('nothing to back up');
+		Slack.log('nothing to back up');
 		return ;
 	}
 
 	return Storage.getStoredUsers().reduce((prom, user)=>{
-		Slack.log(`backing up ${user}`)
 		return prom
 			.then(()=>{
-				console.log('backing up', user);
+				Slack.log('backing up', user);
 				return Storage.backupUser(user)
 			})
-			.then(()=>console.log('done!'))
+			.then(()=>Slack.log('done!'))
 	}, Promise.resolve())
 	.then(()=>{
 		Slack.log('backing up stats')
 		return Storage.backupStats();
 	})
-	.then(()=>console.log('finished!'));
+	.then(()=>Slack.log('finished!'));
 };
 
 
 const startTimedBackup = (timer = 10)=>{
 	setTimeout(()=>{
 		backup();
-		startTimedBackup(timer * MIN);
-	}, timer)
+		startTimedBackup(timer);
+	}, timer * MIN)
 };
 
 
