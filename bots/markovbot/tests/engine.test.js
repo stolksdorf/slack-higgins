@@ -1,7 +1,7 @@
 const test = require('pico-check');
 const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key),init);
 
-const engine = require('./engine.js');
+const engine = require('../markov.engine.js');
 const utils = engine.utils;
 
 

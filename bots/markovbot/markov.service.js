@@ -1,51 +1,74 @@
-const Markov = require('./markov.engine.js');
-const MarkovDB = require('./markov.db.js');
+const Storage = require('./markov.storage.js');
+const Engine = require('./markov.engine.js');
 
-const MIN = 60 * 1000;
-const DEBOUNCE = 0.1 * MIN;
+//const MIN = 60 * 1000;
 
-let msgCache = {}, timers = {};
+//TODO: Remove when done testing
+const Slack = require('pico-slack')
 
-const cleanMsgs = (msgs)=>{
-	return msgs.reduce((acc, msg)=>{
-		if(msg.indexOf('uploaded a file:') !== -1) return acc;  //Skip file upload messages
-		msg = msg.replace(/(<h.+>)/gi, '').trim(); //Remove links from messages
-		if(msg) acc.push(msg);
-		return acc;
-	}, []);
+
+
+const generateMessage = async (user)=>{
+	const mapping = await Storage.getMapping(user);
+	const stats = await Storage.getStats(user);
+	return {
+		text        : Engine.generateMessage(mapping),
+		msgCount    : stats[user].msgCount,
+		letterCount : stats[user].letterCount,
+	};
 };
 
-const Messages = {
-	encodeMessages: async (user, msgs)=>{
-		if (!user) console.log('encoding!', user, msgs);
-		try {
-			let mapping = await MarkovDB.getMapping(user);
-			mapping = Markov.updateMapping(cleanMsgs(msgs), mapping);
-			MarkovDB.saveMapping(user, mapping);
-		} catch (err) {
-			console.error(`[MarkovService]: Encountered error while encoding messages.`, {user, msgs}, err.message, err);
-		}
-	},
-	addMessage: (user, msg)=>{
-		if(timers[user]) clearTimeout(timers[user]);
-		msgCache[user] = msgCache[user] || [];
-		msgCache[user].push(msg);
-		timers[user] = setTimeout(()=>{
-			Messages.encodeMessages(user, msgCache[user]);
-			msgCache[user] = [];
-		}, DEBOUNCE);
-	},
-	getNewMessage: async (user)=>{
-		let mapping = await MarkovDB.getMapping(user);
-		return {
-			letters : mapping.letters,
-			msgs    : mapping.msgs,
-			text    : await Markov.genMessage(mapping),
-		};
-	},
-	getMessageCount: async(user)=>{
-		const mapping = await MarkovDB.getMapping(user);
-		return mapping.msgs;
+const encodeMessage = (user, message)=>{
+	const fragments = Engine.generateFragments(message);
+	Storage.cacheFragments(user, fragments);
+	Storage.cacheStats(user, 1, message.length);
+};
+
+const backupCache = async ()=>{
+	Slack.log('starting backup');
+	if(Storage.getStoredUsers().length == 0){
+		Slack.log('nothing to back up');
+		return ;
 	}
+
+	return Storage.getStoredUsers().reduce((prom, user)=>{
+		return prom
+			.then(()=>{
+				Slack.log('backing up', user);
+				return Storage.backupUser(user)
+			})
+			.then(()=>Slack.log('done!'))
+	}, Promise.resolve())
+	.then(()=>{
+		Slack.log('backing up stats')
+		return Storage.backupStats();
+	})
+	.then(()=>Slack.log('finished!'));
 };
-module.exports = Messages;
+
+// //TODO: move to bot
+// const startTimedBackup = (timer = 10)=>{
+// 	setTimeout(()=>{
+// 		backupCache();
+// 		startTimedBackup(timer);
+// 	}, timer * MIN)
+// };
+
+
+// const generateFormattedMessage = async (user)=>{
+// 	const text = await generateMessage(user);
+// 	const info = await Storage.getInfo(user);
+
+// 	return {
+// 		text,
+// 		msgCount : info.msgCount,
+// 		letterCount : info.letterCount,
+// 	};
+// }
+
+module.exports = {
+	generateMessage,
+	encodeMessage,
+	backupCache,
+	//startTimedBackup
+}

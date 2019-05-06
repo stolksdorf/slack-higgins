@@ -1,58 +1,29 @@
-const _ = require('lodash');
 const Slack = require('pico-slack');
-const MarkovService = require('./markov.service.js');
+const Markov = require('./markov.service.js');
 
+const sample       = (obj)=>Object.values(obj)[Math.floor(Math.random() * Object.values(obj).length)];
+const map          = (obj,fn)=>Object.keys(obj).map((key)=>fn(obj[key],key));
 const formatNumber = (num)=>num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+const loop = (fn, time=1000)=>setTimeout(()=>loop(fn, fn() || time), time);
 
-//const Populate = require('./populate.script.js')
+const MIN = 1000 * 60;
+const HOURS = MIN * 60;
 
-//Bump these to config files
+const Aliases = require('./aliases.js');
+const encodeBlacklist = ['trivia-time'];
 
-const aliases = {
-	dave  : 'david',
-	meg   : 'meggeroni',
-	scoot : 'scott',
-	brock : 'brockdusome',
-	greg  : 'gleaver',
-	goog  : 'gleaver',
-	'jennifer.czekus' : 'jenny',
-	tina  : 'tskoops',
-	jenaynay : 'jenny',
-	rebabybay : 'rebaybay',
-	rebecca  : 'rebaybay',
-	sarah : 'sarahellen.w',
-};
-const iconAliases = {
-	brockdusome : 'broccoli',
-	slackbot : 'slack',
-	david : 'mariachi_dave',
-	'sarahellen.w' : 'sarah',
-};
+//const Users = Object.values(Slack.users);
+const Users = ['scott'];
 
-const blacklist = ['trivia-time'];
 
-const botSend = async (channel, user, msg='')=>{
-	const icon = iconAliases[user] || user;
-	if(!msg) msg = await MarkovService.getNewMessage(user);
+const BotSend = async (channel, user)=>{
+	Slack.log(`Sending Message as ${user}bot in ${channel}`);
+
+	const msg = await Markov.generateMessage(user);
 	Slack.api('chat.postMessage', {
 		channel     : channel,
 		username    : `${user}bot`,
-		icon_emoji  : `:${icon}:`,
-		attachments : [{
-			pretext   : msg.text,
-			mrkdwn_in : ['pretext'],
-			footer    : `built with ${formatNumber(msg.msgs)} messages, using ${formatNumber(msg.letters)} letters.`
-		}]
-	});
-};
-
-
-const newBotSend = async (channel, user)=>{
-	const msg = await service.generateMessage(user);
-	Slack.api('chat.postMessage', {
-		channel     : channel,
-		username    : `${user}bot`,
-		icon_emoji  : `:${iconAliases[user] || user}:`,
+		icon_emoji  : `:${Aliases.icon[user] || user}:`,
 		attachments : [{
 			pretext   : msg.text,
 			mrkdwn_in : ['pretext'],
@@ -61,81 +32,38 @@ const newBotSend = async (channel, user)=>{
 	});
 };
 
+const AttemptEncode = (msg)=>{
+	if(msg.isDirect) return;
+	if(encodeBlacklist.includes(msg.channel)) return;
 
-const service = require('./new stuff/service.js');
+	return Markov.encodeMessage(msg.user, msg.text);
+};
 
-//migrate('scott').then(()=>Slack.msg('scott', 'done!'));
+const CheckForEvocation = (msg)=>{
+	const shouldProc = (lookup, user)=>{
+		if(Slack.msgHas(msg.text, `${lookup}bot`)) BotSend(msg.channel, user);
+	};
+	map(Users, (user)=>shouldProc(user, user));
+	map(Aliases.name, (user, nickname)=>shouldProc(nickname, user));
+};
 
-service.startTimedBackup(10);
+const TriggerRandomBot = ()=>{
+	const filteredUsers = Users
+		.filter((user)=>!['hil', 'wyatt', 'ms.chelsea'].includes(user))
+	const randomUser = sample(filteredUsers);
+	BotSend('bottin-around', randomUser);
+};
 
+/* --------------------------- */
+
+
+loop(()=>{
+	TriggerRandomBot();
+	return sample([5,6,7,8,9]) * HOURS;
+}, 1 * HOURS);
+loop(Markov.backupCache, 10 * MIN);
 
 Slack.onMessage((msg)=>{
-	if(blacklist.some((channel)=>channel==msg.channel)) return;
-
-	////// TESTING
-
-	if(Slack.msgHas(msg.text, `scottbot`)){
-		return service.generateMessage('scott')
-			.then((genMessage)=>{
-				newBotSend(msg.channel, 'scott')
-			});
-	}
-
-	if(msg.user == 'scott'){
-		if(msg.isDirect){
-			if(msg.text == 'migrate'){
-				try{
-					return service.migrate(['scott']).then(()=>Slack.msg('scott', 'done!'));
-				}catch(err){
-					Slack.log(err)
-				}
-			}
-			if(msg.text == 'backup') return service.backup();
-		}
-		return service.encodeMessage('scott', msg.text);
-	}
-
-	////////////
-
-
-	// if(msg.isDirect && msg.text == 'populate' && msg.user == 'scott'){
-	// 	return service.migrate('scott').then(()=>Slack.msg('scott', 'done!'));
-	// }
-	// if(msg.isDirect && msg.text == 'test' && msg.user == 'scott'){
-	// 	return service.generateMessage('scott').then((message)=>Slack.msg('scott', message));
-	// }
-
-	if(!msg.isDirect && !blacklist.includes(msg.channel)){
-		MarkovService.addMessage(msg.user, msg.text);
-	}
-
-	//Bump out to another file
-	_.map(Slack.users, (user)=>{
-		if(Slack.msgHas(msg.text, `${user}bot`)) botSend(msg.channel, user);
-	});
-	_.map(aliases, (realName, alias)=>{
-		if(Slack.msgHas(msg.text, `${alias}bot`)) botSend(msg.channel, realName);
-	});
+	AttemptEncode(msg);
+	CheckForEvocation(msg);
 });
-
-/** Random Proc **/
-let populatedUsers = false;
-const getRandomUser = async ()=>{
-	if(Array.isArray(populatedUsers)) return _.sample(populatedUsers);
-	populatedUsers = [];
-	await Promise.all(_.map(Slack.users, async (name)=>{
-		const count = await MarkovService.getMessageCount(name);
-		if(count > 25) populatedUsers.push(name);
-	}));
-	return _.sample(populatedUsers);
-};
-
-const HOURS = 1000 * 60 * 60;
-const sendRandomMessage = async ()=>{
-	const randomUser = await getRandomUser();
-	if(!randomUser) return;
-	const msg = await MarkovService.getNewMessage(randomUser);
-	if(msg) botSend('bottin-around', randomUser, msg);
-	setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);
-};
-setTimeout(sendRandomMessage, _.random(5, 10) * HOURS);

@@ -1,6 +1,8 @@
 const redis = require('pico-redis')('markov');
-const Engine = require('./engine.js');
+const Engine = require('./markov.engine.js');
 const S3 = require('./s3.js');
+
+const Slack = require("pico-slack");
 
 const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key),init);
 const sequence = async (arr, func)=>{
@@ -10,7 +12,7 @@ const sequence = async (arr, func)=>{
 };
 
 
-module.exports = async (users)=>{
+const migrate = async (users)=>{
 	let newStats = {};
 
 	return sequence(users, async (user)=>{
@@ -31,3 +33,14 @@ module.exports = async (users)=>{
 	})
 	.then(()=>S3.upload('stats.json', JSON.stringify(newStats, null, '  ')))
 }
+
+
+//Command Messages
+Slack.onMessage((msg)=>{
+	if(msg.isDirect && msg.user == 'scott'){
+
+		if(msg.text == 'migrate'){
+			return migrate(['scott']).then(()=>Slack.msg('scott', 'done!'));
+		}
+	}
+});

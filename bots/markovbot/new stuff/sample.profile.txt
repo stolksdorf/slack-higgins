@@ -1,3 +1,0 @@
-metadata
-sequence|a:10,b:2,c:1,4:3,5:1
-|

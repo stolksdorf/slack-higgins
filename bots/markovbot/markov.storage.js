@@ -1,12 +1,11 @@
 const S3 = require('./s3.js');
-const Engine = require('./engine.js');
+const Engine = require('./markov.engine.js');
 
 const map    = (obj,fn)=>Object.keys(obj).map((key)=>fn(obj[key],key));
 const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key),init);
 
 let fragmentCache = {};
 let mappingCache = {};
-
 
 
 let tempStats={};
@@ -45,8 +44,6 @@ const backupStats = async ()=>{
 
 
 
-
-
 const fetchMapping = async (user)=>{
 	console.log('fetching', user);
 	const mapping = await S3.fetch(`${user}.map`);
@@ -67,8 +64,6 @@ const backupUser = async (user)=>{
 	if(!fragmentCache[user]) return;
 	let mapping = await getMapping(user);
 	mappingCache[user] = Engine.extendMapping(mapping, fragmentCache[user]);
-
-	//Buffer.byteLength(string, encoding);
 
 	await S3.upload(`${user}.map`, mappingCache[user]);
 	delete fragmentCache[user];
