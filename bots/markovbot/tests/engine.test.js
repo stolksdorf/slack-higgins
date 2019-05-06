@@ -4,9 +4,7 @@ const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key
 const engine = require('../markov.engine.js');
 const utils = engine.utils;
 
-
-
-const END_SEQ =String.fromCharCode(28);
+const END_MSG = String.fromCharCode(28);
 
 const sampleEntries = {
 	'seq'  : {a:4},
@@ -119,13 +117,13 @@ test.group('generate fragments', (test)=>{
 		const frags = engine.generateFragments('hello.');
 		t.is(frags[''], {h:1});
 		t.is(frags['hell'], {o:1});
-		t.is(frags['hello.'], {[END_SEQ]:1});
+		t.is(frags['hello.'], {[END_MSG]:1});
 	});
 
 	test('mutiple repeats', (t)=>{
 		const frags = engine.generateFragments('hello. hello. hello.');
 		t.is(frags['ello. '], {h:2});
-		t.is(frags['hello.'], {' ':2, [END_SEQ]:1});
+		t.is(frags['hello.'], {' ':2, [END_MSG]:1});
 	});
 });
 
