@@ -1,12 +1,8 @@
 const Storage = require('./markov.storage.js');
 const Engine = require('./markov.engine.js');
 
-//const MIN = 60 * 1000;
-
 //TODO: Remove when done testing
 const Slack = require('pico-slack')
-
-
 
 const generateMessage = async (user)=>{
 	const mapping = await Storage.getMapping(user);
@@ -46,29 +42,8 @@ const backupCache = async ()=>{
 	.then(()=>Slack.log('finished!'));
 };
 
-// //TODO: move to bot
-// const startTimedBackup = (timer = 10)=>{
-// 	setTimeout(()=>{
-// 		backupCache();
-// 		startTimedBackup(timer);
-// 	}, timer * MIN)
-// };
-
-
-// const generateFormattedMessage = async (user)=>{
-// 	const text = await generateMessage(user);
-// 	const info = await Storage.getInfo(user);
-
-// 	return {
-// 		text,
-// 		msgCount : info.msgCount,
-// 		letterCount : info.letterCount,
-// 	};
-// }
-
 module.exports = {
 	generateMessage,
 	encodeMessage,
 	backupCache,
-	//startTimedBackup
 }

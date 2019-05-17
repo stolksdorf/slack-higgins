@@ -35,8 +35,7 @@ const BotSend = async (channel, user)=>{
 const AttemptEncode = (msg)=>{
 	if(msg.isDirect) return;
 	if(encodeBlacklist.includes(msg.channel)) return;
-
-	return Markov.encodeMessage(msg.user, msg.text);
+	Markov.encodeMessage(msg.user, msg.text);
 };
 
 const CheckForEvocation = (msg)=>{
