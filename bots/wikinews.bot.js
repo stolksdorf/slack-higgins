@@ -88,6 +88,6 @@ cron.scheduleJob('11 15 * * 5', run);
 
 
 onCommand('wiki', ()=>{
-	console.log('running wiki');
+	//console.log('running wiki');
 	run();
 });
