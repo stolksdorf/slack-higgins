@@ -4,6 +4,7 @@ const processPollMessage = (msg='')=>{
 	const text = msg.trim();
 	if(!text) return {};
 	const [question, rest] = text.split('?');
+	if(!rest) return {};
 	const options = rest.split(',');
 	return {
 		question : question.trim(),
@@ -17,9 +18,9 @@ const getMessage = (question, options)=>{
 
 const getHelpMessage = ()=>{
 	return `To create a poll, make a message in the following format:
-\`poll: Would you like go bowling? yes, fuck yeah, 10-4 lil buddy, ...\`
+\`poll: Would you like go bowling? yes, fuck yeah, 10-4 lil buddy\`
 or
-\`/poll Would you like go bowling? yes, fuck yeah, 10-4 lil buddy, ...\`
+\`/poll Would you like go bowling? yes, fuck yeah, 10-4 lil buddy\`
 `
 }
 
