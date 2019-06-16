@@ -24,6 +24,7 @@ Slack.onMessage((msg)=>{
 });
 
 Slack.onMessage((msg)=>{
+	if(msg.subtype == 'bot_message' || msg.text.indexOf('/poll') == 0) return;
 	if(msg.text.indexOf('poll:') == 0 || msg.text.indexOf('Poll:') == 0){
 		const {question, options} = processPollMessage(msg.text.slice(5));
 		if(!question || !options || options.length < 2){
