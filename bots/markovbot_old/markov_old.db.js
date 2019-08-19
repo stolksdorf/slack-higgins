@@ -66,10 +66,10 @@ const MarkovDB = {
 		Cache[user] = mapping;
 		Backlog.push(user);
 
-		redis.set(user, mapping);
-
 		// Saving is expensive, so we don't want to do it too often.  Updating the cache (which we've done) is enough in most cases.
 		MarkovDB.enqueueBatchUpdate();
+
+		return redis.set(user, mapping);
 	},
 
 	enqueueBatchUpdate: _.throttle(() => MarkovDB.persistBacklog(), BATCH_DELAY, { leading: false }),
