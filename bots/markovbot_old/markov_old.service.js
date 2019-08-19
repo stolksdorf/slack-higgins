@@ -23,7 +23,11 @@ const Messages = {
 			mapping = Markov.updateMapping(cleanMsgs(msgs), mapping);
 			await MarkovDB.saveMapping(user, mapping);
 		} catch (err) {
-			console.error(`[MarkovService]: Encountered error while encoding messages.`, {user, msgs}, err.message, err);
+			if (err.code == 'OOM') {
+				console.error(new Error(`Redis OOM error while encoding messages {{user, msgs}}: {err.message}`))
+			} else {
+				console.error(`[MarkovService]: Encountered error while encoding messages.`, {user, msgs}, err.message, err);
+			}
 		}
 	},
 	addMessage: (user, msg)=>{
