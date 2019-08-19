@@ -105,9 +105,9 @@ const MarkovDB = {
 					updated_at = EXCLUDED.updated_at;
 			`;
 
-			await DB.sequelize.query(sql, { replacements }).catch((err) => {
+			/*await DB.sequelize.query(sql, { replacements }).catch((err) => {
 				console.error(`[MarkovDB]: Encountered error while PERSISTING backlog:`, err.message, 'Participants:', users, 'Replacements:', _.omit(replacements, ['totals', 'weights']), 'Stack Trace:', err);
-			});
+			});*/
 
 			const executionTime = Date.now() - start;
 			const querySize = JSON.stringify(replacements).length;
