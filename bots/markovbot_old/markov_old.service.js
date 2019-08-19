@@ -21,7 +21,7 @@ const Messages = {
 		try {
 			let mapping = await MarkovDB.getMapping(user);
 			mapping = Markov.updateMapping(cleanMsgs(msgs), mapping);
-			MarkovDB.saveMapping(user, mapping);
+			await MarkovDB.saveMapping(user, mapping);
 		} catch (err) {
 			console.error(`[MarkovService]: Encountered error while encoding messages.`, {user, msgs}, err.message, err);
 		}
