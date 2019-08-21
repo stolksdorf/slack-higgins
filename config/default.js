@@ -18,5 +18,15 @@ module.exports = {
 	s3 : {
 		access : '',
 		secret : ''
+	},
+	activitybot : {
+		debug : false,
+		ignored_channels: 'general,feedback,events,diagnostics',
+		target_channel: 'general',
+		cooldown_seconds: 86400,
+		threshold : {
+			message_count: 20,
+			seconds: 300
+		}
 	}
 }
