@@ -23,6 +23,7 @@ module.exports = {
         debug : false,
         ignored_channels: 'general,feedback,events,diagnostics',
         target_channel: 'general',
+        cooldown_seconds: 86400,
         threshold : {
             message_count: 15,
             seconds: 300

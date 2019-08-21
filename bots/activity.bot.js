@@ -12,12 +12,17 @@ const MESSAGE_COUNT_THRESHOLD = _.parseInt(
 const THRESHOLD_SECONDS = _.parseInt(
 	config.get('activitybot.threshold.seconds')
 );
+const COOLDOWN_SECONDS = _.parseInt(
+	config.get('activitybot.cooldown_seconds')
+);
 
 const IGNORED_CHANNELS = config.get('activitybot.ignored_channels').split(',')
 
+const coolingChanels = {};
+const messageTimestamps = {};
 
-const messageTimestampsByChannelKey = {};
 
+const unixNow = () => Math.floor(Date.now() / 1000);
 
 /**
  * Add `msg`'s timestamp as UNIX epoch to the end of the array for
@@ -29,12 +34,12 @@ const tallyMessage = (msg) => {
 	if (_.in(msg.channel, IGNORED_CHANNELS)) {
 		return;
 	}
-    const channelKey = `${msg.channel_id}|${msg.channel}`;
-	if (!_.has(messageTimestampsByChannelKey, channelKey)) {
-		messageTimestampsByChannelKey[channelKey] = [];
+	const channelKey = `${msg.channel_id}|${msg.channel}`;
+	if (!_.has(messageTimestamps, channelKey)) {
+		messageTimestamps[channelKey] = [];
 	}
 	const unixTimestamp = Math.floor(msg.ts * 1000);
-	messageTimestampsByChannelKey[channelKey].push(unixTimestamp)
+	messageTimestamps[channelKey].push(unixTimestamp)
 };
 
 /**
@@ -43,9 +48,27 @@ const tallyMessage = (msg) => {
  * in a new array.
  */
 const cullTimestamps = (timestamps, thresholdSeconds) => {
-	const minimumTimestamp = Math.floor(Date.now() / 1000) - thresholdSeconds;
+	const minimumTimestamp = unixNow() - thresholdSeconds;
 	const cutoffIndex = _.sortedIndex(timestamps, minimumTimestamp);
 	return _.slice(timestamps, cutoffIndex);
+};
+
+/**
+ * Check whether channel with `channelKey` is on cooldown.
+ * Update the `coolingChannels` object and
+ * return true if the channel is on cooldown, else false.
+ */
+const checkChannelCooldown = (channelKey) => {
+	if (!_.has(coolingChannels, channelKey)) {
+		// channel not on cooldown
+		return false;
+	}
+	if (unixNow() - COOLDOWN_SECONDS > coolingChannels[channelKey]) {
+		// channel is now off cooldown
+		delete coolingChannels[channelKey];
+		return false;
+	}
+	return true;
 };
 
 /**
@@ -53,7 +76,10 @@ const cullTimestamps = (timestamps, thresholdSeconds) => {
  * thresholds and notify #general about them.
  */
 const checkForActivityBursts = () => {
-	_.forEach(messageTimestampsByChannelKey, (timestamps, channelKey) => {
+	_.forEach(messageTimestamps, (timestamps, channelKey) => {
+		const channelIsOnCooldown = checkChannelCooldown(channelKey);
+		if (channelIsOnCooldown) return;
+
 		timestamps = cullTimestamps(timestamps, THRESHOLD_SECONDS);
 		if (DEBUG) {
 			Slack.log(
@@ -65,6 +91,8 @@ const checkForActivityBursts = () => {
 				TARGET_CHANNEL,
 				`Something's going down in <#${channelKey}>!`
 			);
+			coolingChannels[channelKey] = unixNow();
+			delete messageTimestamps[channelKey];
 		}
 	});
 };
