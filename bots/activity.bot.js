@@ -18,7 +18,7 @@ const COOLDOWN_SECONDS = _.parseInt(
 
 const IGNORED_CHANNELS = config.get('activitybot.ignored_channels').split(',');
 
-const coolingChanels = {};
+const coolingChannels = {};
 const messageTimestamps = {};
 
 
@@ -31,7 +31,7 @@ const unixNow = ()=>Math.floor(Date.now() / 1000);
  * more or less.
  */
 const tallyMessage = (msg)=>{
-	if(_.in(msg.channel, IGNORED_CHANNELS)) {
+	if(_.has(msg.channel, IGNORED_CHANNELS)) {
 		return;
 	}
 	const channelKey = `${msg.channel_id}|${msg.channel}`;
