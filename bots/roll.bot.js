@@ -87,15 +87,15 @@ const getFudge = function(){
 
 
 Slack.onMessage((msg)=>{
-	if(!Slack.msgHas(msg.text, 'roll')) return;
+	if(!Slack.has(msg.text, 'roll')) return;
 
 	let res;
 	try {
-		if(Slack.msgHas(msg.text, ['check', 'throw', 'save'])){
+		if(Slack.has(msg.text, ['check', 'throw', 'save'])){
 			res = getCheck(msg.text);
-		} else if(Slack.msgHas(msg.text, 'fudge')){
+		} else if(Slack.has(msg.text, 'fudge')){
 			res = getFudge();
-		} else if(Slack.msgHas(msg.text, 'bear')){
+		} else if(Slack.has(msg.text, 'bear')){
 			res = getBear();
 		} else {
 			res = getRoll(msg.text);

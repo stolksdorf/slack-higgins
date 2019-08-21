@@ -1,6 +1,3 @@
-const _ = require('lodash');
-const glob = require('glob');
-const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
@@ -9,10 +6,10 @@ app.use(bodyParser.json());
 const config = require('./config')
 
 const Slack = require('pico-slack');
+const BotLoader = require('pico-slack/bot-loader.js');
+
 const Redis = require('pico-redis');
 
-
-process.on('unhandledRejection', Slack.error);
 
 try {
 	Redis.connect();
@@ -32,32 +29,26 @@ try {
 	console.error('Error connecting to postgres', err);
 }
 
-Slack.setInfo('higgins', ':tophat:');
+
+
+
+
+Slack.bot.name = 'higgins';
+Slack.bot.icon = 'tophet';
 Slack.emitter.setMaxListeners(25);
 
 const loadCmds = require('./cmd.loader.js');
 const loadActions = require('./action.loader.js');
 
 
-const loadBots = ()=>{
-	return new Promise((resolve, reject)=>{
-		glob('./bots/**/*.bot.js', {ignore: './bots/disabled/**'}, (err, files)=>{
-			if(err) return reject(err);
-			return resolve(files);
-		});
+const loadBots = async ()=>{
+	isRouter = (obj)=>obj && Object.getPrototypeOf(obj) == express.Router;
+	const bots = await BotLoader();
+	return bots.map((bot)=>{
+		if(bot.error) return;
+		console.log('loaded bot ->', bot.name);
+		if(isRouter(bot.result)) app.use(bot.result);
 	})
-		.then((bots)=>{
-			_.each(bots, (botpath)=>{
-				try {
-					const router = require(botpath);
-					console.log('loaded', botpath);
-					if(router && !_.isEmpty(router)) app.use(router);
-				} catch (err){
-					console.log(botpath, err);
-					Slack.error('Bot Load Error', botpath, err);
-				}
-			});
-		})
 };
 
 
@@ -72,5 +63,8 @@ Slack.connect(config.get('slack_bot_token'))
 	.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
 	.then(()=>loadActions('./actions')).then((actionRouter)=>app.use(actionRouter))
 	.then(()=>app.listen(process.env.PORT || 8000))
-	.then(()=>Slack.debug('Rebooted!'))
-	.catch((err)=>Slack.error(err));
+	.then(()=>Slack.log('Rebooted!'))
+	.catch((err)=>{
+		console.log(err);
+		Slack.error(err)
+	});

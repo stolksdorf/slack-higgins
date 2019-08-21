@@ -9,7 +9,7 @@ Slack.onMessage((msg)=>{
 
 	Slack.log('Why hello!');
 
-	if(Slack.msgHas(msg.text, 'conspiracy?')){
+	if(Slack.has(msg.text, 'conspiracy?')){
 		Slack.msgAs('conspiracybot', ':sleuth_or_spy:', msg.channel, _.sample(responses));
 	}
 

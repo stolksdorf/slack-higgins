@@ -27,10 +27,10 @@ const recommendScotch = (text)=>{
 	const group = Groups.getMatchingGroup(text);
 
 	let costs = ['$$$', '$$$$'];
-	if(Slack.msgHas(text, ['cheap', 'poor', 'inexpensive'])){
+	if(Slack.has(text, ['cheap', 'poor', 'inexpensive'])){
 		costs = ['$', '$$'];
 	}
-	if(Slack.msgHas(text, ['fancy', 'rich', 'expensive', 'pricy'])){
+	if(Slack.has(text, ['fancy', 'rich', 'expensive', 'pricy'])){
 		costs = ['$$$$$', '$$$$$+'];
 	}
 	console.log(group, costs);
@@ -43,15 +43,15 @@ const recommendScotch = (text)=>{
 
 
 Slack.onMessage((msg)=>{
-	if(!Slack.msgHas(msg.text, 'scotchbot')) return;
+	if(!Slack.has(msg.text, 'scotchbot')) return;
 	const send = (text)=>Slack.msgAs('scotchbot', ':scotch:', msg.channel, text);
 
-	if(Slack.msgHas(msg.text, ['introduce yourself', 'say hello'])){
+	if(Slack.has(msg.text, ['introduce yourself', 'say hello'])){
 		return send('Greetings and saluations to the fine populace of Coolsville. '+
 			'I, Scotchbot, am your steadfast servant in your sortie to seek out, however surreptitious or unsung, the most succulent of spirits; *Scotch*. ');
 	}
 
-	if(Slack.msgHas(msg.text, ['what can you do', 'how do you'])){
+	if(Slack.has(msg.text, ['what can you do', 'how do you'])){
 		return send('Well, I can do a great many things. My knowledge of scotch is unrivaled. '
 			+ 'I can give a review of nearly every scotch or recommend you a scotch.\n\n'
 			+ 'For example you can say \'Scotchbot mayhaps I desire to whet my palette with something smoky, pungent, and _very_ expensive\' or '
@@ -59,21 +59,21 @@ Slack.onMessage((msg)=>{
 		);
 	}
 
-	if(Slack.msgHas(msg.text, 'how', 'were', 'made')){
+	if(Slack.has(msg.text, 'how', 'were', 'made')){
 		return send('Well my good friend, you have the rare opportunity to witness the creation of such a fine bot as myself! ' +
 			'\n\nhttps://www.youtube.com/playlist?list=PLAWj9jpFY-UsjNiFiACdUMP_dxJCK_QIv');
 	}
 
-	if(Slack.msgHas(msg.text, ['random', 'heart'])){
+	if(Slack.has(msg.text, ['random', 'heart'])){
 		return send(Formatter.random(_.sample(ScotchAPI.list)));
 	}
 
-	if(Slack.msgHas(msg.text, ['tell me', 'review', 'describe', 'description', 'thoughts', 'the deal'])){
+	if(Slack.has(msg.text, ['tell me', 'review', 'describe', 'description', 'thoughts', 'the deal'])){
 		const {scotch, confidence} = ScotchAPI.lookup(getImportantWords(msg.text));
 		return send(Formatter.lookup(scotch, confidence));
 	}
 
-	if(Slack.msgHas(msg.text, ['recommend', 'suggest', 'desire', 'palette', 'want'])){
+	if(Slack.has(msg.text, ['recommend', 'suggest', 'desire', 'palette', 'want'])){
 		const scotches = _.sampleSize(recommendScotch(msg.text), _.sample([1, 1, 1, 1, 2]));
 		if(scotches.length == 0){
 			return send(`_I couldn't find anything for you, however..._\n${

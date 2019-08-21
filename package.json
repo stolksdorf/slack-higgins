@@ -50,7 +50,7 @@
     "pico-conf": "^1.5.1",
     "pico-gist": "^1.0.1",
     "pico-redis": "^1.0.0",
-    "pico-slack": "^2.1.0",
+    "pico-slack": "^2.1.1",
     "pos": "^0.4.2",
     "request": "^2.88.0",
     "sequelize": "^4.41.2",

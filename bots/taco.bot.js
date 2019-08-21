@@ -25,7 +25,7 @@ const getUsersFromMessage = (msg)=>{
 		.filter((user)=>!!user);
 };
 
-const send = (channel, msg)=>Slack.sendAs('burritobot', ':burrito:', channel, msg);
+const send = (channel, msg)=>Slack.alias('burritobot', ':burrito:').send(channel, msg);
 
 
 const awardTaco = async (bestower, recipient, channel, message, numTacos = 1)=>{

@@ -95,7 +95,7 @@ const Send = {
 Slack.onMessage((msg)=>{
 	if(msg.channel !== 'nation-states') return;
 
-	if(Slack.msgHas(msg.text, higginsNames(), ['issue', 'issues', 'nation', 'docket', 'people'])){
+	if(Slack.has(msg.text, higginsNames(), ['issue', 'issues', 'nation', 'docket', 'people'])){
 		getIssue(msg.user)
 	}
 

@@ -7,7 +7,7 @@ Slack.onMessage((msg)=>{
 	if(msg.user != 'scott') return;
 	console.log('onMessage commands:', commands);
 	commands.map((cmd)=>{
-		if(Slack.msgHas(msg.text, cmd.keywords)) cmd.fn(msg);
+		if(Slack.has(msg.text, cmd.keywords)) cmd.fn(msg);
 	})
 });
 

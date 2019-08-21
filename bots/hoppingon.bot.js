@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('pico-slack').alias('chrisbot', 'chris');
 
 
 const hopping = [
@@ -31,14 +31,14 @@ on = on.concat(on.map((word)=>`${word}s`));
 const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
 
 
-Slack.onMessage((msg)=>{
-	if(msg.channel == 'overwatch' && Slack.msgHas(msg.text, ['hopping on', 'hop on', 'hoppin on'])){
-		Slack.sendAs('chrisbot', 'chris', 'overwatch', `${rand(hopping)} ${rand(on)}!`);
+Slack.onChannelMessage('overwatch', (msg)=>{
+	if(Slack.has(msg.text, ['hopping on', 'hop on', 'hoppin on'])){
+		Slack.send('overwatch', `${rand(hopping)} ${rand(on)}!`);
 	}
-	if(msg.channel == 'overwatch' && msg.user == 'chris'){
-		if(Slack.msgHas(msg.text, hopping, on)){
+	if(msg.user == 'chris'){
+		if(Slack.has(msg.text, hopping, on)){
 			Slack.react(msg, ":howdareyou");
-			Slack.sendAs('chrisbot', 'chris', 'overwatch', `_*Ahem.*_`);
+			Slack.send('overwatch', `_*Ahem.*_`);
 		}
 	}
 })
