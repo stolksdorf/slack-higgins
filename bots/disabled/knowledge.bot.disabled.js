@@ -42,7 +42,7 @@ const classifySpeech = (text)=>{
 
 
 Slack.onMessage((msg)=>{
-	if(!(Slack.msgHas(msg.text, [Slack.bot.id, 'higgins', 'higs']) && msg.channel == 'bottin-around')) return;
+	if(!(Slack.has(msg.text, [Slack.bot.id, 'higgins', 'higs']) && msg.channel == 'bottin-around')) return;
 	const text = msg.text.replace(`<@${Slack.bot.id}>`, '').replace('higgins', '').replace('Higgins', '');
 
 	const sentiment = speak.sentiment.analyze(text);

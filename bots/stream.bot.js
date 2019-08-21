@@ -7,11 +7,11 @@ const timers = {};
 const check = (name, game='overwatch')=>{
 	if(!timers[name]){
 		if(game == 'overwatch'){
-			Slack.sendAs('streambot', ':overwatch:', 'overwatch',
+			Slack.alias('streambot', ':overwatch:').send('overwatch',
 				`*${name}* just started streaming Overwatch. https://www.twitch.tv/${name}`
 			);
 		} else {
-			Slack.sendAs('streambot', ':video_game:', 'vidya',
+			Slack.alias('streambot', ':video_game:').send('vidya',
 				`*${name}* just started streaming ${game}. https://www.twitch.tv/${name}`
 			);
 		}

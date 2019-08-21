@@ -40,7 +40,7 @@ const AttemptEncode = (msg)=>{
 
 const CheckForEvocation = (msg)=>{
 	const shouldProc = (lookup, user)=>{
-		if(Slack.msgHas(msg.text, `${lookup}bot`)) BotSend(msg.channel, user);
+		if(Slack.has(msg.text, `${lookup}bot`)) BotSend(msg.channel, user);
 	};
 	map(Users, (user)=>shouldProc(user, user));
 	map(Aliases.name, (user, nickname)=>shouldProc(nickname, user));

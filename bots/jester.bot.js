@@ -26,14 +26,14 @@ const jokes = [
 
 const findJoke = (text)=>{
 	return _.find(jokes, (joke)=>{
-		return Slack.msgHas(text, joke.triggers);
+		return Slack.has(text, joke.triggers);
 	});
 };
 
 const ohHai = (msg)=>{
 	const joke = findJoke(msg.text);
 	if(joke){
-		Slack.sendAs('JokeBot', ':chris:', msg, joke.joke);
+		Slack.alias('JokeBot', ':chris:').send(msg, joke.joke);
 	}
 // 	Slack.log(msg, joke);
 };

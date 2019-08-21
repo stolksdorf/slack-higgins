@@ -131,12 +131,12 @@ const getCharacter = (race, gender, _cls, bg)=>{
 
 Slack.onMessage((msg)=>{
 	if(msg.channel !== 'dnd') return;
-	if(!Slack.msgHas(msg, ['higs', 'higgins', 'backstorybot', Slack.bot.id])) return;
+	if(!Slack.has(msg, ['higs', 'higgins', 'backstorybot', Slack.bot.id])) return;
 
-	const race   = _.find(Guide.Supplement.races, (race)=>Slack.msgHas(msg, race));
-	const gender = _.find(['Female', 'Male'], (gender)=>Slack.msgHas(msg, gender));
-	const cls    = _.find(Guide.Class.list(), (cls)=>Slack.msgHas(msg, cls));
-	const bg     = _.find(Guide.Background.list(), (bg)=>Slack.msgHas(msg, bg));
+	const race   = _.find(Guide.Supplement.races, (race)=>Slack.has(msg, race));
+	const gender = _.find(['Female', 'Male'], (gender)=>Slack.has(msg, gender));
+	const cls    = _.find(Guide.Class.list(), (cls)=>Slack.has(msg, cls));
+	const bg     = _.find(Guide.Background.list(), (bg)=>Slack.has(msg, bg));
 
 	console.log({race, gender, cls, bg});
 
@@ -149,20 +149,20 @@ Slack.onMessage((msg)=>{
 	};
 
 
-	if(Slack.msgHas(msg, 'family')){
+	if(Slack.has(msg, 'family')){
 		console.log('here');
 		const family = Guide.People.family(race);
 		return send('', getFamily(family));
 	}
 
-	if(Slack.msgHas(msg, 'npc')){
+	if(Slack.has(msg, 'npc')){
 		return send('', getNPC(race, gender));
 	}
 
-	if(Slack.msgHas(msg, 'event')){
+	if(Slack.has(msg, 'event')){
 		return Slack.send(msg.channel, Guide.Life.event());
 	}
-	if(Slack.msgHas(msg, 'character')){
+	if(Slack.has(msg, 'character')){
 		return send('', getCharacter(race, gender, cls, bg));
 	}
 

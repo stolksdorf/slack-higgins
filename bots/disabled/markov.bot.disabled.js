@@ -134,7 +134,7 @@ const sendMessage = (name, icon, channel, {text='', info=false})=>{
 
 Slack.onMessage((msg)=>{
 	_.each(Slack.users, (user)=>{
-		if(Slack.msgHas(msg.text, `${user}bot`)){
+		if(Slack.has(msg.text, `${user}bot`)){
 			//if(!hasMapping(user)) sendMessage(`${user}bot`, user, msg.channel, {text: ':timer_clock: `hold plz...`'});
 
 			getMapping(user, msg.channel)
@@ -143,7 +143,7 @@ Slack.onMessage((msg)=>{
 				.catch((err)=>Slack.error(err));
 		}
 	});
-	if(Slack.msgHas(msg.text, 'hivebot')){
+	if(Slack.has(msg.text, 'hivebot')){
 		getMapping('hivebot', msg.channel)
 			.then(({mapping, info})=>genMessage(mapping, info))
 			.then((text)=>sendMessage('hivebot', 'hivebot', msg.channel, text))
@@ -155,7 +155,7 @@ Slack.onMessage((msg)=>{
 const thesis = fs.readFileSync('./bots/katie_thesis.txt', 'utf8');
 const thesisMapping = buildMap(thesis.split('\n'));
 Slack.onMessage((msg)=>{
-	if(Slack.msgHas(msg.text, 'thesisbot')){
+	if(Slack.has(msg.text, 'thesisbot')){
 		sendMessage('thesisbot', 'pencil', msg.channel, genMessage(thesisMapping))
 			.catch((err)=>Slack.error(err));
 	}

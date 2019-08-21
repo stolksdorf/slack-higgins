@@ -69,10 +69,10 @@ Slack.onMessage((msg)=>{
 
 	//Bump out to another file
 	_.map(Users, (user)=>{
-		if(Slack.msgHas(msg.text, `${user}bot`)) botSend(msg.channel, user);
+		if(Slack.has(msg.text, `${user}bot`)) botSend(msg.channel, user);
 	});
 	_.map(aliases, (realName, alias)=>{
-		if(Slack.msgHas(msg.text, `${alias}bot`)) botSend(msg.channel, realName);
+		if(Slack.has(msg.text, `${alias}bot`)) botSend(msg.channel, realName);
 	});
 });
 
