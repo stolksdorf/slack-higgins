@@ -6,23 +6,12 @@ const Slack = require('pico-slack');
 const DEBUG = config.get('activitybot.debug');
 const TARGET_CHANNEL = config.get('activitybot.target_channel');
 
-const MESSAGE_COUNT_THRESHOLD = parseInt(
+const MESSAGE_COUNT_THRESHOLD = _.parseInt(
 	config.get('activitybot.threshold.message_count')
 );
-if (isNaN(MESSAGE_COUNT_THRESHOLD)) {
-	Slack.error(
-		'[ActivityBot]: Could not parse message count threshold config value'
-	);
-	return;
-}
-
-const THRESHOLD_SECONDS = parseInt(
+const THRESHOLD_SECONDS = _.parseInt(
 	config.get('activitybot.threshold.seconds')
 );
-if (isNaN(THRESHOLD_SECONDS)) {
-	Slack.error('[ActivityBot]: Could not parse time threshold config value');
-	return;
-}
 
 const IGNORED_CHANNELS = config.get('activitybot.ignored_channels').split(',')
 
