@@ -16,7 +16,7 @@ const THRESHOLD_SECONDS = _.parseInt(
 const IGNORED_CHANNELS = config.get('activitybot.ignored_channels').split(',')
 
 
-const messageTimestampsByChannel = {};
+const messageTimestampsByChannelKey = {};
 
 
 /**
@@ -29,11 +29,12 @@ const tallyMessage = (msg) => {
 	if (_.in(msg.channel, IGNORED_CHANNELS)) {
 		return;
 	}
-	if (!_.has(messageTimestampsByChannel, msg.channel)) {
-		messageTimestampsByChannel[msg.channel] = [];
+    const channelKey = `${msg.channel_id}|${msg.channel}`;
+	if (!_.has(messageTimestampsByChannelKey, channelKey)) {
+		messageTimestampsByChannelKey[channelKey] = [];
 	}
 	const unixTimestamp = Math.floor(msg.ts * 1000);
-	messageTimestampsByChannel[msg.channel].push(unixTimestamp)
+	messageTimestampsByChannelKey[channelKey].push(unixTimestamp)
 };
 
 /**
@@ -52,17 +53,17 @@ const cullTimestamps = (timestamps, thresholdSeconds) => {
  * thresholds and notify #general about them.
  */
 const checkForActivityBursts = () => {
-	_.forEach(messageTimestampsByChannel, (timestamps, channel) => {
+	_.forEach(messageTimestampsByChannelKey, (timestamps, channelKey) => {
 		timestamps = cullTimestamps(timestamps, THRESHOLD_SECONDS);
 		if (DEBUG) {
 			Slack.log(
-				`[ActivityBot]: Culled #${channel} timestamps: ${timestamps}`
+				`[ActivityBot]: Culled <#${channelKey}> timestamps: ${timestamps}`
 			);
 		}
 		if (timestamps.length >= MESSAGE_COUNT_THRESHOLD) {
 			Slack.send(
 				TARGET_CHANNEL,
-				`@here Something's going down in #${channel}!`
+				`Something's going down in <#${channelKey}>!`
 			);
 		}
 	});
