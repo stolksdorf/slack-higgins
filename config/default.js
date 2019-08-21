@@ -25,7 +25,7 @@ module.exports = {
 		target_channel: 'general',
 		cooldown_seconds: 86400,
 		threshold : {
-			message_count: 15,
+			message_count: 20,
 			seconds: 300
 		}
 	}
