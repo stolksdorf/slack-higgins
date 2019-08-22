@@ -58,7 +58,6 @@
     "string-similarity": "^1.2.2",
     "superagent": "^3.8.3",
     "syllable": "^3.2.0",
-    "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1",
     "xml2js": "^0.4.19"
   },
