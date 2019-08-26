@@ -11,7 +11,7 @@ const hasDisadvantage = function(msg){
 	return _.includes(msg, 'dis');
 };
 const parseDice = function(msg){
-	const dNotation = msg.match(/([\d]*)d([\d]+)/);
+	const dNotation = msg.match(/\s([\d]*)d([\d]+)/);
 	if(dNotation === null) throw 'Oops, your dice string wasn\'t formatted properly';
 	return {
 		num  : Number(dNotation[1] || 1),
@@ -22,7 +22,7 @@ const parseDice = function(msg){
 const getBear = function(){
 	const description = _.sample(['rookie', 'washed-up', 'retired', 'unhinged', 'slick', 'incompetent']);
 	const bear = _.sample([
-		'Grizzly bear, who is terrifiying',
+		'Grizzly bear, who is terrifying',
 		'Polar bear, who is amazing at swimming',
 		'Panda bear, who will eat anything that looks like bamboo',
 		'Black bear, who can climb anything',
@@ -87,7 +87,8 @@ const getFudge = function(){
 
 
 Slack.onMessage((msg)=>{
-	if(!Slack.msgHas(msg.text, 'roll')) return;
+	// Avoids matching "roll" in undesired words like "controlling".
+	if(!/(?:^|\s)roll/i.test(msg.text)) return;
 
 	let res;
 	try {
