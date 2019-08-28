@@ -89,10 +89,9 @@ const checkChannelCooldown = (channelKey)=>{
 const checkForActivityBursts = ()=>{
 	messageTimestamps = _.reduce(messageTimestamps, (res, timestamps, channelKey) => {
 		const channelIsOnCooldown = checkChannelCooldown(channelKey);
-		if(checkChannelCooldown(channelKey)) return res;
-
 		const culled = cullTimestamps(timestamps, THRESHOLD_SECONDS, channelKey);
-		if(culled.length >= MESSAGE_COUNT_THRESHOLD) {
+
+		if(culled.length >= MESSAGE_COUNT_THRESHOLD && !channelIsOnCooldown) {
 			// alert the troops
 			Slack.send(
 				TARGET_CHANNEL,
