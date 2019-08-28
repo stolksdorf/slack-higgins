@@ -21,6 +21,7 @@ module.exports = {
 	},
 	activitybot : {
 		debug : false,
+		run_interval_seconds: 30,
 		ignored_channels: 'general,feedback,events,diagnostics',
 		target_channel: 'general',
 		cooldown_seconds: 43200,

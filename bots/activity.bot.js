@@ -15,6 +15,9 @@ const THRESHOLD_SECONDS = _.parseInt(
 const COOLDOWN_SECONDS = _.parseInt(
 	config.get('activitybot.cooldown_seconds')
 );
+const RUN_INTERVAL_SECONDS = _.parseInt(
+	config.get('activitybot.run_interval_seconds')
+);
 
 const IGNORED_CHANNELS = config.get('activitybot.ignored_channels').split(',');
 
@@ -22,7 +25,8 @@ const coolingChannels = {};
 let messageTimestamps = {};
 
 
-const unixNow = ()=>Math.floor(Date.now() / 1000);
+const unixNow = () => Math.floor(Date.now() / 1000);
+
 
 /**
  * Add `msg`'s timestamp as UNIX epoch to the end of the array for
@@ -40,8 +44,11 @@ const tallyMessage = (msg)=>{
 	if(!_.has(messageTimestamps, channelKey)) {
 		messageTimestamps[channelKey] = [];
 	}
-	const unixTimestamp = Math.floor(msg.ts * 1000);
+	const unixTimestamp = Math.floor(msg.ts);
 	messageTimestamps[channelKey].push(unixTimestamp);
+	if(DEBUG) {
+		Slack.log(`[Activitybot]: <#${channelKey}>: ${unixTimestamp} ${JSON.stringify(msg)}`);
+	}
 };
 
 /**
@@ -97,7 +104,7 @@ const checkForActivityBursts = ()=>{
 				TARGET_CHANNEL,
 				`Something's going down in <#${channelKey}>!`
 			);
-			coolingChannels[channelKey] = unixNow();
+			coolingChannels[channelKey] = unixNow()
 		}
 		res[channelKey] = culled;
 		return res;
@@ -114,4 +121,4 @@ const checkForActivityBursts = ()=>{
 
 
 Slack.onMessage(tallyMessage);
-setInterval(checkForActivityBursts, 30*1000);
+setInterval(checkForActivityBursts, RUN_INTERVAL_SECONDS * 1000);
