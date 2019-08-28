@@ -19,7 +19,7 @@ const COOLDOWN_SECONDS = _.parseInt(
 const IGNORED_CHANNELS = config.get('activitybot.ignored_channels').split(',');
 
 const coolingChannels = {};
-const messageTimestamps = {};
+let messageTimestamps = {};
 
 
 const unixNow = ()=>Math.floor(Date.now() / 1000);
@@ -31,7 +31,9 @@ const unixNow = ()=>Math.floor(Date.now() / 1000);
  * more or less.
  */
 const tallyMessage = (msg)=>{
-	if(_.has(msg.channel, IGNORED_CHANNELS)) {
+	const channelIgnored = _.has(msg.channel, IGNORED_CHANNELS);
+	const messageIsThreadReply = msg.subtype == 'message_replied';
+	if(channelIgnored || messageIsThreadReply) {
 		return;
 	}
 	const channelKey = `${msg.channel_id}|${msg.channel}`;
@@ -47,10 +49,16 @@ const tallyMessage = (msg)=>{
  * the specified `thresholdSeconds`. Return the surviving timestamps
  * in a new array.
  */
-const cullTimestamps = (timestamps, thresholdSeconds)=>{
+const cullTimestamps = (timestamps, thresholdSeconds, channelKey)=>{
 	const minimumTimestamp = unixNow() - thresholdSeconds;
 	const cutoffIndex = _.sortedIndex(timestamps, minimumTimestamp);
-	return _.slice(timestamps, cutoffIndex);
+	const culled = _.slice(timestamps, cutoffIndex);
+	if(DEBUG) {
+		Slack.log(
+			`[ActivityBot]: Culled <#${channelKey}> timestamps ${timestamps} -> ${culled}`
+		);
+	}
+	return culled
 };
 
 /**
@@ -66,6 +74,9 @@ const checkChannelCooldown = (channelKey)=>{
 	if(unixNow() - COOLDOWN_SECONDS > coolingChannels[channelKey]) {
 		// channel is now off cooldown
 		delete coolingChannels[channelKey];
+		if(DEBUG) {
+			Slack.log(`[Activitybot]: <#${channelKey}> is off cooldown`)
+		}
 		return false;
 	}
 	return true;
@@ -76,25 +87,30 @@ const checkChannelCooldown = (channelKey)=>{
  * thresholds and notify #general about them.
  */
 const checkForActivityBursts = ()=>{
-	_.forEach(messageTimestamps, (timestamps, channelKey)=>{
+	messageTimestamps = _.reduce(messageTimestamps, (res, timestamps, channelKey) => {
 		const channelIsOnCooldown = checkChannelCooldown(channelKey);
-		if(channelIsOnCooldown) return;
+		if(checkChannelCooldown(channelKey)) return res;
 
-		timestamps = cullTimestamps(timestamps, THRESHOLD_SECONDS);
-		if(DEBUG) {
-			Slack.log(
-				`[ActivityBot]: Culled <#${channelKey}> timestamps: ${timestamps}`
-			);
-		}
-		if(timestamps.length >= MESSAGE_COUNT_THRESHOLD) {
+		const culled = cullTimestamps(timestamps, THRESHOLD_SECONDS, channelKey);
+		if(culled.length >= MESSAGE_COUNT_THRESHOLD) {
+			// alert the troops
 			Slack.send(
 				TARGET_CHANNEL,
 				`Something's going down in <#${channelKey}>!`
 			);
 			coolingChannels[channelKey] = unixNow();
-			delete messageTimestamps[channelKey];
 		}
-	});
+		res[channelKey] = culled;
+		return res;
+	}, {});
+	if(DEBUG) {
+		Slack.log(
+			'[Activitybot]: Finished checking activity. '
+			+ JSON.stringify(messageTimestamps)
+			+ ' '
+			+ JSON.stringify(coolingChannels, null, '  ')
+		)
+	}
 };
 
 
