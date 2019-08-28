@@ -25,7 +25,7 @@ const coolingChannels = {};
 let messageTimestamps = {};
 
 
-const unixNow = () => Math.floor(Date.now() / 1000);
+const unixNow = ()=>Math.floor(Date.now() / 1000);
 
 
 /**
@@ -62,7 +62,7 @@ const cullTimestamps = (timestamps, thresholdSeconds, channelKey)=>{
 			`[ActivityBot]: Culled <#${channelKey}> timestamps ${timestamps} -> ${culled}`
 		);
 	}
-	return culled
+	return culled;
 };
 
 /**
@@ -79,7 +79,7 @@ const checkChannelCooldown = (channelKey)=>{
 		// channel is now off cooldown
 		delete coolingChannels[channelKey];
 		if(DEBUG) {
-			Slack.log(`[Activitybot]: <#${channelKey}> is off cooldown`)
+			Slack.log(`[Activitybot]: <#${channelKey}> is off cooldown`);
 		}
 		return false;
 	}
@@ -91,7 +91,7 @@ const checkChannelCooldown = (channelKey)=>{
  * thresholds and notify #general about them.
  */
 const checkForActivityBursts = ()=>{
-	messageTimestamps = _.reduce(messageTimestamps, (res, timestamps, channelKey) => {
+	messageTimestamps = _.reduce(messageTimestamps, (res, timestamps, channelKey)=>{
 		const channelIsOnCooldown = checkChannelCooldown(channelKey);
 		const culled = cullTimestamps(timestamps, THRESHOLD_SECONDS, channelKey);
 
@@ -101,7 +101,7 @@ const checkForActivityBursts = ()=>{
 				TARGET_CHANNEL,
 				`Something's going down in <#${channelKey}>!`
 			);
-			coolingChannels[channelKey] = unixNow()
+			coolingChannels[channelKey] = unixNow();
 		}
 		res[channelKey] = culled;
 		return res;
@@ -112,7 +112,7 @@ const checkForActivityBursts = ()=>{
 			+ JSON.stringify(messageTimestamps)
 			+ ' '
 			+ JSON.stringify(coolingChannels, null, '  ')
-		)
+		);
 	}
 };
 
