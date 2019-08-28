@@ -46,9 +46,6 @@ const tallyMessage = (msg)=>{
 	}
 	const unixTimestamp = Math.floor(msg.ts);
 	messageTimestamps[channelKey].push(unixTimestamp);
-	if(DEBUG) {
-		Slack.log(`[Activitybot]: <#${channelKey}>: ${unixTimestamp} ${JSON.stringify(msg)}`);
-	}
 };
 
 /**
