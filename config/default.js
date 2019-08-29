@@ -24,10 +24,10 @@ module.exports = {
 		run_interval_seconds: 30,
 		ignored_channels: 'general,feedback,events,diagnostics',
 		target_channel: 'general',
-		cooldown_seconds: 43200,
+		cooldown_seconds: 12 * 60 * 60,
 		threshold : {
 			message_count: 20,
-			seconds: 300
+			seconds: 5 * 60
 		}
 	}
 }
