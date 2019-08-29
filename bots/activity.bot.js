@@ -26,6 +26,7 @@ let messageTimestamps = {};
 
 
 const unixNow = ()=>Math.floor(Date.now() / 1000);
+const debug(...args)=>DEBUG && Slack.log(args.join(' '))
 
 
 /**
@@ -57,10 +58,7 @@ const cullTimestamps = (timestamps, thresholdSeconds, channelKey)=>{
 	const minimumTimestamp = unixNow() - thresholdSeconds;
 	const cutoffIndex = _.sortedIndex(timestamps, minimumTimestamp);
 	const culled = _.slice(timestamps, cutoffIndex);
-	if(DEBUG) {
-		Slack.log(
-			`[ActivityBot]: Culled <#${channelKey}> timestamps ${timestamps} -> ${culled}`
-		);
+	debug(`[ActivityBot]: Culled <#${channelKey}> timestamps ${timestamps} -> ${culled}`);
 	}
 	return culled;
 };
@@ -78,9 +76,7 @@ const checkChannelCooldown = (channelKey)=>{
 	if(unixNow() - COOLDOWN_SECONDS > coolingChannels[channelKey]) {
 		// channel is now off cooldown
 		delete coolingChannels[channelKey];
-		if(DEBUG) {
-			Slack.log(`[Activitybot]: <#${channelKey}> is off cooldown`);
-		}
+		debug(`[Activitybot]: <#${channelKey}> is off cooldown`);
 		return false;
 	}
 	return true;
@@ -106,14 +102,11 @@ const checkForActivityBursts = ()=>{
 		res[channelKey] = culled;
 		return res;
 	}, {});
-	if(DEBUG) {
-		Slack.log(
-			'[Activitybot]: Finished checking activity. '
-			+ JSON.stringify(messageTimestamps)
-			+ ' '
-			+ JSON.stringify(coolingChannels, null, '  ')
-		);
-	}
+	debug(
+		'[Activitybot]: Finished checking activity',
+		JSON.stringify(messageTimestamps),
+		JSON.stringify(coolingChannels, null, '  ')
+	);
 };
 
 
