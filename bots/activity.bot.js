@@ -36,8 +36,8 @@ const unixNow = ()=>Math.floor(Date.now() / 1000);
  */
 const tallyMessage = (msg)=>{
 	const channelIgnored = _.has(msg.channel, IGNORED_CHANNELS);
-	const messageIsThreadReply = msg.subtype == 'message_replied';
-	if(channelIgnored || messageIsThreadReply) {
+	const messageIsWeird = msg.subtype || msg.hidden;
+	if(channelIgnored || messageIsWeird) {
 		return;
 	}
 	const channelKey = `${msg.channel_id}|${msg.channel}`;
