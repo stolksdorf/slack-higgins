@@ -26,7 +26,7 @@ let messageTimestamps = {};
 
 
 const unixNow = ()=>Math.floor(Date.now() / 1000);
-const debug(...args)=>DEBUG && Slack.log(args.join(' '))
+const debug = (...args)=>DEBUG && Slack.log(args.join(' '));
 
 
 /**
@@ -59,7 +59,6 @@ const cullTimestamps = (timestamps, thresholdSeconds, channelKey)=>{
 	const cutoffIndex = _.sortedIndex(timestamps, minimumTimestamp);
 	const culled = _.slice(timestamps, cutoffIndex);
 	debug(`[ActivityBot]: Culled <#${channelKey}> timestamps ${timestamps} -> ${culled}`);
-	}
 	return culled;
 };
 
