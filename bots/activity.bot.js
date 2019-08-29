@@ -15,14 +15,19 @@ const THRESHOLD_SECONDS = _.parseInt(
 const COOLDOWN_SECONDS = _.parseInt(
 	config.get('activitybot.cooldown_seconds')
 );
+const RUN_INTERVAL_SECONDS = _.parseInt(
+	config.get('activitybot.run_interval_seconds')
+);
 
 const IGNORED_CHANNELS = config.get('activitybot.ignored_channels').split(',');
 
 const coolingChannels = {};
-const messageTimestamps = {};
+let messageTimestamps = {};
 
 
 const unixNow = ()=>Math.floor(Date.now() / 1000);
+const debug(...args)=>DEBUG && Slack.log(args.join(' '))
+
 
 /**
  * Add `msg`'s timestamp as UNIX epoch to the end of the array for
@@ -31,14 +36,16 @@ const unixNow = ()=>Math.floor(Date.now() / 1000);
  * more or less.
  */
 const tallyMessage = (msg)=>{
-	if(_.has(msg.channel, IGNORED_CHANNELS)) {
+	const channelIgnored = _.has(msg.channel, IGNORED_CHANNELS);
+	const messageIsWeird = msg.subtype || msg.hidden;
+	if(channelIgnored || messageIsWeird) {
 		return;
 	}
 	const channelKey = `${msg.channel_id}|${msg.channel}`;
 	if(!_.has(messageTimestamps, channelKey)) {
 		messageTimestamps[channelKey] = [];
 	}
-	const unixTimestamp = Math.floor(msg.ts * 1000);
+	const unixTimestamp = Math.floor(msg.ts);
 	messageTimestamps[channelKey].push(unixTimestamp);
 };
 
@@ -47,10 +54,13 @@ const tallyMessage = (msg)=>{
  * the specified `thresholdSeconds`. Return the surviving timestamps
  * in a new array.
  */
-const cullTimestamps = (timestamps, thresholdSeconds)=>{
+const cullTimestamps = (timestamps, thresholdSeconds, channelKey)=>{
 	const minimumTimestamp = unixNow() - thresholdSeconds;
 	const cutoffIndex = _.sortedIndex(timestamps, minimumTimestamp);
-	return _.slice(timestamps, cutoffIndex);
+	const culled = _.slice(timestamps, cutoffIndex);
+	debug(`[ActivityBot]: Culled <#${channelKey}> timestamps ${timestamps} -> ${culled}`);
+	}
+	return culled;
 };
 
 /**
@@ -66,6 +76,7 @@ const checkChannelCooldown = (channelKey)=>{
 	if(unixNow() - COOLDOWN_SECONDS > coolingChannels[channelKey]) {
 		// channel is now off cooldown
 		delete coolingChannels[channelKey];
+		debug(`[Activitybot]: <#${channelKey}> is off cooldown`);
 		return false;
 	}
 	return true;
@@ -76,27 +87,28 @@ const checkChannelCooldown = (channelKey)=>{
  * thresholds and notify #general about them.
  */
 const checkForActivityBursts = ()=>{
-	_.forEach(messageTimestamps, (timestamps, channelKey)=>{
+	messageTimestamps = _.reduce(messageTimestamps, (res, timestamps, channelKey)=>{
 		const channelIsOnCooldown = checkChannelCooldown(channelKey);
-		if(channelIsOnCooldown) return;
+		const culled = cullTimestamps(timestamps, THRESHOLD_SECONDS, channelKey);
 
-		timestamps = cullTimestamps(timestamps, THRESHOLD_SECONDS);
-		if(DEBUG) {
-			Slack.log(
-				`[ActivityBot]: Culled <#${channelKey}> timestamps: ${timestamps}`
-			);
-		}
-		if(timestamps.length >= MESSAGE_COUNT_THRESHOLD) {
+		if(culled.length >= MESSAGE_COUNT_THRESHOLD && !channelIsOnCooldown) {
+			// alert the troops
 			Slack.send(
 				TARGET_CHANNEL,
 				`Something's going down in <#${channelKey}>!`
 			);
 			coolingChannels[channelKey] = unixNow();
-			delete messageTimestamps[channelKey];
 		}
-	});
+		res[channelKey] = culled;
+		return res;
+	}, {});
+	debug(
+		'[Activitybot]: Finished checking activity',
+		JSON.stringify(messageTimestamps),
+		JSON.stringify(coolingChannels, null, '  ')
+	);
 };
 
 
 Slack.onMessage(tallyMessage);
-setInterval(checkForActivityBursts, 30*1000);
+setInterval(checkForActivityBursts, RUN_INTERVAL_SECONDS * 1000);
