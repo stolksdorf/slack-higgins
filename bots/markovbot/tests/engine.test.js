@@ -43,11 +43,9 @@ test.group('stats', (test)=>{
 	});
 
 
-	test.only('adding new messages updates stats properly', (t)=>{
+	test('adding new messages updates stats properly', (t)=>{
 		const newMessages = ['why hello', 'who is this?'];
 		const newMapping = engine.encodeMessages(newMessages, sampleMapping);
-
-		console.log(newMapping);
 
 		const {stats} = engine.utils.extractStats(newMapping);
 

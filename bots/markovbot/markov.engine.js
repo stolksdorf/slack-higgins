@@ -3,10 +3,11 @@ const reduce = (obj,fn,init)=>Object.keys(obj).reduce((a,key)=>fn(a,obj[key],key
 
 const MARKOV_DEPTH = 6;
 
-const END_MSG    = String.fromCharCode(28);
-const SEQ_DIV    = String.fromCharCode(29);
-const ENTRY_DIV  = String.fromCharCode(30);
+const END_MSG    = String.fromCharCode(28); //▼
+const SEQ_DIV    = String.fromCharCode(29); //↔
+const ENTRY_DIV  = String.fromCharCode(30); //▲
 const WEIGHT_DIV = String.fromCharCode(31);
+
 
 const truncate = (key)=>(key.length > MARKOV_DEPTH ? key.slice(-MARKOV_DEPTH) : key);
 
@@ -121,7 +122,7 @@ const utils = {
 		try{
 			if(pivot !== -1){
 				stats = JSON.parse(mapping.substr(0,pivot));
-				mapping = mapping.substr(pivot+1);
+				mapping = mapping.substr(pivot);
 			}
 		}catch(err){};
 		return {stats, mapping}
