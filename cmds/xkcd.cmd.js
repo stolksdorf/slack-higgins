@@ -1,5 +1,5 @@
 const _      = require('lodash');
-const google = require('google');
+const google = require('google-it');
 const xkcd   = require('xkcd');
 
 const ERR_NOT_FOUND = 'Could not find any comics using those keywords.  Try something else!';
@@ -72,24 +72,20 @@ module.exports = {
 		}
 
 		// Otherwise, let's try to find the most relevant comic via keywords.
-		return google(`site:xkcd.com ${msg}`, function(err, nextPage, links) {
+		return google({ query: `site:xkcd.com ${msg}` }).then((results) => {
 			try {
-				if(err) {
-					return error(err);
-				}
-
-				if(links.length < 1) {
+				if(results.length < 1) {
 					return error(ERR_NOT_FOUND);
 				}
 
-				const foundComic = _.reduce(links, function(foundComic, link) {
+				const foundComic = _.reduce(results, function(foundComic, { link }) {
 					if(foundComic) {
 						// Already found the most relevant comic, so skip to the end.
 						return foundComic;
 					}
 
 					// Check if google result is for an explicit comic page.
-					const matches = link.href.match(/^https?:\/\/xkcd.com\/([\d]+)\/?$/);
+					const matches = link.match(/^https?:\/\/xkcd.com\/([\d]+)\/?$/);
 					if(matches === null || matches.length < 2 || !matches[1]) {
 						// Link does not point to an explicit comic page, try the next one.
 						return false;
@@ -113,6 +109,6 @@ module.exports = {
 			} catch (err) {
 				return error(err);
 			}
-		});
+		}).catch(error);
 	}
 };
