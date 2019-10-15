@@ -153,15 +153,11 @@ const encodeMessages = (msgs=[], old_mapping='')=>{
 		stats.letters += msg.length;
 		const frags = utils.generateFragments(msg);
 		mapping = reduce(frags, utils.addFragmentToMapping, mapping);
-		//console.log(mapping);
-		//console.log();
-		//console.log('--------------------');
-		//console.log();
 	});
 	return `${JSON.stringify(stats)}${mapping}`;
 }
 
-
+//Remove the stats portion
 const generateMessage = (mapping)=>{
 	const { stats } = utils.extractStats(mapping);
 	const addLetter = (msg='')=>{
@@ -178,10 +174,24 @@ const generateMessage = (mapping)=>{
 	}
 };
 
+const getStats = (mapping)=>{
+	const pivot = mapping.indexOf(ENTRY_DIV);
+	let stats = {msgs:0,letters:0};
+	try{
+		if(pivot !== -1){
+			stats = JSON.parse(mapping.substr(0,pivot));
+			mapping = mapping.substr(pivot);
+		}
+	}catch(err){};
+	return {...stats, mapping}
+}
+
 module.exports = {
 	utils,
+
 	encodeMessages,
 	generateMessage,
+	getStats
 	//mergeFragments,
 	//extendMapping,
 }
