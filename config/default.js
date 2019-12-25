@@ -6,18 +6,18 @@ module.exports = {
 
 	rainbot : {
 		darksky_api : '',
-		ifttt_webhook_key : ''
+		ifttt_webhook_key : '',
 	},
 	nationstates_pwd : {
 
 	},
 	github_token : '',
 	markov : {
-		bucket_name: 'coolsville-markov'
+		bucket_name: 'coolsville-markov',
 	},
 	s3 : {
 		access : '',
-		secret : ''
+		secret : '',
 	},
 	activitybot : {
 		debug : false,
@@ -27,7 +27,10 @@ module.exports = {
 		cooldown_seconds: 12 * 60 * 60,
 		threshold : {
 			message_count: 20,
-			seconds: 5 * 60
-		}
-	}
-}
+			seconds: 5 * 60,
+		},
+	},
+	minecraftbot : {
+		rcon_password : '',
+	},
+};
