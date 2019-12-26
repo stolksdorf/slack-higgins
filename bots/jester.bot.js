@@ -38,4 +38,4 @@ const ohHai = (msg)=>{
 // 	Slack.log(msg, joke);
 };
 
-Slack.onMessage(ohHai);
+//Slack.onMessage(ohHai);
