@@ -52,6 +52,7 @@
     "pico-redis": "^1.0.0",
     "pico-slack": "^1.4.5",
     "pos": "^0.4.2",
+    "rcon": "^1.0.3",
     "request": "^2.88.0",
     "sequelize": "^4.41.2",
     "speakeasy-nlp": "^0.2.13",
