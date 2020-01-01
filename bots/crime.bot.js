@@ -9,9 +9,9 @@ let lastSender  = {};
 
 Slack.onMessage((msg)=>{
 	if(Slack.msgHas(msg.text, ['#bde', '#bigdecadeenergy'])){
-		Slack.sendAs('bdebot', 'eggplant', msg.channel, `<https://gist.github.com/stolksdorf/${crimeGistID}|#20crimeteen!>`)
+		Slack.sendAs('bdebot', 'eggplant', msg.channel, `:eggplant: <https://gist.github.com/stolksdorf/${crimeGistID}|#BigDecadeEnergy!> :eggplant:`)
 		Gist.append(crimeGistID, {
-			':eggplant: BigDecadeEnergy :eggplant:' : `\n\n\`[in #${msg.channel} on ${(new Date()).toLocaleDateString()} at ${(new Date()).toLocaleTimeString()}]\`<br />`
+			'BigDecadeEnergy' : `\n\n\`[in #${msg.channel} on ${(new Date()).toLocaleDateString()} at ${(new Date()).toLocaleTimeString()}]\`<br />`
 				+ `**${lastSender[msg.channel]}**: ${lastMessage[msg.channel]}<br />`
 				+ `**${msg.user}**: ${msg.text}\n\n`
 		})
