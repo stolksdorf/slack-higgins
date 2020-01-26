@@ -19,6 +19,9 @@ module.exports = {
 		access : '',
 		secret : '',
 	},
+	historybot:{
+		bucket_name: 'coolsville-history'
+	},
 	activitybot : {
 		debug : false,
 		run_interval_seconds: 30,
