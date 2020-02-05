@@ -7,6 +7,7 @@ const S3 = require('../utils/s3.js');
 
 const MIN = 60 * 1000;
 const BucketName = config.get('historybot.bucket_name');
+const IgnoredChannels = (config.get('historybot.ignored_channels', true) || '').split(',');
 const wait = async (n,val)=>new Promise((r)=>setTimeout(()=>r(val), n));
 
 let HistoryStorage = {};
@@ -86,7 +87,7 @@ Slack.onMessage(async (msg)=>{
 		return await uploadHistoryToSlack(msg.channel);
 	}
 
-	if(msg.text && !config.get('historybot:ignored_channels').includes(msg.channel)){
+	if(msg.text && !IgnoredChannels.includes(msg.channel)){
 		storeMessage(msg);
 	}
 });

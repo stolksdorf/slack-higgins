@@ -1,3 +1,5 @@
+const MIN = 60 * 1000;
+
 module.exports = {
 	database_url : "postgres://trfovedsdkkdve:df3e1c8b55ed312ff9782f10ae168d844b48a53b0f1f489eca6f03091eab790c@ec2-50-17-250-38.compute-1.amazonaws.com:5432/d76edao4s0c6iu",
 	diagnostics_webhook : '',
@@ -20,7 +22,9 @@ module.exports = {
 		secret : '',
 	},
 	historybot:{
-		bucket_name: 'coolsville-history'
+		bucket_name: 'coolsville-history',
+		backup_rate: 20 * MIN,
+		ignored_channels: 'diagnostics'
 	},
 	activitybot : {
 		debug : false,
