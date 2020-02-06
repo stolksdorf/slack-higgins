@@ -24,12 +24,14 @@ const aliases = {
 	rebabybay : 'rebaybay',
 	rebecca  : 'rebaybay',
 	sarah : 'sarahellen.w',
+	rachel : 'rhenderson1993',
 };
 const iconAliases = {
 	brockdusome : 'broccoli',
 	slackbot : 'slack',
 	david : 'mariachi_dave',
 	'sarahellen.w' : 'sarah',
+	rhenderson1993 : 'rachel',
 };
 
 const blacklist = ['trivia-time'];
