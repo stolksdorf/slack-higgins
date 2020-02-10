@@ -50,10 +50,11 @@ const backupAll = async ()=>{
 
 const parseMessage = (msgObj)=>{
 	let res = {
-		id : msgObj.ts,
+		ts : msgObj.ts,
 		user : msgObj.user,
 		//date : datefns.format(new Date(), 'dd/MMM/yyy - H:mm:ss'), //for v2 of datefns
-		date : datefns.format(new Date(), 'DD/MMM/YYYY - H:mm:ss'),
+		//date : datefns.format(new Date(), 'DD/MMM/YYYY - H:mm:ss'),
+		//date : datefns.format(new Date(), 'YYYY-MM-DD H:mm:ss'),
 		msg : msgObj.text
 	}
 	if(msgObj.thread_ts) res.thread = msgObj.thread_ts;
@@ -68,13 +69,28 @@ const uploadHistoryToSlack = async (channel)=>{
 	const content = await fetchHistory(channel);
 	const filename = `coolsville-${channel}-history.txt`
 
-	const file = content.map((entry)=>`[${entry.user} ${entry.date}]:${entry.msg}`).join('\n');
+	const file = content.map((entry)=>`[${entry.user} ${datefns.format(new Date(entry.ts*1000), 'YYYY-MM-DD H:mm:ss')}]:${entry.msg}`).join('\n');
 
 	await request.post('https://slack.com/api/files.upload')
 		.field('token',  Slack.token)
 		.field('channels', channel)
 		.field('filename',  filename)
 		.field('filetype',  'txt')
+		.field('title', filename)
+		.attach('file', Buffer.from(file), {filename})
+};
+
+const uploadJSONToSlack = async (channel)=>{
+	const content = await fetchHistory(channel);
+	const filename = `coolsville-${channel}-history.json`
+
+	const file = JSON.stringify(content, null, '  ');
+
+	await request.post('https://slack.com/api/files.upload')
+		.field('token',  Slack.token)
+		.field('channels', channel)
+		.field('filename',  filename)
+		.field('filetype',  'json')
 		.field('title', filename)
 		.attach('file', Buffer.from(file), {filename})
 }
@@ -84,10 +100,13 @@ setInterval(backupAll, config.get('historybot:backup_rate'))
 
 Slack.onMessage(async (msg)=>{
 	if(Slack.msgHas(msg.text, 'higgins', 'history', ['please', 'plz'])){
+		if(Slack.msgHas(msg.text, 'json')){
+			return await uploadJSONToSlack(msg.channel);
+		}
 		return await uploadHistoryToSlack(msg.channel);
 	}
 
-	if(msg.text && !IgnoredChannels.includes(msg.channel)){
+	if(msg.text && !msg.isDirect && !IgnoredChannels.includes(msg.channel)){
 		storeMessage(msg);
 	}
 });
