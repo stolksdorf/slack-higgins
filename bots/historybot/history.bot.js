@@ -3,7 +3,7 @@ const Slack = require('pico-slack');
 const datefns = require('date-fns');
 const request = require('superagent');
 
-const S3 = require('../utils/s3.js');
+const S3 = require('../../utils/s3.js');
 
 const MIN = 60 * 1000;
 const BucketName = config.get('historybot.bucket_name');
