@@ -33,7 +33,6 @@ const parseChannel = (channelName)=>{
 			if(!entry.user_profile || !entry.text) return;
 			res.push({
 				ts : entry.ts,
-				//date : datefns.format(new Date(entry.ts * 1000), "YYYY-MM-DD H:mm:ss"),
 				user : entry.user_profile.name,
 				//channel : channelName,
 				text : entry.text

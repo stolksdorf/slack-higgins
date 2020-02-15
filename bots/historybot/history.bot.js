@@ -101,7 +101,7 @@ const uploadJSONToSlack = async (channel, dest)=>{
 setInterval(backupAll, config.get('historybot:backup_rate'))
 
 Slack.onMessage(async (msg)=>{
-	if(Slack.msgHas(msg.text, 'higgins', 'history', ['please', 'plz'])){
+	if(Slack.msgHas(msg.text, 'higgins', 'history', ['please', 'plz'], 'channel')){
 		let channel = msg.channel;
 		if (msg.isDirect) {
 			const matches = /<#[A-Z0-9]+\|([^>]+)>/.exec(msg.text);

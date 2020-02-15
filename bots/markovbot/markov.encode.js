@@ -5,6 +5,8 @@ const config = require('pico-conf');
 const sequence = async (obj, fn)=>Object.keys(obj).reduce((a,key)=>a.then((r)=>fn(obj[key], key, r)), Promise.resolve());
 
 
+const fs = require('fs');
+
 let Mappings = {};
 
 const createMapping = {
