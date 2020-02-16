@@ -6,13 +6,12 @@ const truncate = (str, depth)=>(str.length > depth ? str.slice(-depth) : str);
 const weightedRandom = (weights={})=>{
 	const keys = Object.keys(weights);
 	if(keys.length == 1) return keys[0];
-	const total = sum(Object.values(weights))
-	const rand = Math.floor(Math.random() * total);
+	const total = sum(Object.values(weights));
+	const rand = Math.floor(Math.random() * total) + 1;
 	let threshold = 0;
 	return keys.find((key)=>{
-		if(threshold >= rand) return true;
 		threshold += weights[key];
-		return false;
+		return rand <= threshold;
 	});
 };
 
@@ -30,7 +29,7 @@ const generate = (mapping, depth=6)=>{
 	const addLetter = (msg='')=>{
 		const key = truncate(msg, depth);
 		const letter = weightedRandom(mapping[key]);
-		if(!letter || letter == END) return msg;
+		if(typeof letter === 'undefined' || letter == END) return msg;
 		return addLetter(msg + letter);
 	};
 	return addLetter();
@@ -39,5 +38,6 @@ const generate = (mapping, depth=6)=>{
 module.exports = {
 	encode,
 	generate,
+	truncate
 };
 
