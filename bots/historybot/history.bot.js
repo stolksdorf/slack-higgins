@@ -65,7 +65,7 @@ const storeMessage = (msg)=>{
 	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(parseMessage(msg))
 };
 
-const uploadHistoryToSlack = async (channel)=>{
+const uploadHistoryToSlack = async (channel, dest)=>{
 	const content = await fetchHistory(channel);
 	const filename = `coolsville-${channel}-history.txt`
 
@@ -73,14 +73,14 @@ const uploadHistoryToSlack = async (channel)=>{
 
 	await request.post('https://slack.com/api/files.upload')
 		.field('token',  Slack.token)
-		.field('channels', channel)
+		.field('channels', dest)
 		.field('filename',  filename)
 		.field('filetype',  'txt')
 		.field('title', filename)
 		.attach('file', Buffer.from(file), {filename})
 };
 
-const uploadJSONToSlack = async (channel)=>{
+const uploadJSONToSlack = async (channel, dest)=>{
 	const content = await fetchHistory(channel);
 	const filename = `coolsville-${channel}-history.json`
 
@@ -88,7 +88,7 @@ const uploadJSONToSlack = async (channel)=>{
 
 	await request.post('https://slack.com/api/files.upload')
 		.field('token',  Slack.token)
-		.field('channels', channel)
+		.field('channels', dest)
 		.field('filename',  filename)
 		.field('filetype',  'json')
 		.field('title', filename)
@@ -100,10 +100,15 @@ setInterval(backupAll, config.get('historybot:backup_rate'))
 
 Slack.onMessage(async (msg)=>{
 	if(Slack.msgHas(msg.text, 'higgins', 'history', ['please', 'plz'])){
-		if(Slack.msgHas(msg.text, 'json')){
-			return await uploadJSONToSlack(msg.channel);
+		let channel = msg.channel;
+		if (msg.isDirect) {
+			const matches = /<#[A-Z0-9]+\|([^>]+)>/.exec(msg.text);
+			channel = matches[1];
 		}
-		return await uploadHistoryToSlack(msg.channel);
+		if(Slack.msgHas(msg.text, 'json')){
+			return await uploadJSONToSlack(channel, msg.channel);
+		}
+		return await uploadHistoryToSlack(channel, msg.channel);
 	}
 
 	if(msg.text && !msg.isDirect && !IgnoredChannels.includes(msg.channel)){
