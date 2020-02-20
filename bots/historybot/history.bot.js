@@ -12,6 +12,8 @@ const wait = async (n,val)=>new Promise((r)=>setTimeout(()=>r(val), n));
 
 let HistoryStorage = {};
 
+const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss')
+
 const fetchHistory = async (channel)=>{
 	let channelData;
 	try{
@@ -55,7 +57,7 @@ const parseMessage = (msgObj)=>{
 		//date : datefns.format(new Date(), 'dd/MMM/yyy - H:mm:ss'), //for v2 of datefns
 		//date : datefns.format(new Date(), 'DD/MMM/YYYY - H:mm:ss'),
 		//date : datefns.format(new Date(), 'YYYY-MM-DD H:mm:ss'),
-		msg : msgObj.text
+		test : msgObj.text
 	}
 	if(msgObj.thread_ts) res.thread = msgObj.thread_ts;
 	return res;
@@ -69,7 +71,7 @@ const uploadHistoryToSlack = async (channel)=>{
 	const content = await fetchHistory(channel);
 	const filename = `coolsville-${channel}-history.txt`
 
-	const file = content.map((entry)=>`[${entry.user} ${datefns.format(new Date(entry.ts*1000), 'YYYY-MM-DD H:mm:ss')}]:${entry.msg}`).join('\n');
+	const file = content.map((entry)=>`[${entry.user} ${getDate(entry.ts)}]:${entry.text}`).join('\n');
 
 	await request.post('https://slack.com/api/files.upload')
 		.field('token',  Slack.token)

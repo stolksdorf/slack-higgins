@@ -36,7 +36,7 @@ const parseChannel = (channelName)=>{
 				//date : datefns.format(new Date(entry.ts * 1000), "YYYY-MM-DD H:mm:ss"),
 				user : entry.user_profile.name,
 				//channel : channelName,
-				msg : entry.text
+				text : entry.text
 			})
 		});
 	}
