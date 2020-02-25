@@ -31,7 +31,23 @@ const fetch = async (bucket, filename)=>{
 	})
 };
 
+const list = async (bucket)=>{
+	return new Promise((resolve, reject)=>{
+		S3.listObjectsV2({
+			Bucket : bucket,
+			//Key    : filename,
+		}, (err, data)=>err ? reject(err) : resolve(data));
+	})
+	.then((data)=>data.Contents.map(x=>x.Key))
+	.catch((err)=>{
+		//console.log(err);
+		//if(err.code == 'NoSuchKey') return [];
+		throw err;
+	})
+}
+
 module.exports = {
 	fetch,
+	list,
 	upload
 };
