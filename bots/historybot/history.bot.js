@@ -57,7 +57,7 @@ const parseMessage = (msgObj)=>{
 		//date : datefns.format(new Date(), 'dd/MMM/yyy - H:mm:ss'), //for v2 of datefns
 		//date : datefns.format(new Date(), 'DD/MMM/YYYY - H:mm:ss'),
 		//date : datefns.format(new Date(), 'YYYY-MM-DD H:mm:ss'),
-		test : msgObj.text
+		text : msgObj.text
 	}
 	if(msgObj.thread_ts) res.thread = msgObj.thread_ts;
 	return res;
