@@ -1,4 +1,5 @@
 const s3 = require('../../utils/s3.js');
+const request = require('superagent');
 const Markov = require('./markov.engine2.js');
 const config = require('pico-conf');
 
@@ -21,49 +22,78 @@ const createMapping = ()=>{
 	}
 };
 
-//Fetch corpus
-// Loop through for each user and generate mapping
-//
 
-const run = async ()=>{
-	console.log('here');
-	console.time('Finished');
+
+
+const getUsers = async ()=>{
+	return await request.get(`https://slack.com/api/users.list`)
+		.query({ token : config.get('command_token') })
+		.then((res)=>res.body.members.map((user)=>user.name))
+};
+
+const getAllHistory = async ()=>{
 	const channels = await s3.list(config.get('historybot:bucket_name'));
 
-	console.log('channels', channels);
+	//const channels = ['bsg.json'];
 
-	await sequence(channels, async (channel)=>{
-		//console.log('Fetching', channel);
+	let res = {};
+	await sequence(channels, async (channel, _, acc={})=>{
+		console.log('Fetching', channel);
 		const raw = await s3.fetch(config.get('historybot:bucket_name'), channel);
-		const logs = JSON.parse(raw);
-		console.log('Processing', logs.length, channel);
-
-		logs.map(({user, msg})=>{
-			//if(user !== 'rebaybay') return;
-
-			Mappings[user] = Mappings[user] || createMapping();
-			Mappings[user].letters += msg.length;
-			Mappings[user].messages++;
-
-
-			//Mappings[user].depth5 = Markov.encode(Mappings[user].depth5, msg, 5);
-			//Mappings[user].depth6 = Markov.encode(Mappings[user].depth6, msg, 6);
-			//Mappings[user].depth7 = Markov.encode(Mappings[user].depth7, msg, 7);
-			Mappings[user].depth8 = Markov.encode(Mappings[user].depth8, msg, 8);
-		});
+		if(!raw) return;
+		res[channel] = JSON.parse(raw);
 	});
+	return res;
+};
+
+const getMappingForUser = (user, channels)=>{
+	const mapping = {
+		letters  : 0,
+		messages : 0,
+		depth5   : {},
+		depth6   : {},
+		depth7   : {},
+		depth8   : {},
+	};
+	console.log('Processing', user);
+	console.time('done');
+	Object.entries(channels).map(([name, logs])=>{
+		logs.filter((log)=>log.user == user).map((msg)=>{
+			mapping.letters += msg.msg.length;
+			mapping.messages++;
+			//mapping.depth5 = Markov.encode(mapping.depth5, msg, 5);
+			//mapping.depth6 = Markov.encode(mapping.depth6, msg, 6);
+			//mapping.depth7 = Markov.encode(mapping.depth7, msg, 7);
+			mapping.depth8 = Markov.encode(mapping.depth8, msg.msg, 8);
+		})
+	})
+	console.timeEnd('done');
+	return mapping;
+}
 
 
-	Object.keys(Mappings).map((user)=>{
-		console.log('Writing', user);
-		fs.writeFileSync(exportPath + `/${user}.mapping.json`, JSON.stringify(Mappings[user]))
+
+const run = async ()=>{
+	console.time('Finished');
+
+	console.log('Fetching Users...');
+	const users = await getUsers();
+
+	console.log('Fetching All Channel History...');
+	const channels = await getAllHistory();
+
+	users.map((user)=>{
+		const res = getMappingForUser(user, channels);
+		console.log(user, res.letters, res.messages);
+		if(res.messages > 100){
+			fs.writeFileSync(exportPath + `/${user}.mapping.json`, JSON.stringify(res))
+		}
 	})
 
-
-	// await sequence(Object.keys(Mappings), async (user)=>{
-	// 	console.log('Saving mapping', user);
-	// 	await s3.upload(config.get('markov:bucket_name'), `${user}.mapping.json`, JSON.stringify(Mappings[user]))
-	// });
+	// // await sequence(Object.keys(Mappings), async (user)=>{
+	// // 	console.log('Saving mapping', user);
+	// // 	await s3.upload(config.get('markov:bucket_name'), `${user}.mapping.json`, JSON.stringify(Mappings[user]))
+	// // });
 
 	console.timeEnd('Finished');
 
