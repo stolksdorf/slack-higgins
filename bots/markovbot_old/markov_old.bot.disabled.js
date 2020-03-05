@@ -9,7 +9,7 @@ const formatNumber = (num)=>num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$
 //Bump these to config files
 
 const Users = Object.values(Slack.users)
-	.filter((user)=>!['scott'].includes(user));
+	//.filter((user)=>!['scott'].includes(user));
 
 const aliases = {
 	dave  : 'david',

@@ -43,7 +43,7 @@ const BotSend = async (channel, user)=>{
 
 	Slack.api('chat.postMessage', {
 		channel     : channel,
-		username    : `${user}bot2`,
+		username    : `${user}bot`,
 		icon_emoji  : `:${Aliases.icon[user] || user}:`,
 		attachments : [{ mrkdwn_in : ['pretext'], footer, pretext }]
 	});
@@ -51,14 +51,17 @@ const BotSend = async (channel, user)=>{
 
 Slack.onMessage((msg)=>{
 	const shouldProc = (lookup, user)=>{
-		if(Slack.has(msg.text, `${lookup}bot2`)) BotSend(msg.channel, user);
+		if(Slack.has(msg.text, `${lookup}bot`)){
+			if(!CACHE[user]) Slack.react(msg, 'stopwatch');
+			BotSend(msg.channel, user);
+		}
 	};
 	map(Users, (user)=>shouldProc(user, user));
 	map(Aliases.name, (user, nickname)=>shouldProc(nickname, user));
 });
 
 loop(()=>{
-	TriggerRandomBot();
+	if((new Date()).getHours() > 8) TriggerRandomBot();
 	return sample([5,6,7,8,9]) * HOURS;
 }, 1 * HOURS);
 

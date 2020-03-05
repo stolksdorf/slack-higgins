@@ -10,7 +10,10 @@ const sequence = async (obj, fn)=>Object.keys(obj).reduce((a,key)=>a.then((r)=>f
 
 
 const exportPath = "C:/Users/scott/Desktop/coolsville-markov-mappings";
-const CachePath = "C:/Dropbox/root/Programming/Javascript/higgins/cache"
+const HistoryCache = "C:/Dropbox/root/Programming/Javascript/higgins/cache/history";
+const MappingCache = "C:/Dropbox/root/Programming/Javascript/higgins/cache/mappings";
+
+const IgnoredChannels = ['support'];
 
 /*
 --depth=8
@@ -43,7 +46,7 @@ const getUsers = async ()=>{
 
 
 const getChannel = async (channelname)=>{
-	const fp = CachePath + '/' + channelname;
+	const fp = HistoryCache + channelname;
 	if(fs.existsSync(fp)) return fs.promises.readFile(fp);
 	const channeldata = await s3.fetch(config.get('historybot:bucket_name'), channelname);
 	if(Args.cache) await fs.promises.writeFile(fp, channeldata);
@@ -51,8 +54,12 @@ const getChannel = async (channelname)=>{
 }
 
 const getAllHistory = async ()=>{
-	const channels = await s3.list(config.get('historybot:bucket_name'));
+	let channels = await s3.list(config.get('historybot:bucket_name'));
 	//const channels = ['bsg.json'];
+
+	channels = channels.filter((name)=>{
+		return !IgnoredChannels.includes(name.replace('.json', ''));
+	})
 
 	let res = {};
 	await sequence(channels, async (channelname, _, acc={})=>{
@@ -104,7 +111,7 @@ const run = async (depth=8)=>{
 		const mapping = makeMappingForUser(user, getAllTextByUser(channels, user), depth);
 		console.log(user, mapping.letters, mapping.messages);
 		if(mapping.messages > 150){
-			await fs.promises.writeFile(CachePath + `/${user}.mapping${depth}.json`, JSON.stringify(mapping));
+			await fs.promises.writeFile(MappingCache + `/${user}.mapping${depth}.json`, JSON.stringify(mapping));
 			if(Args.upload){
 				await s3.upload(config.get('markov.bucket_name'), `${user}.mapping${depth}.json`, JSON.stringify(mapping));
 			}
