@@ -6,3 +6,4 @@ todo.md
 # Ignore sensitive stuff
 /config/local.*
 node_modules
+cache

@@ -1,6 +1,6 @@
 {
   "name": "slack-higgins",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "a slackbot for my personal slack",
   "main": "higgins.js",
   "scripts": {
@@ -38,9 +38,10 @@
     "date-fns": "^1.30.1",
     "express": "^4.16.4",
     "glob": "^7.1.3",
-    "google-it": "^1.2.1",
+    "google": "^1.4.0",
+    "google-it": "^1.5.0",
     "js-yaml": "^3.13.1",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.15",
     "moment": "^2.22.2",
     "node-fetch": "^2.3.0",
     "node-schedule": "^1.3.1",
@@ -49,7 +50,7 @@
     "pico-conf": "^1.5.1",
     "pico-gist": "^1.0.1",
     "pico-redis": "^1.0.0",
-    "pico-slack": "^1.4.5",
+    "pico-slack": "^2.1.1",
     "pos": "^0.4.2",
     "rcon": "^1.0.3",
     "request": "^2.88.0",
@@ -58,7 +59,6 @@
     "string-similarity": "^1.2.2",
     "superagent": "^3.8.3",
     "syllable": "^3.2.0",
-    "unofficial-nest-api": "^0.1.4",
     "xkcd": "^1.1.1",
     "xml2js": "^0.4.19"
   },

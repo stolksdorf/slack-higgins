@@ -13,7 +13,7 @@ const MAX_SIZE = 2;
 const MAX_AGE = 30;
 
 Slack.onMessage((msg)=>{
-	if(!Slack.msgHas(msg.text, 'higgins', 'clean', 'house')) return;
+	if(!Slack.has(msg.text, 'higgins', 'clean', 'house')) return;
 	Slack.msg(msg.channel, '_Sure, give me a sec_');
 	getAllFiles(msg.user_id)
 		.then(({files, size})=>{

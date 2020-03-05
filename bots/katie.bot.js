@@ -1,9 +1,7 @@
-const Slack = require('pico-slack');
-const Msg = Slack.msgAs.bind(null, 'batiebot', 'katie');
+const KatieBot = require('pico-slack').alias('katiebot', 'katie');
 
-
-Slack.onMessage((msg)=>{
+KatieBot.onMessage((msg)=>{
 	if(msg.channel == 'secret-laboratory' && msg.user == 'katie'){
-		Msg(msg.channel, 'Why hello there!');
+		KatieBot.send(msg.channel, 'Why hello there!');
 	}
 });

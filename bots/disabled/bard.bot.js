@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const fetch = require('node-fetch');
 const Slack = require('pico-slack');
- 
+
 const getWords = async (constraint, word, topic) => {
   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')
   const data = await response.json();
@@ -9,11 +9,11 @@ const getWords = async (constraint, word, topic) => {
   console.log("get words:", data);
   return data[0].word;
 }
- 
+
 const makePoem = async (text)=>{
   const clean = _.split(text, ' ');
   const trigger = _.last(clean);
- 
+
   const words = await Promise.all([
     getWords('rel_syn=', trigger),
     getWords('rel_gen=', trigger),
@@ -27,10 +27,10 @@ const makePoem = async (text)=>{
    // console.log("make poem:", poem);
   return poem;
 };
- 
+
 const response = async (msg)=>{
-  if(!Slack.msgHas(msg.text, 'bardbot', 'poem')) return;
-  
+  if(!Slack.has(msg.text, 'bardbot', 'poem')) return;
+
   const poem = await makePoem(msg.text);
   Slack.sendAs('BardBot', ':rose:', msg.channel, poem);
   // console.log(msg.text, poem, "response goes here");
@@ -40,7 +40,7 @@ try{
   // Code that might fail
   Slack.onMessage(response);
   // console.log("tester")
-  
+
 }catch(err){
    // Code that will run when it fails
   Slack.error('you done goofed');

@@ -20,14 +20,14 @@ const higginsNames = [
 
 const isActive = ()=>!!activeClue;
 const isTriviaRequest = (msg)=>{
-	return !isActive() && Slack.msgHas(msg.text, higginsNames, [
+	return !isActive() && Slack.has(msg.text, higginsNames, [
 		'trivia', 'another', 'trizzle', 'question', 'quite so', 'hit me', 'quiz', 'very good', 'well done', 'once more',
 		'keep em coming', 'keep \'em coming', 'don\'t stop', 'brain buster', 'small potatoes', 'hit it',
 		'brain teaser', 'yet more', 'even more'
 	]);
 };
-const isScoreboardRequest = (msg)=>Slack.msgHas(msg.text, higginsNames, ['score', 'scoreboard', 'points', 'winning', 'crowns'])
-const isCategoriesRequest = (msg)=>Slack.msgHas(msg.text, higginsNames, ['categories', 'category'])
+const isScoreboardRequest = (msg)=>Slack.has(msg.text, higginsNames, ['score', 'scoreboard', 'points', 'winning', 'crowns'])
+const isCategoriesRequest = (msg)=>Slack.has(msg.text, higginsNames, ['categories', 'category'])
 const send = (msg)=>Slack.send('trivia-time', msg);
 
 
