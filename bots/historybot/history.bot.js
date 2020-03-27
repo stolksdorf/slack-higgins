@@ -65,18 +65,14 @@ const parseMessage = (msgObj)=>{
 }
 
 const storeMessage = (msg)=>{
-	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(parseMessage(msg));
+	const payload = parseMessage(msg);
+	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(payload);
 
 	if (HistoryDatabaseToken) {
 		// Sideload messages into the history database, without blocking.
 		request.post('https://coolsville.gregleaver.com/slack/message')
 			.set('X-Verification-Token', HistoryDatabaseToken)
-			.send({
-				ts      : msg.ts,
-				channel : msg.channel,
-				user    : msg.user,
-				text    : msg.text,
-			});
+			.send(Object.assign({}, payload, { channel: msg.channel }));
 	}
 };
 
