@@ -8,6 +8,7 @@ const S3 = require('../../utils/s3.js');
 const MIN = 60 * 1000;
 const BucketName = config.get('historybot.bucket_name');
 const IgnoredChannels = (config.get('historybot.ignored_channels', true) || '').split(',');
+const HistoryDatabaseToken = config.get('historybot.db_token');
 const wait = async (n,val)=>new Promise((r)=>setTimeout(()=>r(val), n));
 
 let HistoryStorage = {};
@@ -64,7 +65,19 @@ const parseMessage = (msgObj)=>{
 }
 
 const storeMessage = (msg)=>{
-	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(parseMessage(msg))
+	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(parseMessage(msg));
+
+	if (HistoryDatabaseToken) {
+		// Sideload messages into the history database, without blocking.
+		request.post('https://coolsville.gregleaver.com/slack/message')
+			.set('X-Verification-Token', HistoryDatabaseToken)
+			.send({
+				ts      : msg.ts,
+				channel : msg.channel,
+				user    : msg.user,
+				text    : msg.text,
+			});
+	}
 };
 
 const uploadHistoryToSlack = async (channel, dest)=>{

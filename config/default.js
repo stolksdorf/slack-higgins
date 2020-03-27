@@ -24,7 +24,8 @@ module.exports = {
 	historybot:{
 		bucket_name: 'coolsville-history',
 		backup_rate: 20 * MIN,
-		ignored_channels: 'diagnostics'
+		ignored_channels: 'diagnostics',
+		db_token: '',
 	},
 	activitybot : {
 		debug : false,
