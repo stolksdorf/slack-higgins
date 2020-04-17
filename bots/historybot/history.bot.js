@@ -8,12 +8,21 @@ const S3 = require('../../utils/s3.js');
 const MIN = 60 * 1000;
 const BucketName = config.get('historybot.bucket_name');
 const IgnoredChannels = (config.get('historybot.ignored_channels', true) || '').split(',');
-const HistoryDatabaseToken = config.get('historybot.db_token');
 const wait = async (n,val)=>new Promise((r)=>setTimeout(()=>r(val), n));
 
 let HistoryStorage = {};
 
-const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss')
+const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss');
+
+const uploadToDatabase = (endpoint, payload)=>{
+	const HistoryDatabaseToken = config.get('historybot.db_token');
+	if (!HistoryDatabaseToken) return;
+	
+	return request.post(`https://coolsville.gregleaver.com${endpoint}`)
+		.set('X-Verification-Token', HistoryDatabaseToken)
+		.send(payload)
+		.catch(console.error);
+};
 
 const fetchHistory = async (channel)=>{
 	let channelData;
@@ -68,12 +77,17 @@ const storeMessage = (msg)=>{
 	const payload = parseMessage(msg);
 	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(payload);
 
-	if (HistoryDatabaseToken) {
-		// Sideload messages into the history database, without blocking.
-		request.post('https://coolsville.gregleaver.com/slack/message')
-			.set('X-Verification-Token', HistoryDatabaseToken)
-			.send(Object.assign({}, payload, { channel: msg.channel }));
-	}
+	// Sideload messages into the history database, without blocking.
+	uploadToDatabase('/upload', Object.assign({}, payload, {
+		channel : {
+			id : msg.channel_id,
+			name : msg.channel,
+		},
+		user : {
+			id : msg.user_id,
+			name : msg.user,
+		},
+	}));
 };
 
 const uploadHistoryToSlack = async (channel, dest)=>{
@@ -126,4 +140,24 @@ Slack.onMessage(async (msg)=>{
 	if(msg.text && !msg.isDirect && !IgnoredChannels.includes(msg.channel)){
 		storeMessage(msg);
 	}
+});
+
+Slack.onReact(async (msg)=>{
+	if (msg.item.type != 'message') return;
+	return await uploadToDatabase('/reaction', {
+		ts : msg.ts,
+		emoji : msg.reaction,
+		user : {
+			id : msg.user_id,
+			name : msg.user,
+		},
+		channel : {
+			id : msg.channel_id,
+			name : msg.channel,
+		},
+		msg : {
+			channel_id : msg.item.channel,
+			ts : msg.item.ts,
+		},
+	});
 });
