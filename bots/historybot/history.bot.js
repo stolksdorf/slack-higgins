@@ -78,7 +78,7 @@ const storeMessage = (msg)=>{
 	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(payload);
 
 	// Sideload messages into the history database, without blocking.
-	uploadToDatabase('/upload', Object.assign({}, payload, {
+	uploadToDatabase('/messages', Object.assign({}, payload, {
 		channel : {
 			id : msg.channel_id,
 			name : msg.channel,
