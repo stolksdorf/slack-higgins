@@ -144,7 +144,7 @@ Slack.onMessage(async (msg)=>{
 
 Slack.onReact(async (msg)=>{
 	if (msg.item.type != 'message') return;
-	return await uploadToDatabase('/reaction', {
+	return await uploadToDatabase('/reactions', {
 		ts : msg.ts,
 		emoji : msg.reaction,
 		user : {
