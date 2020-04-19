@@ -26,6 +26,7 @@ module.exports = {
 		backup_rate: 20 * MIN,
 		ignored_channels: 'diagnostics',
 		db_token: '',
+		db_host: 'dev.coolsville.gregleaver.com',
 	},
 	activitybot : {
 		debug : false,

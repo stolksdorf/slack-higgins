@@ -17,8 +17,9 @@ const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss');
 const uploadToDatabase = (endpoint, payload)=>{
 	const HistoryDatabaseToken = config.get('historybot.db_token');
 	if (!HistoryDatabaseToken) return;
-	
-	return request.post(`https://coolsville.gregleaver.com${endpoint}`)
+
+	const host = config.get('historybot.db_host');
+	return request.post(`https://${host}/${endpoint}`)
 		.set('X-Verification-Token', HistoryDatabaseToken)
 		.send(payload)
 		.catch(console.error);
@@ -78,7 +79,7 @@ const storeMessage = (msg)=>{
 	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(payload);
 
 	// Sideload messages into the history database, without blocking.
-	uploadToDatabase('/messages', Object.assign({}, payload, {
+	uploadToDatabase('messages', Object.assign({}, payload, {
 		channel : {
 			id : msg.channel_id,
 			name : msg.channel,
@@ -144,7 +145,7 @@ Slack.onMessage(async (msg)=>{
 
 Slack.onReact(async (msg)=>{
 	if (msg.item.type != 'message') return;
-	return await uploadToDatabase('/reactions', {
+	return await uploadToDatabase('reactions', {
 		ts : msg.ts,
 		emoji : msg.reaction,
 		user : {
