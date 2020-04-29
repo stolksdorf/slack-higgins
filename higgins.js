@@ -59,6 +59,10 @@ app.get('/', (req, res)=>{
 });
 
 Slack.connect(config.get('slack_bot_token'))
+	.then(()=>{
+		Slack.socket.on('close', ()=>Slack.log('Slack socket connection closed.'));
+		Slack.socket.on('error', (error)=>Slack.error(`Slack socket error: ${error}`));
+	})
 	.then(()=>loadBots())
 	.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
 	.then(()=>loadActions('./actions')).then((actionRouter)=>app.use(actionRouter))
