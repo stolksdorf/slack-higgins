@@ -6,6 +6,7 @@ const request = require('superagent');
 const S3 = require('../../utils/s3.js');
 
 const MIN = 60 * 1000;
+const isProd = config.get('production');
 const BucketName = config.get('historybot.bucket_name');
 const IgnoredChannels = (config.get('historybot.ignored_channels', true) || '').split(',');
 const DatabaseToken = config.get('historybot.db_token');
@@ -16,9 +17,14 @@ let HistoryStorage = {};
 
 const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss');
 
-const uploadToDatabase = (endpoint, payload)=>{
+const uploadToDatabase = async (endpoint, payload)=>{
 	if (!DatabaseToken) return;
-	return request.post(`https://${DatabaseApiHost}/${endpoint}`)
+	if (!DatabaseApiHost) {
+		const msg = '[HistoryBot] Database token has been set but host is still blank!';
+		if (isProd) return console.error(msg);
+		return console.warn(msg);
+	}
+	return await request.post(`https://${DatabaseApiHost}/${endpoint}`)
 		.set('X-Verification-Token', DatabaseToken)
 		.send(payload)
 		.catch(console.error);
