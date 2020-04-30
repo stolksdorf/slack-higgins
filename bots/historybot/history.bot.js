@@ -6,11 +6,11 @@ const request = require('superagent');
 const S3 = require('../../utils/s3.js');
 
 const MIN = 60 * 1000;
-const isProd = config.get('production');
+const isProd = config.get('production', true);
 const BucketName = config.get('historybot.bucket_name');
 const IgnoredChannels = (config.get('historybot.ignored_channels', true) || '').split(',');
-const DatabaseToken = config.get('historybot.db_token');
-const DatabaseApiHost = config.get('historybot.db_host');
+const DatabaseToken = config.get('historybot.db_token', true);
+const DatabaseApiHost = config.get('historybot.db_host', true);
 const wait = async (n,val)=>new Promise((r)=>setTimeout(()=>r(val), n));
 
 let HistoryStorage = {};
