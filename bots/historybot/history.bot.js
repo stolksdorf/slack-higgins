@@ -6,13 +6,29 @@ const request = require('superagent');
 const S3 = require('../../utils/s3.js');
 
 const MIN = 60 * 1000;
+const isProd = config.get('production', true);
 const BucketName = config.get('historybot.bucket_name');
 const IgnoredChannels = (config.get('historybot.ignored_channels', true) || '').split(',');
+const DatabaseToken = config.get('historybot.db_token', true);
+const DatabaseApiHost = config.get('historybot.db_host', true);
 const wait = async (n,val)=>new Promise((r)=>setTimeout(()=>r(val), n));
 
 let HistoryStorage = {};
 
-const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss')
+const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss');
+
+const uploadToDatabase = async (endpoint, payload)=>{
+	if (!DatabaseToken) return;
+	if (!DatabaseApiHost) {
+		const msg = '[HistoryBot] Database token has been set but host is still blank!';
+		if (isProd) return console.error(msg);
+		return console.warn(msg);
+	}
+	return await request.post(`https://${DatabaseApiHost}/${endpoint}`)
+		.set('X-Verification-Token', DatabaseToken)
+		.send(payload)
+		.catch(console.error);
+};
 
 const fetchHistory = async (channel)=>{
 	let channelData;
@@ -64,7 +80,20 @@ const parseMessage = (msgObj)=>{
 }
 
 const storeMessage = (msg)=>{
-	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(parseMessage(msg))
+	const payload = parseMessage(msg);
+	HistoryStorage[msg.channel] = (HistoryStorage[msg.channel] || []).concat(payload);
+
+	// Sideload messages into the history database, without blocking.
+	uploadToDatabase('messages', Object.assign({}, payload, {
+		channel : {
+			id : msg.channel_id,
+			name : msg.channel,
+		},
+		user : {
+			id : msg.user_id,
+			name : msg.user,
+		},
+	}));
 };
 
 const uploadHistoryToSlack = async (channel, dest)=>{
@@ -117,4 +146,24 @@ Slack.onMessage(async (msg)=>{
 	if(msg.text && !msg.isDirect && !IgnoredChannels.includes(msg.channel)){
 		storeMessage(msg);
 	}
+});
+
+Slack.onReact(async (msg)=>{
+	if (msg.item.type != 'message') return;
+	return await uploadToDatabase('reactions', {
+		ts : msg.ts,
+		emoji : msg.reaction,
+		user : {
+			id : msg.user_id,
+			name : msg.user,
+		},
+		channel : {
+			id : msg.channel_id,
+			name : msg.channel,
+		},
+		msg : {
+			channel_id : msg.item.channel,
+			ts : msg.item.ts,
+		},
+	});
 });
