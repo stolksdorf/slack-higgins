@@ -8,6 +8,8 @@ const S3 = require('../../utils/s3.js');
 const MIN = 60 * 1000;
 const BucketName = config.get('historybot.bucket_name');
 const IgnoredChannels = (config.get('historybot.ignored_channels', true) || '').split(',');
+const DatabaseToken = config.get('historybot.db_token');
+const DatabaseApiHost = config.get('historybot.db_host');
 const wait = async (n,val)=>new Promise((r)=>setTimeout(()=>r(val), n));
 
 let HistoryStorage = {};
@@ -15,12 +17,9 @@ let HistoryStorage = {};
 const getDate = (ts)=>datefns.format(new Date(ts*1000), 'YYYY-MM-DD H:mm:ss');
 
 const uploadToDatabase = (endpoint, payload)=>{
-	const HistoryDatabaseToken = config.get('historybot.db_token');
-	if (!HistoryDatabaseToken) return;
-
-	const host = config.get('historybot.db_host');
-	return request.post(`https://${host}/${endpoint}`)
-		.set('X-Verification-Token', HistoryDatabaseToken)
+	if (!DatabaseToken) return;
+	return request.post(`https://${DatabaseApiHost}/${endpoint}`)
+		.set('X-Verification-Token', DatabaseToken)
 		.send(payload)
 		.catch(console.error);
 };
