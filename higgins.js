@@ -35,7 +35,7 @@ try {
 
 Slack.bot.name = 'higgins';
 Slack.bot.icon = 'tophat';
-Slack.emitter.setMaxListeners(25);
+Slack.emitter.setMaxListeners(100);
 
 const loadCmds = require('./cmd.loader.js');
 const loadActions = require('./action.loader.js');
