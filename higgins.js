@@ -34,8 +34,8 @@ try {
 
 
 Slack.bot.name = 'higgins';
-Slack.bot.icon = 'tophet';
-Slack.emitter.setMaxListeners(25);
+Slack.bot.icon = 'tophat';
+Slack.emitter.setMaxListeners(100);
 
 const loadCmds = require('./cmd.loader.js');
 const loadActions = require('./action.loader.js');
@@ -59,16 +59,11 @@ app.get('/', (req, res)=>{
 });
 
 Slack.connect(config.get('slack_bot_token'))
-	.then(()=>{
-		Slack.socket.on('close', ()=>Slack.log('Slack socket connection closed.'));
-		Slack.socket.on('error', (error)=>Slack.error(`Slack socket error: ${error}`));
-	})
 	.then(()=>loadBots())
 	.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
 	.then(()=>loadActions('./actions')).then((actionRouter)=>app.use(actionRouter))
 	.then(()=>app.listen(process.env.PORT || 8000))
 	.then(()=>Slack.log('Rebooted!'))
-	.catch((err)=>{
-		console.log(err);
-		Slack.error(err)
-	});
+	.then(()=>Slack.onEvent('reconnect', ()=>Slack.log('Reconnected!')))
+	.then(()=>Slack.onError((err)=>Slack.error(`Slack socket error: ${err}`, err)))
+	.catch(Slack.error);
