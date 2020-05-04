@@ -1,10 +1,10 @@
 const Slack = require('pico-slack');
 
+const admins = ['scott', 'jared'];
 const commands = [];
 
-Slack.onMessage((msg)=>{
-	if(msg.channel != 'diagnostics') return;
-	if(msg.user != 'scott') return;
+Slack.onChannelMessage('diagnostics', (msg)=>{
+	if(!admins.includes(msg.user)) return;
 	console.log('onMessage commands:', commands);
 	commands.map((cmd)=>{
 		if(Slack.has(msg.text, cmd.keywords)) cmd.fn(msg);
