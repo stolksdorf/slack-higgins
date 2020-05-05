@@ -112,7 +112,7 @@ Slack.onMessage((msg)=>{
 	}
 
 	Slack.send(msg.channel, response, {
-        username:   'rollbot',
-        icon_emoji: ':game_die:'
-    });
+		username:   'rollbot',
+		icon_emoji: ':game_die:'
+	});
 });
