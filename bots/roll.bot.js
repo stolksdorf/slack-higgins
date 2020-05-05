@@ -111,5 +111,8 @@ Slack.onMessage((msg)=>{
 		response += `\n> ${JSON.stringify(res.rolls)}`;
 	}
 
-	Slack.msgAs('rollbot', ':game_die:', msg.channel, response);
+	Slack.send(msg.channel, response, {
+        username:   'rollbot',
+        icon_emoji: ':game_die:'
+    });
 });
