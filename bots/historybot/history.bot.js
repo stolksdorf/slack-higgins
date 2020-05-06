@@ -52,7 +52,6 @@ const saveChannel = async (channel)=>{
 const backupAll = async ()=>{
 	const channels = Object.keys(HistoryStorage);
 	if(!channels.length){
-		Slack.log('nothing to backup');
 		return;
 	}
 
