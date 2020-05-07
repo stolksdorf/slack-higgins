@@ -38,7 +38,7 @@ const debug = (...args)=>DEBUG && Slack.log(args.join(' '));
 const tallyMessage = (msg)=>{
 	const channelIgnored = _.indexOf(IGNORED_CHANNELS, msg.channel) > -1;
 	const messageIsWeird = msg.subtype || msg.hidden;
-	if(channelIgnored || messageIsWeird) {
+	if(channelIgnored || messageIsWeird || msg.isPrivate) {
 		return;
 	}
 	const channelKey = `${msg.channel_id}|${msg.channel}`;
