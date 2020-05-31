@@ -1,8 +1,20 @@
+/*
+Downloads our slack history from S3 and encodes it to markov mappings
+
+Usage:
+
+node markov.enocde.js --depth=8 --cache --upload
+
+*/
+
+
 const s3 = require('../../utils/s3.js');
 const request = require('superagent');
 const Markov = require('./markov.engine.js');
 const config = require('pico-conf');
 const fs = require('fs');
+
+const fse = require('fs-extra');
 
 
 const sequence = async (obj, fn)=>Object.keys(obj).reduce((a,key)=>a.then((r)=>fn(obj[key], key, r)), Promise.resolve());
@@ -10,16 +22,10 @@ const sequence = async (obj, fn)=>Object.keys(obj).reduce((a,key)=>a.then((r)=>f
 
 
 const exportPath = "C:/Users/scott/Desktop/coolsville-markov-mappings";
-const HistoryCache = "C:/Dropbox/root/Programming/Javascript/higgins/cache/history";
-const MappingCache = "C:/Dropbox/root/Programming/Javascript/higgins/cache/mappings";
+const HistoryCache = "C:/Users/scott/Desktop/cache/history/";
+const MappingCache = "C:/Users/scott/Desktop/cache/mappings/";
 
 const IgnoredChannels = ['support'];
-
-/*
---depth=8
---cache stores channels into cache
---upload uploads resutls to aws
-*/
 
 
 const getArgs = (processArr = process.argv.slice(2))=>{
@@ -49,8 +55,8 @@ const getChannel = async (channelname)=>{
 	const fp = HistoryCache + channelname;
 	if(fs.existsSync(fp)) return fs.promises.readFile(fp);
 	const channeldata = await s3.fetch(config.get('historybot:bucket_name'), channelname);
-	if(Args.cache) await fs.promises.writeFile(fp, channeldata);
-	return channeldata
+	if(Args.cache) await fse.outputFile(fp, channeldata);
+	return channeldata;
 }
 
 const getAllHistory = async ()=>{
@@ -109,12 +115,20 @@ const run = async (depth=8)=>{
 
 	await sequence(users, async (user)=>{
 		const mapping = makeMappingForUser(user, getAllTextByUser(channels, user), depth);
-		console.log(user, mapping.letters, mapping.messages);
+
 		if(mapping.messages > 150){
-			await fs.promises.writeFile(MappingCache + `/${user}.mapping${depth}.json`, JSON.stringify(mapping));
-			if(Args.upload){
-				await s3.upload(config.get('markov.bucket_name'), `${user}.mapping${depth}.json`, JSON.stringify(mapping));
+			console.log(user, 'total messages', mapping.messages);
+			if(Args.cache){
+				await fse.outputFile(MappingCache + `${user}.mapping${depth}.json`, JSON.stringify(mapping));
 			}
+
+			if(Args.upload){
+				console.time(`${user} uploaded!`);
+				await s3.upload(config.get('markov.bucket_name'), `${user}.mapping${depth}.json`, JSON.stringify(mapping));
+				console.timeEnd(`${user} uploaded!`);
+			}
+		}else{
+			console.log(user, 'total messages', mapping.messages, 'SKIPPING');
 		}
 	})
 	console.timeEnd('Finished');

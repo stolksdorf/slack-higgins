@@ -12,6 +12,7 @@ module.exports = {
 		rebabybay : 'rebaybay',
 		rebecca  : 'rebaybay',
 		sarah : 'sarahellen.w',
+		christie : 'christiefelker993'
 	},
 	icon :{
 		brockdusome : 'broccoli',
