@@ -25,6 +25,8 @@ const peeps = [
 	`Conrad`,
 	`Ross`,
 	`Ryan`,
+	'Christie',
+	'Sarah',
 ];
 
 const PeepOffset = 13; //So whatever date it is we land on the right person
