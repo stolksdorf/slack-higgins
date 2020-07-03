@@ -42,4 +42,7 @@ module.exports = {
 	minecraftbot : {
 		rcon_password : '',
 	},
+	happinessandcheerbot:{
+		peep_offset : 0
+	},
 };

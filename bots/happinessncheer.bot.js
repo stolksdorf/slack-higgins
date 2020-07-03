@@ -1,5 +1,6 @@
 const Slack = require('pico-slack');
 const cron = require('node-schedule');
+const config = require('pico-conf');
 const {differenceInCalendarDays} = require('date-fns');
 
 const peeps = [
@@ -29,7 +30,7 @@ const peeps = [
 	'Sarah',
 ];
 
-const PeepOffset = 5; //So whatever date it is we land on the right person
+const PeepOffset = Number(config.get('happinessandcheerbot:peep_offset')); //So whatever date it is we land on the right person
 
 const getSuggester = (offset=0) =>{
 	const now = new Date();
