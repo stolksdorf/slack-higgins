@@ -29,7 +29,7 @@ const peeps = [
 	'Sarah',
 ];
 
-const PeepOffset = 13; //So whatever date it is we land on the right person
+const PeepOffset = 5; //So whatever date it is we land on the right person
 
 const getSuggester = (offset=0) =>{
 	const now = new Date();
@@ -48,3 +48,5 @@ cron.scheduleJob(`0 9 * * *`, ()=>{
 	Slack.send('happiness-and-cheer', `Reminder: ${theChoosenOne} which theme will you bless us with today?`);
 });
 
+
+console.log(getSuggester(1))
