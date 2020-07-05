@@ -36,8 +36,9 @@ const PeepOffset = Number(config.get('happinessandcheerbot:peep_offset', true));
 const getSuggester = (offset=0) =>{
 	const now = new Date();
 	const yearStart = new Date(now.getFullYear(), 0, 0);
-	const delta = differenceInCalendarDays(now, yearStart)
-	return peeps[(delta + offset + PeepOffset) % peeps.length];
+	const delta = differenceInCalendarDays(now, yearStart);
+	const targetIdx = (delta + offset) % peeps.length
+	return peeps[(targetIdx + PeepOffset) % peeps.length];
 }
 
 cron.scheduleJob(`0 22 * * *`, ()=>{
@@ -50,4 +51,4 @@ cron.scheduleJob(`0 9 * * *`, ()=>{
 	Slack.send('happiness-and-cheer', `Reminder: ${theChoosenOne} which theme will you bless us with today?`);
 });
 
-//console.log(getSuggester(1))
+//console.log(getSuggester(0))
