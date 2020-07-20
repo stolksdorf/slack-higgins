@@ -29,7 +29,7 @@ const peeps = [
 	`christiefelker993`,
 	`sarahellen.w`,
 	`kclairebrown`,
-];
+].map(mention);
 
 const PeepOffset = Number(config.get('happinessandcheerbot:peep_offset', true)); //So whatever date it is we land on the right person
 
@@ -45,18 +45,18 @@ const mention = (user)=>{
 	const userId = Object.entries(Slack.users).reduce((acc, [id, name])=>{
 		return (name===user) ? id : acc;
 	}, null);
-	if (userId===null) return user;
+	if (!userId) return user;
 	return `<@${userId}>`;
 };
 
 cron.scheduleJob(`0 22 * * *`, ()=>{
 	const nextUp = getSuggester(1);
-	Slack.send('happiness-and-cheer', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+	Slack.send('happiness-and-cheer', `Reminder: ${nextUp} will be picking theme for tomorrow.`);
 });
 
 cron.scheduleJob(`0 9 * * *`, ()=>{
 	const theChoosenOne = getSuggester(0);
-	Slack.send('happiness-and-cheer', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+	Slack.send('happiness-and-cheer', `Reminder: ${theChoosenOne} which theme will you bless us with today?`);
 });
 
 //console.log(getSuggester(0))
