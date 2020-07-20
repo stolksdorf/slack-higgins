@@ -19,5 +19,6 @@ module.exports = {
 		slackbot : 'slack',
 		david : 'mariachi_dave',
 		'sarahellen.w' : 'sarah',
+		'christiefelker993' : 'christie',
 	},
 }
