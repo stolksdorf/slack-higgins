@@ -3,6 +3,14 @@ const cron = require('node-schedule');
 const config = require('../config');
 const {differenceInCalendarDays} = require('date-fns');
 
+const mention = (user)=>{
+	const userId = Object.entries(Slack.users).reduce((acc, [id, name])=>{
+		return (name===user) ? id : acc;
+	}, null);
+	if (!userId) return user;
+	return `<@${userId}>`;
+};
+
 const peeps = [
 	`rebaybay`,
 	`christian`,
@@ -39,14 +47,6 @@ const getSuggester = (offset=0) =>{
 	const delta = differenceInCalendarDays(now, yearStart);
 	const targetIdx = (delta + offset) % peeps.length
 	return peeps[(targetIdx + PeepOffset) % peeps.length];
-};
-
-const mention = (user)=>{
-	const userId = Object.entries(Slack.users).reduce((acc, [id, name])=>{
-		return (name===user) ? id : acc;
-	}, null);
-	if (!userId) return user;
-	return `<@${userId}>`;
 };
 
 cron.scheduleJob(`0 22 * * *`, ()=>{
