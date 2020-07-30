@@ -34,7 +34,7 @@ Slack.onMessage((msg)=>{
 				Slack.react(evt, times(options.length, (idx)=>emojis[idx]));
 			})
 	}
-	if(Slack.has(msg, ['poll', 'pollbot'], ['make', 'do', 'create', 'forget'])){
+	if(Slack.has(msg, ['poll', 'pollbot'], ['make', 'do', 'create', 'forget', 'help', 'how'])){
 		return Slack.send(msg.channel, getHelpMessage());
 	}
 });
