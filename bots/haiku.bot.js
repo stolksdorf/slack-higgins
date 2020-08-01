@@ -2,21 +2,42 @@ const config = require('pico-conf');
 const Slack = require('pico-slack').alias('haikubot', ':cherry_blossom:')
 const syllable = require('syllable');
 const Gist = require('pico-gist')(config.get('github_token'));
-
 const GistId = 'a6ceae1ba9192e372a6682d214665b56';
 
-const getSentences = (str)=>str.match(/([^\.!\?]+[\.!\?]+)|([^\.!\?]+$)/g);
+
+const isURL = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/;
+const isEmoji = /(:[\w]+:)/g
+
+
+const cleanSentence = (str)=>{
+	str = str.replace(isEmoji, '')
+	str = str.replace(isURL, 'null')
+	return str;
+}
+const getSyllableCount = (str)=>syllable(cleanSentence(str));
+
+
+const test = ()=>{
+	const test = `> Me? Raspberry bush.
+> Sweet, bright, and a wee bit wild
+> Also, I'm a https://www.youtube.com/watch?v=xPSJtzvSxEY :dave_dancing: :raspberry:`
+
+	console.log(test.split('\n').map(cleanSentence).map(syllable));
+	console.log(syllable(`hey there <@U0VKSFTB6>`))
+};
+
+
 
 let stored = {};
 const add = (sentence, channel)=>{
 	if(!stored[channel]) stored[channel] = [];
 
-	const syl = syllable(sentence);
+	const syllableCount = getSyllableCount(sentence);
 	const count = stored[channel].length;
 
-	if(syl == 7 && count == 1){
+	if(syllableCount == 7 && count == 1){
 		stored[channel].push(sentence);
-	}else if(syl == 5 && count == 2){
+	}else if(syllableCount == 5 && count == 2){
 		const res = stored[channel].concat(sentence);
 		stored[channel] = [];
 		return res;
@@ -24,13 +45,15 @@ const add = (sentence, channel)=>{
 		stored[channel] = [];
 	}
 
-	if(syl == 5 && stored[channel].length == 0){
+	if(syllableCount == 5 && stored[channel].length == 0){
 		stored[channel].push(sentence);
 	}
 };
 
+
+
 Slack.onMessage((msg)=>{
-	const sentences = msg.text.split('\n').map(getSentences).reduce((acc, t)=>acc.concat(t), []);
+	const sentences = msg.text.split('\n');
 	sentences.map((sentence)=>{
 		if(!sentence) return;
 		const haiku = add(sentence.trim(), msg.channel);
