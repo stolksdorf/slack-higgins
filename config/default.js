@@ -45,4 +45,8 @@ module.exports = {
 	happinessandcheerbot:{
 		peep_offset : 0
 	},
+	scott_todo_bot : {
+		bucket : 'stolksdorf-todo',
+		name : 'today.md'
+	}
 };
