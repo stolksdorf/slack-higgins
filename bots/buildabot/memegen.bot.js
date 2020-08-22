@@ -51,7 +51,7 @@ Slack.onMessage((evt)=>{
 				Slack.alias('memebot', 'robot_face').send(evt.channel, memeUrl)
 			})
 			.catch((err)=>{
-				Slack.send(evt.channel, 'Oops, something went wrong')
+				Slack.send(evt.channel, 'Oops, something went wrong\n' + err)
 			})
 	}
 });
