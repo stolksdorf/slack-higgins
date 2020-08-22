@@ -35,7 +35,7 @@ const getRandomCandyImage = async ()=>{
 
 
 Slack.onMessage((msg)=>{
-	if(Slack.has(msg, [`higgins`], ['candy', 'sweets', 'chocolate'])){
+	if(Slack.has(msg, [`higgins`, `@UOMT4MU5B`], ['candy', 'sweets', 'chocolate'])){
 
 		if(msg.user == 'christian'){
 

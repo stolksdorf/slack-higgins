@@ -31,7 +31,7 @@ const makeMeme = async (memeId, text0, text1)=>{
 };
 
 const getMemeId = (text)=>{
-	text = text.replace('memeit ', '');
+	//text = text.replace('memeit ', '');
 
 	//memeTemplates.filter(())
 
