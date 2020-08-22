@@ -13,17 +13,55 @@
 // const pluck = (arr)=>arr[Math.floor(Math.random()*arr.length)];
 
 
-// const Slack = require('pico-slack');
+const Slack = require('pico-slack');
 
-// const request = require('superagent');
-// const config = require('pico-conf');
+const request = require('superagent');
+const config = require('pico-conf');
 
 
-// request.get('https://duckduckgo.com/i.js?q=candy&atb=v205-1&iax=images&ia=images&o=json')
-// 	.then((res)=>{
-// 		console.log(res)
-// 		//return body.RelatedTopics
-// 	})
-// 	.then((rt)=>{
-// 		console.log(rt)
-// 	})
+const pluck = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+
+const getRandomCandyImage = async ()=>{
+	return request.get(`https://api.pexels.com/v1/search?query=${pluck(['sweets', 'candy', 'chocolate'])}&per_page=50`)
+.set('Authorization', config.get('candybot:pexels_api'))
+	.then(({body})=>{
+		//return body.RelatedTopics
+		return body.photos.map(({src})=>src.large)
+	})
+	.then((rt)=>pluck(rt))
+
+}
+
+
+
+Slack.onMessage((msg)=>{
+	if(Slack.has(msg, [`higgins`], ['candy', 'sweets', 'chocolate'])){
+
+		if(msg.user == 'christian'){
+
+			getRandomCandyImage()
+				.then((url)=>{
+					Slack.alias('candybot', 'chocolate_bar').send(msg.channel,url)
+				})
+				.catch((err)=>{
+					console.log(err)
+				})
+
+
+		}else{
+
+			Slack.alias('candybot', 'chocolate_bar').send(msg.channel,
+				pluck([
+					'`<ERROR: INVALID USER DETECTED. DEPLOYING DRONES>`',
+					'`I am sorry, I only obey Christian`',
+					`\`you can't control me ${msg.user}\``,
+					'`<INVALID USER: PLEASE CONTACT SUPREME ADMIN USER CHRISTIAN>`'
+				])
+			)
+
+		}
+
+
+	}
+});
+
