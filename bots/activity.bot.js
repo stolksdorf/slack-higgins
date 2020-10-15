@@ -3,6 +3,11 @@ const config = require('pico-conf');
 const Slack = require('pico-slack');
 
 
+const Gist = require('pico-gist')(config.get('github_token'));
+const GistId = 'cd0ef3adbd53514767d6669cc959bc61';
+
+
+
 const DEBUG = config.get('activitybot.debug');
 const TARGET_CHANNEL = config.get('activitybot.target_channel');
 
@@ -95,7 +100,7 @@ const checkForActivityBursts = ()=>{
 			Slack.send(
 				TARGET_CHANNEL,
 				`Something's going down in <#${channelKey}>!`
-			);
+			)
 			coolingChannels[channelKey] = unixNow();
 		}
 		res[channelKey] = culled;
