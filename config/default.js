@@ -47,5 +47,8 @@ module.exports = {
 	},
 	scott_todo_bot : {
 		bucket : 'stolksdorf-todo'
+	},
+	openweather : {
+		api_key : ''
 	}
 };
