@@ -18,9 +18,18 @@ const check = async ()=>{
 	const delta = pressure - KITCHENER_AVG_PRESSURE;
 
 	if(delta >= PRESSURE_DELTA_TRIGGER){
-		Slack.send('support', `Heads out Barometer Binches. The barometric pressure is currently ${delta} kPa over the average. If you are feeling off, it might be that.`);
+		Slack.send('support', `Heads up Barometer Binches. The barometric pressure is currently ${pressure} hPa which is ${delta} hPa over the average. If you are feeling off, it might be that.`);
 	}
-}
+};
+
+Slack.onMessage(async (msg)=>{
+	if(msg.mentionsBot && Slack.has(msg, ['pressure', 'barometric', 'barometer'])){
+		const pressure = await getPressure();
+		const delta = pressure - KITCHENER_AVG_PRESSURE;
+		Slack.send(msg.channel, `The barometric pressure is currently ${pressure} hPa which is ${delta>0?'+':'-'}${delta} hPa relative to the average.`);
+
+	}
+})
 
 cron.scheduleJob(`0 8 * * *`, check);  //Morning check
 cron.scheduleJob(`0 13 * * *`, check); //Afternoon check
