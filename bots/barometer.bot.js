@@ -15,6 +15,7 @@ const WEEK_THRESHOLD = 6;
 const DAY_THRESHOLD = 6;
 
 
+
 const getRealtimePressure = async ()=>{
 	return request.get(`https://api.openweathermap.org/data/2.5/weather?q=Kitchener&appid=${config.get('openweather.api_key')}`)
 		.then(({body})=>body.main.pressure)
@@ -35,6 +36,7 @@ const recordCurrentPressure = async ()=>{
 		}]
 	});
 };
+
 
 /////////////////////////////////////////////////
 
@@ -59,19 +61,19 @@ const getDayDelta = (pressures, currPressure)=>{
 const getWeekDelta = (pressures, currPressure)=>{
 	const avgPressure = (pressures)=>{
 		return pressures.reduce((acc, {pressure})=>{
-			return acc + pressure
+			return acc + Number(pressure)
 		}, 0) / pressures.length;
 	};
-	return currPressure - avgPressure(filterByDaysAgo(pressures, 4))
+	return currPressure - avgPressure(filterByDaysAgo(pressures, 7))
 };
 
 
-const msg = (currPressure, dayDelta, weekDelta)=>{
-	return `The barometric pressure is currently ${currPressure}hPa :wind_blowing_face:
+const genMsg = (currPressure, dayDelta, weekDelta)=>{
+	return `The barometric pressure is currently ${currPressure} hPa :wind_blowing_face:
 
-		:clock2: We're seeing a ${d(weekDelta)}hPa delta within the last 24hrs.
-		:calendar: The current pressure is ${d(dayDelta)}hPa relative to the weekly average.
-		:cityscape: ${d(currPressure - KITCHENER_AVG_PRESSURE)}hPa to Kitchener's yearly average.
+:clock2: We're seeing a ${d(weekDelta)} hPa delta within the last 24hrs.
+:calendar: The current pressure is ${d(dayDelta)} hPa relative to the weekly average.
+:cityscape: ${d(currPressure - KITCHENER_AVG_PRESSURE)} hPa to Kitchener's yearly average.
 	`
 }
 
@@ -81,7 +83,7 @@ const msg = (currPressure, dayDelta, weekDelta)=>{
 
 
 const check = ()=>{
-	const currPressure = getRealtimePressure()
+	const currPressure = getRealtimePressure();
 
 	const weekDelta = getWeekDelta(history, currPressure);
 	const dayDelta = getDayDelta(history, currPressure);
@@ -90,7 +92,7 @@ const check = ()=>{
 	if(Math.abs(dayDelta) < DAY_THRESHOLD) return;
 
 	Slack.send(CHANNEL, `* :warning: HEADS UP BAROMETER BINCHES :warning: *
-		${msg(currPressure, dayDelta, weekDelta)}
+		${genMsg(currPressure, dayDelta, weekDelta)}
 	`);
 };
 
@@ -103,7 +105,7 @@ Slack.onMessage(async (msg)=>{
 		const weekDelta = getWeekDelta(history, currPressure);
 		const dayDelta = getDayDelta(history, currPressure);
 
-		Slack.send(msg.channel, msg(currPressure, dayDelta, weekDelta));
+		Slack.send(msg.channel, genMsg(currPressure, dayDelta, weekDelta));
 	}
 });
 
