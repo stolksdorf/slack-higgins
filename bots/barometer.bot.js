@@ -3,7 +3,7 @@ const config = require('pico-conf');
 const request = require('superagent');
 const cron = require('node-schedule');
 
-const datefns = require('date-fns')
+const datefns = require('date-fns');
 
 const Gist = require('pico-gist')(config.get('github_token'));
 const GistId = 'da33c5e5a5b00c103ef11687458b47f8';
@@ -109,6 +109,7 @@ Slack.onMessage(async (msg)=>{
 	}
 });
 
+////////////////
 
 cron.scheduleJob(`0 8 * * *`, check);  //Morning check
 cron.scheduleJob(`0 13 * * *`, check); //Afternoon check
