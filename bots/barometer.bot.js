@@ -82,18 +82,26 @@ const genMsg = (currPressure, dayDelta, weekDelta)=>{
 
 
 
-const check = ()=>{
-	const currPressure = getRealtimePressure();
+const check = async ()=>{
+	try{
+		const currPressure = await getRealtimePressure();
+		const history = await getHistoricPressures();
 
-	const weekDelta = getWeekDelta(history, currPressure);
-	const dayDelta = getDayDelta(history, currPressure);
+		const weekDelta = getWeekDelta(history, currPressure);
+		const dayDelta = getDayDelta(history, currPressure);
 
-	if(Math.abs(weekDelta) < WEEK_THRESHOLD) return;
-	if(Math.abs(dayDelta) < DAY_THRESHOLD) return;
+		console.log(weekDelta, WEEK_THRESHOLD)
+		console.log(dayDelta, DAY_THRESHOLD)
 
-	Slack.send(CHANNEL, `* :warning: HEADS UP BAROMETER BINCHES :warning: *
-		${genMsg(currPressure, dayDelta, weekDelta)}
-	`);
+		if(Math.abs(weekDelta) < WEEK_THRESHOLD) return;
+		if(Math.abs(dayDelta) < DAY_THRESHOLD) return;
+
+		Slack.send(CHANNEL, `* :warning: HEADS UP BAROMETER BINCHES :warning: *
+			${genMsg(currPressure, dayDelta, weekDelta)}
+		`);
+	}catch(err){
+		console.log(err)
+	}
 };
 
 
@@ -106,6 +114,12 @@ Slack.onMessage(async (msg)=>{
 		const dayDelta = getDayDelta(history, currPressure);
 
 		Slack.send(msg.channel, genMsg(currPressure, dayDelta, weekDelta));
+	}
+
+	if(Slack.has(msg, 'test', 'pressure')){
+
+		check();
+
 	}
 });
 
