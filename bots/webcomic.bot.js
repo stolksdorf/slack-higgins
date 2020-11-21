@@ -29,7 +29,7 @@ Slack.onMessage(async (msg)=>{
 			Slack.send(msg.channel, 'Webcomic saved!');
 		}
 
-		if(Slack.has(msg, ['test', 'comic'])){
+		if(Slack.has(msg, 'test', 'comic')){
 			SendWebcomics();
 
 		}
