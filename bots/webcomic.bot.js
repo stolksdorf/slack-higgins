@@ -48,7 +48,7 @@ const SendWebcomics = async ()=>{
 			return Slack.send(CHANNEL, 'Sorry guys, no comics this week. Remember to submit comics by DMing higgins with `comic: [link]`.')
 		}
 
-		const list = sample(notShared, 1);
+		const list = sample(notShared, 3);
 		await Slack.send(CHANNEL, `Time for Sunday Morning Comics!`);
 		list.map((idx)=>{
 			webcomics[idx].shared = true;
