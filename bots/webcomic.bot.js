@@ -63,4 +63,4 @@ const SendWebcomics = async ()=>{
 
 
 //Sunday morning at 10am
-cron.scheduleJob(`0 10 * * * 7`, SendWebcomics);
+cron.scheduleJob(`0 10 * * 7`, SendWebcomics);
