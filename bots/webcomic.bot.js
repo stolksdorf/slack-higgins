@@ -15,7 +15,7 @@ const sample = (arr, count=1, r=new Set())=>{
 
 Slack.onMessage(async (msg)=>{
 	try{
-		if(msg.isDirect && msg.text.startsWith('comic:')){
+		if(msg.text.startsWith('comic:')){
 			const link = msg.text.split('comic:')[1].trim().replace('<', '').replace('>', '');
 
 			await Gist.append(GistId, {

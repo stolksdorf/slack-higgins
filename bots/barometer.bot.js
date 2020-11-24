@@ -96,8 +96,8 @@ const check = async ()=>{
 		if(Math.abs(weekDelta) < WEEK_THRESHOLD) return;
 		if(Math.abs(dayDelta) < DAY_THRESHOLD) return;
 
-		Slack.send(CHANNEL, `* :warning: HEADS UP BAROMETER BINCHES :warning: *
-			${genMsg(currPressure, dayDelta, weekDelta)}
+		Slack.send(CHANNEL, `:warning: *Heads Up Barometer Binches* :warning:
+${genMsg(currPressure, dayDelta, weekDelta)}
 		`);
 	}catch(err){
 		console.log(err)
@@ -125,11 +125,22 @@ Slack.onMessage(async (msg)=>{
 
 ////////////////
 
-cron.scheduleJob(`0 8 * * *`, check);  //Morning check
-cron.scheduleJob(`0 13 * * *`, check); //Afternoon check
-cron.scheduleJob(`0 18 * * *`, check); //Evening check
+cron.scheduleJob(`5 8 * * *`, check);  //Morning check
+cron.scheduleJob(`5 13 * * *`, check); //Afternoon check
+cron.scheduleJob(`5 18 * * *`, check); //Evening check
 
 
 cron.scheduleJob(`0 7 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 8 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 9 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 10 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 11 * * *`, recordCurrentPressure);
 cron.scheduleJob(`0 12 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 13 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 14 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 15 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 16 * * *`, recordCurrentPressure);
 cron.scheduleJob(`0 17 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 18 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 19 * * *`, recordCurrentPressure);
+cron.scheduleJob(`0 20 * * *`, recordCurrentPressure);
