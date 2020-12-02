@@ -55,13 +55,9 @@ const backupAll = async ()=>{
 		return;
 	}
 
-	Slack.log('Starting history backup...');
-
 	await channels.reduce((seq, channel)=>{
 		return seq.then(()=>saveChannel(channel)).then(()=>wait(500));
 	}, Promise.resolve());
-
-	Slack.log('Finished history backup:', channels.join(', '));
 };
 
 
