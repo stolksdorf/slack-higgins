@@ -18,6 +18,7 @@ const peeps = [
 	`lp`,
 	`scott`,
 	`rhenderson1993`,
+	`thomas`,
 	`tskoops`,
 	`david`,
 	`katie`,
