@@ -43,7 +43,7 @@ module.exports = {
 		rcon_password : '',
 	},
 	happinessandcheerbot:{
-		peep_offset : 0
+		//peep_offset : 0
 	},
 	scott_todo_bot : {
 		bucket : 'stolksdorf-todo'
