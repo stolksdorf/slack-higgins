@@ -31,6 +31,13 @@ const peeps = [
 	`kclairebrown`,
 ];
 
+
+const getSuggester = (offset=0, now=new Date()) =>{
+	const yearStart = new Date(now.getFullYear(), 0, 0);
+	const delta = differenceInCalendarDays(now, yearStart);
+	return peeps[(delta + offset) % peeps.length];
+};
+
 const calculateOffset = (targetPeep, targetDate)=>{
 	let offset = 0;
 	while(offset < peeps.length){
@@ -53,11 +60,6 @@ const mention = (user)=>{
 	return `<@${userId}>`;
 };
 
-const getSuggester = (offset=0, now=new Date()) =>{
-	const yearStart = new Date(now.getFullYear(), 0, 0);
-	const delta = differenceInCalendarDays(now, yearStart);
-	return peeps[(delta + offset) % peeps.length];
-};
 
 
 cron.scheduleJob(`0 22 * * *`, ()=>{

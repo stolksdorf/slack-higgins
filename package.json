@@ -22,7 +22,7 @@
     "slack"
   ],
   "engines": {
-    "node": "^9.6.0"
+    "node": "^15.0.0"
   },
   "author": "stolksdorf",
   "license": "MIT",
@@ -50,7 +50,7 @@
     "pico-conf": "^1.5.1",
     "pico-gist": "^1.0.1",
     "pico-redis": "^1.0.0",
-    "pico-slack": "^2.3.0",
+    "pico-slack": "^2.3.1",
     "pos": "^0.4.2",
     "rcon": "^1.0.3",
     "request": "^2.88.0",

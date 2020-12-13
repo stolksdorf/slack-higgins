@@ -6,7 +6,7 @@ app.use(bodyParser.json());
 const config = require('./config')
 
 const Slack = require('pico-slack');
-const BotLoader = require('pico-slack/bot-loader.js');
+const BotLoader = require('./bot.loader.js');
 
 const Redis = require('pico-redis');
 
@@ -43,7 +43,12 @@ const loadActions = require('./action.loader.js');
 
 const loadBots = async ()=>{
 	isRouter = (obj)=>obj && Object.getPrototypeOf(obj) == express.Router;
-	const bots = await BotLoader();
+	let bots;
+	try{
+		bots = await BotLoader();
+	}catch(err){
+		console.log(err)
+	}
 	return bots.map((bot)=>{
 		if(bot.error) return;
 		console.log('loaded bot ->', bot.name);
