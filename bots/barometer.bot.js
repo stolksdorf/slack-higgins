@@ -38,9 +38,6 @@ const recordCurrentPressure = async ()=>{
 };
 
 
-/////////////////////////////////////////////////
-
-
 const d = (val)=>`${val>0?'+':''}${val.toFixed(1)}`;
 
 
@@ -77,11 +74,6 @@ const genMsg = (currPressure, dayDelta, weekDelta)=>{
 	`
 }
 
-
-////////////////////
-
-
-
 const check = async ()=>{
 	try{
 		const currPressure = await getRealtimePressure();
@@ -89,9 +81,6 @@ const check = async ()=>{
 
 		const weekDelta = getWeekDelta(history, currPressure);
 		const dayDelta = getDayDelta(history, currPressure);
-
-		console.log(weekDelta, WEEK_THRESHOLD)
-		console.log(dayDelta, DAY_THRESHOLD)
 
 		if(Math.abs(weekDelta) < WEEK_THRESHOLD) return;
 		if(Math.abs(dayDelta) < DAY_THRESHOLD) return;
