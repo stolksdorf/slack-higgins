@@ -15,7 +15,7 @@ const WEEK_THRESHOLD = 6;
 const DAY_THRESHOLD = 6;
 
 let checkInMsgIds = new Set();
-const StatusReactions = ['relieved', 'sob'];
+const StatusReactions = ['relieved', 'persevere', 'sob'];
 
 
 const getRealtimePressure = async ()=>{
