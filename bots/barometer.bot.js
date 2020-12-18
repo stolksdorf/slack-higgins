@@ -14,6 +14,8 @@ const KITCHENER_AVG_PRESSURE = 1016;
 const WEEK_THRESHOLD = 6;
 const DAY_THRESHOLD = 6;
 
+let checkInMsgIds = new Set();
+const StatusReactions = ['relieved', 'sob'];
 
 
 const getRealtimePressure = async ()=>{
@@ -85,9 +87,9 @@ const check = async ()=>{
 		if(Math.abs(weekDelta) < WEEK_THRESHOLD) return;
 		if(Math.abs(dayDelta) < DAY_THRESHOLD) return;
 
-		Slack.send(CHANNEL, `:warning: *Heads Up Barometer Binches* :warning:
-${genMsg(currPressure, dayDelta, weekDelta)}
-		`);
+		const sentMsg = await Slack.send(CHANNEL, `:warning: *Heads Up Barometer Binches* :warning: \n${genMsg(currPressure, dayDelta, weekDelta)}`);
+		Slack.react(sentMsg, StatusReactions);
+		checkInMsgIds.add(sentMsg.ts);
 	}catch(err){
 		console.log(err)
 	}
@@ -102,15 +104,27 @@ Slack.onMessage(async (msg)=>{
 		const weekDelta = getWeekDelta(history, currPressure);
 		const dayDelta = getDayDelta(history, currPressure);
 
-		Slack.send(msg.channel, genMsg(currPressure, dayDelta, weekDelta));
+		const sentMsg = await Slack.send(msg.channel, genMsg(currPressure, dayDelta, weekDelta));
+		Slack.react(sentMsg, StatusReactions);
+		checkInMsgIds.add(sentMsg.ts);
 	}
 
 	if(Slack.has(msg, 'test', 'pressure')){
-
 		check();
-
 	}
 });
+
+Slack.onReact(async (evt)=>{
+	if(checkInMsgIds.has(evt.item.ts)){
+		await Gist.append(GistId, {
+			check_in : [{
+				user    : evt.user,
+				status  : evt.reaction,
+				ts      : (new Date()).toISOString()
+			}]
+		});
+	}
+})
 
 ////////////////
 
