@@ -49,7 +49,8 @@ const calculateOffset = (targetPeep, targetDate)=>{
 
 
 // REMINDER: Update this whenever you change the above list
-let PeepOffset = calculateOffset('thomas', new Date('2020-12-14T00:00:00'));
+//let PeepOffset = calculateOffset('thomas', new Date('2020-12-14T00:00:00'));
+let PeepOffset = calculateOffset('kclairebrown', new Date('2021-01-01T00:00:00'));
 
 
 const mention = (user)=>{
@@ -60,6 +61,19 @@ const mention = (user)=>{
 	return `<@${userId}>`;
 };
 
+
+Slack.onMessage((msg)=>{
+	if(msg.channel !== 'happiness-and-cheer') return;
+	if(!msg.mentionsBot) return;
+
+
+	if(Slack.has(msg.text, ['who', 'which'], ['up', 'theme'])){
+		const nextUp = getSuggester(PeepOffset + 1);
+		const theChoosenOne = getSuggester(PeepOffset);
+		Slack.send(msg.channel, `${mention(theChoosenOne)} is picking theme for today, and ${mention(nextUp)} will be picking for tomorrow.`)
+	}
+
+})
 
 
 cron.scheduleJob(`0 22 * * *`, ()=>{
