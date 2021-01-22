@@ -50,5 +50,8 @@ module.exports = {
 	},
 	openweather : {
 		api_key : ''
+	},
+	smmry: {
+		api_key : ''
 	}
 };
