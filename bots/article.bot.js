@@ -2,34 +2,35 @@ const Slack = require('pico-slack');
 const request = require('superagent');
 const config = require('pico-conf');
 
-
-const Gist = require('pico-gist')(config.get('github_token'));
-const GistId = '';
-
 const SMMRY_API_KEY = config.get('smmry:api_key');
 
+const Gist = require('pico-gist')(config.get('github_token'));
+const GistId = 'e7cb2ee49d7c2cadd12ced85bb4dc994';
 
-//https://www.youtube.com/watch?v=snHKEpCv0Hk
+const TriggerEmoji = 'memo';
+const Channels = new Set(['provoking-thoughts', 'politics-and-news']);
 
+const cleanUrl = (url)=>url.replace('<','').replace('>','').split('|')[0]
 
-const execAll = (rgx, str)=>{let m,r=[]; while (m=rgx.exec(str)){r.push(m[1]);}; return r;};
 const getUrls = (text)=>{
-	const regexURL = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/
-	return execAll(regexURL, text)
-		.filter((url)=>true) //Filter out common urls
+	const regexURL = /<(http[^>]*)>/g
+	return [...text.matchAll(regexURL)].map(x=>{
+		return cleanUrl(x[1])
+	});
 };
 
 const getSummary = async (url)=>{
+	url = cleanUrl(url)
+
 	try{
 		const res = await request.get(`https://api.smmry.com`)
 			.query({
-				//SM_LENGTH        : 7,
-				SM_KEYWORD_COUNT : 3,
+				SM_KEYWORD_COUNT : 5,
 				SM_API_KEY       : SMMRY_API_KEY,
 				SM_URL           : url,
 			});
 
-		console.log(res.body.sm_api_limitation);
+		Slack.log('smmry requests remaining: ', res.body.sm_api_limitation);
 		return {
 			title    : res.body.sm_api_title,
 			content  : res.body.sm_api_content,
@@ -38,81 +39,74 @@ const getSummary = async (url)=>{
 			url
 		}
 	}catch(err){
-
 		err = (err.response && err.response.body.sm_api_message) || err;
 		throw err;
-
-		//Slack.error(err);
-		console.log(err);
-		return false;
 	}
 };
 
 const createMessage = (summary, msg)=>{
-	let top = '';
-	if(msg) top =`_${msg.user} shared this in #${msg.channel} on ${(new Date()).toLocaleString()}\n\n`
+	let top = '', bottom='';
+	if(msg) top =`_${msg.user} shared this in #${msg.channel} on ${(new Date()).toLocaleString()}_\n\n`;
 
-	return `${top}*Title*: ${summary.title}
-		*Keywords*: ${summary.keywords.join(', ')}
-		*url*: ${summary.url}
+	return `${top}- *Title*: ${summary.title || `[Could Not Extract]`}
+- *Keywords*: ${summary.keywords.join(', ')}
+- *url*: ${summary.url}
 
-		${summary.content}`;
+*Summary*: ${summary.content}`;
 };
 
-const saveToGist = (msg)=>{
-
-}
-
-
-//getSummary('https://www.youtube.com/watch?v=snHKEpCv0Hk')
+const saveToGist = async (msg)=>{
+	await Gist.append(GistId, { articles : msg + '\n\n---\n\n' });
+};
 
 
-// console.clear()
-
-// getSummary(`https://emergencemagazine.org/story/the-serviceberry`)
-// 	.then((res)=>{
-// 		console.log('yo')
-// 		console.log(res)
-// 	})
-// 	.catch((err)=>{
-// 		console.log(err)
-// 	})
-
-//const addSummaryToThread = (msg, )
-
+let Cache = {};
 
 Slack.onMessage(async (msg)=>{
-
 	if(msg.text.startsWith('article:')){
 		const url = msg.text.replace('article:', '').trim();
-
 		try{
-			const summary = await getSummary(url, msg);
-
+			const summary = await getSummary(url);
 			const reply = createMessage(summary, msg);
-			Slack.send(msg.channel, reply);
+
+			Slack.send(msg.channel, reply
+				+ `\n\n_View the other summarized articles <https://gist.github.com/stolksdorf/${GistId}|here.>_`);
+
 			saveToGist(reply);
 		}catch(err){
-			return Slack.send(msg.channel, `Sorry I could not summarize that URL: ${err}`);
+			return Slack.send(msg.channel, `Sorry I could not summarize that URL: ${err.toLowerCase()}`);
+		}
+	}
+
+	if(Channels.has(msg.channel)){
+		const urls = getUrls(msg.text);
+		if(urls.length!==0){
+			Slack.react(msg, TriggerEmoji);
+			Cache[msg.ts] = {
+				user    : msg.user,
+				channel : msg.channel,
+				urls
+			};
 		}
 	}
 
 
 })
 
+Slack.onReact((evt)=>{
+	if(evt.reaction !== TriggerEmoji || !Cache[evt.item.ts]) return;
+	Cache[evt.item.ts].urls.map(async (url)=>{
+		try{
+			const summary = await getSummary(url);
+			const reply = createMessage(summary, Cache[evt.item.ts]);
 
-// If in special channel
-	// If msg has an url, react
+			Slack.thread(evt.item, reply
+				+ `\n\n_View the other summarized articles <https://gist.github.com/stolksdorf/${GistId}|here.>_`);
 
-// If starts with 'article:'
-	// cut out url - run function
-
-// if someone reacts with "writing"
-  // Look at root message and extract url
-
-/*
-function
-
-
-*/
-
+			saveToGist(reply);
+		}catch(err){
+			return Slack.thread(evt.item, `Sorry I could not summarize that URL: ${err.toLowerCase()}`);
+		}
+	});
+	delete Cache[evt.item.ts];
+})
