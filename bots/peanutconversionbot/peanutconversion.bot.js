@@ -1,42 +1,14 @@
-const _ = require('lodash')
 const Slack = require('pico-slack')
 
-const REGEX = /([\d,.]+)[ -_]*(?:lbs?|pounds?)(?!\w)/g
-const PEANUT_WEIGHT = { lb: 4, kg: 1.8 }
-
-
-const findMatches = (text) => {
-	return [...text.matchAll(regex)].map((_, weightString, units) => {
-		return {
-			weight: Number(weightString),
-			units,
-		}
-	})
-}
-
-
-const translateWeights = (matches) => {
-	const lines = _.map(weights, ({ weight, unit }) => {
-	})
-}
-
-
-const constructMessage = (lines) => {
-}
-
+const peanut = require('./peanutfunctions.js')
 
 const messageHandler = (msg) => {
-	const weights = findMatches(msg.text)
-	Slack.send(msg.channel, _.join(lines, '\n'))
+	const weights = peanut.findMatches(msg.text)
+	const convertedWeights = peanut.convertWeights(weights)
+	const outgoingMsg = fns.constructMessage(convertedWeights)
+	Slack.send(msg.channel, outgoingMsg)
 }
 
-
-Slack.onMessage(messageHandler)
-
-
-module.exports = {
-	messageHandler,
-	findMatches,
-	translateWeights,
-	constructMessage,
+module.exports = () => {
+	Slack.onMessage(messageHandler)
 }
