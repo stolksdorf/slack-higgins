@@ -19,7 +19,7 @@ const findWeights = (text) => {
 const convertWeights = (weights) => {
 	return weights.map(({ weight, units }) => {
 		return {
-			convertedWeight: weight / PEANUT_WEIGHT[units],
+			converted: weight / PEANUT_WEIGHT[units],
 			weight,
 			units,
 		}
@@ -27,8 +27,13 @@ const convertWeights = (weights) => {
 }
 
 
-const constructMessage = (weights) => {
+const constructMessage = (convertedWeights) => {
+	const lines = convertedWeights.map(({ weight, units, converted }) => {
+		return `${weight} ${units} is ${converted} :peanuts:`
+	}, '')
+	return lines.join('\n')
 }
+
 
 module.exports = {
 	findWeights,

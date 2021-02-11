@@ -79,7 +79,7 @@ test.group('`convertWeights()`', (test) => {
 		t.is(output, [{
 			weight: 12.6,
 			units: 'kg',
-			convertedWeight: 7,
+			converted: 7,
 		}])
 	})
 	test('pounds', (t) => {
@@ -90,7 +90,7 @@ test.group('`convertWeights()`', (test) => {
 		t.is(output, [{
 			weight: 140,
 			units: 'lb',
-			convertedWeight: 35,
+			converted: 35,
 		}])
 	})
 	test('nasty decimal', (t) => {
@@ -102,7 +102,30 @@ test.group('`convertWeights()`', (test) => {
 		t.is(output[0].weight, 4531.024)
 		t.is(output[0].units, 'kg')
 		// ¯\_(ツ)_/¯
-		t.is(Math.floor(output[0].convertedWeight), 2517)
+		t.is(Math.floor(output[0].converted), 2517)
+	})
+})
+
+
+test.group('`constructMessage()`', (test) => {
+	test('single', (t) => {
+		const convertedWeights = [{ weight: 4, units: 'lb', converted: 1 }]
+		const message = peanut.constructMessage(convertedWeights)
+		t.is(message, '4 lb is 1 :peanuts:')
+	})
+	test('multiline', (t) => {
+		const convertedWeights = [
+			{ weight: 4, units: 'lb', converted: 1 },
+			{ weight: 180, units: 'kg', converted: 10 },
+			{ weight: 25000, units: 'lb', converted: 6250 },
+		]
+		const message = peanut.constructMessage(convertedWeights)
+		t.is(
+			message,
+			'4 lb is 1 :peanuts:\n' +
+			'180 kg is 10 :peanuts:\n' +
+			'25000 lb is 6250 :peanuts:'
+		)
 	})
 })
 
