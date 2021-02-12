@@ -1,6 +1,8 @@
-const test = require('pico-check');
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
+const test = require('pico-check')
 
-const peanut = require('../peanutfunctions.js');
+const peanut = require('../peanutfunctions.js')
 
 
 test.group('`findWeights()`', (test) => {
@@ -126,6 +128,27 @@ test.group('`constructMessage()`', (test) => {
 			'180 kg is 10 :peanuts:\n' +
 			'25000 lb is 6250 :peanuts:'
 		)
+	})
+})
+
+
+test.group('bot main', (test) => {
+	const slackStub = {
+		send: sinon.spy(),
+		onMessage: sinon.spy(),
+	}
+	const pcb = proxyquire('../peanutconversion.bot.js', { 'pico-slack': slackStub })
+
+	test('`messageHandler()`', (t) => {
+		slackStub.send.resetHistory()
+		pcb.messageHandler({ channel: '#warriors', text: 'omg the elephant weighs 100 pounds' })
+		t.is(slackStub.send.calledOnceWithExactly('#warriors', '100 lb is 25 :peanuts:'), true)
+	})
+
+	test('`load()`', (t) => {
+		slackStub.onMessage.resetHistory()
+		pcb.load()
+		t.is(slackStub.onMessage.calledOnceWithExactly(pcb.messageHandler), true)
 	})
 })
 
