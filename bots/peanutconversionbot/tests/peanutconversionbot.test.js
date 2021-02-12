@@ -6,6 +6,23 @@ const peanut = require('../peanutfunctions.js')
 
 
 test.group('`findWeights()`', (test) => {
+	test.group('negatives', (test) => {
+		[
+			'8 ponds',
+			'ohai',
+			'that is 8 kilometers away',
+			'i mean, 8 kilometres',
+			'who needs more than 256 kilobytes of memory, anyway',
+			'roger, 8kga',
+			'the baker pounds the dough',
+		].map((input) => {
+			test(`input: ${input}`, (t) => {
+				const matches = peanut.findWeights(input)
+				t.is(matches.length, 0)
+			})
+		})
+	})
+
 	test.group('trivial', (test) => {
 		[
 			['8 lbs', 8, 'lb'],
@@ -73,6 +90,10 @@ test.group('`findWeights()`', (test) => {
 
 
 test.group('`convertWeights()`', (test) => {
+	test('empty', (t) => {
+		const output = peanut.convertWeights([])
+		t.is(output, [])
+	})
 	test('kilograms', (t) => {
 		const output = peanut.convertWeights([{
 			weight: 12.6,
@@ -110,6 +131,10 @@ test.group('`convertWeights()`', (test) => {
 
 
 test.group('`constructMessage()`', (test) => {
+	test('empty', (t) => {
+		const message = peanut.constructMessage([])
+		t.is(message, '')
+	})
 	test('single', (t) => {
 		const convertedWeights = [{ weight: 4, units: 'lb', converted: 1 }]
 		const message = peanut.constructMessage(convertedWeights)
@@ -139,10 +164,17 @@ test.group('bot main', (test) => {
 	}
 	const pcb = proxyquire('../peanutconversion.bot.js', { 'pico-slack': slackStub })
 
-	test('`messageHandler()`', (t) => {
-		slackStub.send.resetHistory()
-		pcb.messageHandler({ channel: '#warriors', text: 'omg the elephant weighs 100 pounds' })
-		t.is(slackStub.send.calledOnceWithExactly('#warriors', '100 lb is 25 :peanuts:'), true)
+	test.group('`messageHandler()`', (test) => {
+		test('no match', (t) => {
+			slackStub.send.resetHistory()
+			pcb.messageHandler({ channel: '#general', text: "this is just a regular ol' message" })
+			t.is(slackStub.send.notCalled, true)
+		})
+		test('match', (t) => {
+			slackStub.send.resetHistory()
+			pcb.messageHandler({ channel: '#warriors', text: 'omg the elephant weighs 100 pounds' })
+			t.is(slackStub.send.calledOnceWithExactly('#warriors', '100 lb is 25 :peanuts:'), true)
+		})
 	})
 
 	test('`load()`', (t) => {
