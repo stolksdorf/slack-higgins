@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 const REGEX = /([\d,.]+)[ -_]*(lb|pound|kg|kilo(?:gram)?)s?(?!\w)/g
 const PEANUT_WEIGHT = { lb: 4, kg: 1.8 }
 
@@ -10,7 +8,7 @@ const findWeights = (text) => {
 		// strip commas and spaces; does not work on european-style numbers
 		const strippedWeightString = weightString.replace(/[, ]/g, '')
 		const weight = Number(strippedWeightString)
-		if (_.isNaN(weight)) return null
+		if (isNaN(weight)) return null
 		return { weight, units }
 	}).filter(Boolean)
 }
