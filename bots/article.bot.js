@@ -8,7 +8,7 @@ const Gist = require('pico-gist')(config.get('github_token'));
 const GistId = 'e7cb2ee49d7c2cadd12ced85bb4dc994';
 
 const TriggerEmoji = 'memo';
-const Channels = new Set(['provoking-thoughts', 'politics-and-news']);
+const WatchingChannels = new Set(['provoking-thoughts', 'politics-and-news']);
 
 const cleanUrl = (url)=>url.replace('<','').replace('>','').split('|')[0]
 
@@ -63,7 +63,18 @@ const saveToGist = async (msg)=>{
 let Cache = {};
 
 Slack.onMessage(async (msg)=>{
-	if(msg.text.startsWith('article:')){
+
+	if(WatchingChannels.has(msg.channel)){
+		const urls = getUrls(msg.text);
+		if(urls.length!==0){
+			Slack.react(msg, TriggerEmoji);
+			Cache[msg.ts] = {
+				user    : msg.user,
+				channel : msg.channel,
+				urls
+			};
+		}
+	}else if(msg.text.startsWith('article:')){
 		const url = msg.text.replace('article:', '').trim();
 		try{
 			const summary = await getSummary(url);
@@ -77,21 +88,7 @@ Slack.onMessage(async (msg)=>{
 			return Slack.send(msg.channel, `Sorry I could not summarize that URL: ${err.toLowerCase()}`);
 		}
 	}
-
-	if(Channels.has(msg.channel)){
-		const urls = getUrls(msg.text);
-		if(urls.length!==0){
-			Slack.react(msg, TriggerEmoji);
-			Cache[msg.ts] = {
-				user    : msg.user,
-				channel : msg.channel,
-				urls
-			};
-		}
-	}
-
-
-})
+});
 
 Slack.onReact((evt)=>{
 	if(evt.reaction !== TriggerEmoji || !Cache[evt.item.ts]) return;
@@ -109,4 +106,4 @@ Slack.onReact((evt)=>{
 		}
 	});
 	delete Cache[evt.item.ts];
-})
+});

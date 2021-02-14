@@ -13,6 +13,25 @@ const sample = (arr, count=1, r=new Set())=>{
 };
 
 
+function shuffle(a) {
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[a[i], a[j]] = [a[j], a[i]];
+	}
+	return a;
+}
+
+const getComics = (arr, count=3)=>{
+	let result = [];
+	shuffle(Object.keys(arr)).map(idx=>{
+		if(arr[idx].shared == false || arr[idx].shared == 'false'){
+			result.push(idx)
+		}
+	})
+	return result.slice(0,count);
+}
+
+
 Slack.onMessage(async (msg)=>{
 	try{
 		if(msg.text.startsWith('comic:')){
@@ -42,15 +61,14 @@ Slack.onMessage(async (msg)=>{
 const SendWebcomics = async ()=>{
 	try{
 		let webcomics = await Gist.get(GistId).then(({webcomics})=>webcomics);
-		const notShared = webcomics.filter(({shared})=>!shared || shared==='false');
+		const comics = getComics(webcomics, 3);
 
-		if(notShared.length === 0){
+		if(comics.length === 0){
 			return Slack.send(CHANNEL, 'Sorry guys, no comics this week. Remember to submit comics by DMing higgins with `comic: [link]`.')
 		}
 
-		const list = sample(notShared, 3);
 		await Slack.send(CHANNEL, `Time for Sunday Morning Comics!`);
-		list.map((idx)=>{
+		comics.map((idx)=>{
 			webcomics[idx].shared = true;
 			Slack.send(CHANNEL, `Submitted by ${webcomics[idx].user}: ${webcomics[idx].link}`);
 		});
