@@ -2,7 +2,7 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const test = require('pico-check')
 
-const peanut = require('../peanutfunctions.js')
+const peanut = require('../logic.js')
 
 
 test.group('`findWeights()`', (test) => {
@@ -95,32 +95,21 @@ test.group('`convertWeights()`', (test) => {
 		t.is(output, [])
 	})
 	test('kilograms', (t) => {
-		const output = peanut.convertWeights([{
-			weight: 12.6,
-			units: 'kg',
-		}])
-		t.is(output, [{
-			weight: 12.6,
-			units: 'kg',
-			converted: 7,
-		}])
+		const output = peanut.convertWeights([
+			{ weight: 12.6, units: 'kg' },
+			{ weight: 180, units: 'kg' },
+		])
+		t.is(output, [
+			{ weight: 12.6, units: 'kg', converted: 7 },
+			{ weight: 180, units: 'kg', converted: 100 },
+		])
 	})
 	test('pounds', (t) => {
-		const output = peanut.convertWeights([{
-			weight: 140,
-			units: 'lb',
-		}])
-		t.is(output, [{
-			weight: 140,
-			units: 'lb',
-			converted: 35,
-		}])
+		const output = peanut.convertWeights([{ weight: 140, units: 'lb' }])
+		t.is(output, [{ weight: 140, units: 'lb', converted: 35 }])
 	})
 	test('nasty decimal', (t) => {
-		const output = peanut.convertWeights([{
-			weight: 4531.024,
-			units: 'kg',
-		}])
+		const output = peanut.convertWeights([{ weight: 4531.024, units: 'kg' }])
 		t.is(output.length, 1)
 		t.is(output[0].weight, 4531.024)
 		t.is(output[0].units, 'kg')
@@ -143,14 +132,14 @@ test.group('`constructMessage()`', (test) => {
 	test('multiline', (t) => {
 		const convertedWeights = [
 			{ weight: 4, units: 'lb', converted: 1 },
-			{ weight: 180, units: 'kg', converted: 10 },
+			{ weight: 180, units: 'kg', converted: 100 },
 			{ weight: 25000, units: 'lb', converted: 6250 },
 		]
 		const message = peanut.constructMessage(convertedWeights)
 		t.is(
 			message,
 			'4 lb is 1 :peanuts:\n' +
-			'180 kg is 10 :peanuts:\n' +
+			'180 kg is 100 :peanuts:\n' +
 			'25000 lb is 6250 :peanuts:'
 		)
 	})
@@ -174,10 +163,15 @@ test.group('bot main', (test) => {
 			pcb.messageHandler({ channel: '#general', text: "this is just a regular ol' message" })
 			t.is(slackStub.send.notCalled, true)
 		})
-		test('match', (t) => {
+		test('match (lb)', (t) => {
 			slackStub.send.resetHistory()
 			pcb.messageHandler({ channel: '#warriors', text: 'omg the elephant weighs 100 pounds' })
 			t.is(slackStub.send.calledOnceWithExactly('#warriors', '100 lb is 25 :peanuts:'), true)
+		})
+		test('match (kg)', (t) => {
+			slackStub.send.resetHistory()
+			pcb.messageHandler({ channel: '#warriors', text: 'omg the elephant weighs 180 kg' })
+			t.is(slackStub.send.calledOnceWithExactly('#warriors', '180 kg is 100 :peanuts:'), true)
 		})
 	})
 })

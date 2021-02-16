@@ -1,6 +1,6 @@
 const Slack = require('pico-slack')
 
-const peanut = require('./peanutfunctions.js')
+const peanut = require('./logic.js')
 
 const messageHandler = (msg) => {
 	const weights = peanut.findWeights(msg.text)
