@@ -41,6 +41,7 @@ test.group('`findWeights()`', (test) => {
 			['4 kilograms', 4, 'kg'],
 			['4 kilos', 4, 'kg'],
 			[' 4 kilos\t', 4, 'kg'],
+			['(4 kilos)', 4, 'kg'],
 			['0 lbs', 0, 'lb'],
 		].map(([input, expectedWeight, expectedUnits]) => {
 			test(`input: '${input}'`, (t) => {
