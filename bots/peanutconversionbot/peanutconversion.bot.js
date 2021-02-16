@@ -10,9 +10,6 @@ const messageHandler = (msg) => {
 	Slack.send(msg.channel, outgoingMsg)
 }
 
-module.exports = {
-	messageHandler,
-	load: () => {
-		Slack.onMessage(messageHandler)
-	}
-}
+Slack.onMessage(messageHandler)
+
+module.exports = { messageHandler }

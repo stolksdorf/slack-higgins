@@ -25,13 +25,8 @@ const loadBots = async (opts={})=>{
 			};
 			try {
 				bot.result = require(bot.path);
-				if(typeof bot.result === 'object'){
-					if(Object.keys(bot.result).length === 0){
-						delete bot.result;
-					} else if('load' in bot.result){
-						// if the bot module exports a loader function, run it
-						bot.result.load()
-					}
+				if(typeof bot.result === 'object' && Object.keys(bot.result).length === 0){
+					delete bot.result;
 				}
 			} catch (err){
 				Slack.error(err);

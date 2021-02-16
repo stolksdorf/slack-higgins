@@ -164,6 +164,10 @@ test.group('bot main', (test) => {
 	}
 	const pcb = proxyquire('../peanutconversion.bot.js', { 'pico-slack': slackStub })
 
+	test('attaches Slack message listener on require', (t) => {
+		t.is(slackStub.onMessage.calledOnce, true)
+	})
+
 	test.group('`messageHandler()`', (test) => {
 		test('no match', (t) => {
 			slackStub.send.resetHistory()
@@ -175,12 +179,6 @@ test.group('bot main', (test) => {
 			pcb.messageHandler({ channel: '#warriors', text: 'omg the elephant weighs 100 pounds' })
 			t.is(slackStub.send.calledOnceWithExactly('#warriors', '100 lb is 25 :peanuts:'), true)
 		})
-	})
-
-	test('`load()`', (t) => {
-		slackStub.onMessage.resetHistory()
-		pcb.load()
-		t.is(slackStub.onMessage.calledOnceWithExactly(pcb.messageHandler), true)
 	})
 })
 
