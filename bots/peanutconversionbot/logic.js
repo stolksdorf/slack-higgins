@@ -1,4 +1,4 @@
-const REGEX = /([\d,.]+)[ -_]*(lb|pound|kg|kilo(?:gram)?)s?(?!\w)/g
+const REGEX = /([\d,.]+)[ \-_]*(lb|pound|kg|kilo(?:gram)?)s?(?!\w)/g
 const PEANUT_WEIGHT = { lb: 4, kg: 1.8 }
 
 
