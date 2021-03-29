@@ -15,6 +15,7 @@ test.group('`findWeights()`', (test) => {
 			'who needs more than 256 kilobytes of memory, anyway',
 			'roger, 8kga',
 			'the baker pounds the dough',
+			'https://open.spotify.com/track/6XXNno2uNgLTt6YeM6hBBc?si=XEjvsf88TZahYDhbWF6Qkg',
 		].map((input) => {
 			test(`input: ${input}`, (t) => {
 				const matches = peanut.findWeights(input)
@@ -31,7 +32,7 @@ test.group('`findWeights()`', (test) => {
 			['8 pounds', 8, 'lb'],
 			['8-pound', 8, 'lb'],
 			['8 pound', 8, 'lb'],
-			['8 pounds', 8, 'lb'],
+			['8pounds', 8, 'lb'],
 			['4 kg', 4, 'kg'],
 			['4kg', 4, 'kg'],
 			['4 kgs', 4, 'kg'],
@@ -40,6 +41,7 @@ test.group('`findWeights()`', (test) => {
 			['4-kilogram', 4, 'kg'],
 			['4 kilograms', 4, 'kg'],
 			['4 kilos', 4, 'kg'],
+			['4kilos', 4, 'kg'],
 			[' 4 kilos\t', 4, 'kg'],
 			['(4 kilos)', 4, 'kg'],
 			['0 lbs', 0, 'lb'],
@@ -76,15 +78,15 @@ test.group('`findWeights()`', (test) => {
 			did you hear about the 10,000-lb ant?
 			no, but i did hear about a 4.9kg steak
 			well the ant weighs a lot more - 4,531.024 kilos more!
-			this is a crazy european number: 4 000 000,00 pounds sterling (ignored)
-			here's another one: 4.000.000,00 pounds sterling
+			this is a crazy european number: 4 000 000,05 pounds sterling (reads incorrectly but meh)
+			here's another one: 4.000.000,04 pounds sterling (ignored)
 		`)
 
 		t.is(matches, [
 			{ weight: 10000, units: 'lb' },
 			{ weight: 4.9, units: 'kg' },
 			{ weight: 4531.024, units: 'kg' },
-			{ weight: 4, units: 'lb' },
+			{ weight: 5, units: 'lb' },
 		])
 	})
 })
