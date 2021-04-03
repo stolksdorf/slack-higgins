@@ -21,6 +21,7 @@ const peeps = [
 	`chris`,
 	`simon`,
 	`carlygrayy`,
+	`jogadora.calenso`,
 	`jared`,
 	`mark`,
 	`jenny`,
@@ -50,7 +51,9 @@ const calculateOffset = (targetPeep, targetDate)=>{
 
 // REMINDER: Update this whenever you change the above list
 //let PeepOffset = calculateOffset('thomas', new Date('2020-12-14T00:00:00'));
-let PeepOffset = calculateOffset('kclairebrown', new Date('2021-01-01T00:00:00'));
+//let PeepOffset = calculateOffset('kclairebrown', new Date('2021-01-01T00:00:00'));
+let PeepOffset = calculateOffset('carlygrayy', new Date('2021-04-03T00:00:00'));
+
 
 
 const mention = (user)=>{
