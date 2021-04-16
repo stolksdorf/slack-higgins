@@ -10,6 +10,7 @@
     "test": "pico-check",
     "test:dev": "pico-check -w -b",
     "dev": "nodemon --verbose --delay 1 higgins.js",
+    "sandbox": "nodemon sandbox.js",
     "logs": "heroku logs -t --app=slack-higgins",
     "heroku": "start https://dashboard.heroku.com/apps/slack-higgins",
     "s3": "start https://s3.console.aws.amazon.com/s3/buckets/coolsville-markov"
