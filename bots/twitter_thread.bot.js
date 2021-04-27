@@ -1,5 +1,5 @@
 const Slack = require('pico-slack');
-const twitterRegex = (str)=>(/https:\/\/(mobile\.)?twitter\.com\/[a-z_0-9]+\/status\/(\d+)/.exec(str) || [])[2];
+const twitterRegex = (str)=>(/https:\/\/(mobile\.)?twitter\.com\/\w+\/status\/(\d+)/.exec(str) || [])[2];
 
 let Cache = {};
 
