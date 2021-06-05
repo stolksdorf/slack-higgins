@@ -17,7 +17,6 @@ const peeps = [
 	`meggeroni`,
 	`gleaver`,
 	`kellen`,
-	`cathleen`,
 	`chris`,
 	`simon`,
 	`carlygrayy`,
@@ -49,10 +48,11 @@ const calculateOffset = (targetPeep, targetDate)=>{
 };
 
 
-// REMINDER: Update this whenever you change the above list
+// REMINDER: Update this whenever you change the above list. Update to _what_ you might ask?? 🤷‍♂️ https://tenor.com/Hy99.gif
 //let PeepOffset = calculateOffset('thomas', new Date('2020-12-14T00:00:00'));
 //let PeepOffset = calculateOffset('kclairebrown', new Date('2021-01-01T00:00:00'));
-let PeepOffset = calculateOffset('carlygrayy', new Date('2021-04-03T00:00:00'));
+//let PeepOffset = calculateOffset('carlygrayy', new Date('2021-04-03T00:00:00'));
+let PeepOffset = calculateOffset('christian', new Date('2021-06-05T00:00:00'));
 
 
 
