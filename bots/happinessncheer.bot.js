@@ -4,31 +4,31 @@ const {differenceInCalendarDays} = require('date-fns');
 
 
 const peeps = [
-	`rebaybay`,
-	`christian`,
-	`evelyn`,
-	`lp`,
-	`scott`,
-	`rhenderson1993`,
-	`thomas`,
-	`tskoops`,
-	`david`,
-	`katie`,
-	`meggeroni`,
-	`gleaver`,
-	`kellen`,
-	`chris`,
-	`simon`,
-	`carlygrayy`,
-	`jogadora.calenso`,
-	`jared`,
-	`mark`,
 	`jenny`,
-	`ryan`,
-	`ross`,
-	`christiefelker993`,
 	`sarahellen.w`,
+	`scott`,
+	`jogadora.calenso`,
+	`tskoops`,
+	`ross`,
+	`meggeroni`,
+	`chris`,
+	`evelyn`,
+	`david`,
+	`mark`,
+	`rebaybay`,
+	`simon`,
+	`jared`,
+	`christiefelker993`,
+	`katie`,
+	`rhenderson1993`,
+	`gleaver`,
+	`christian`,
+	`kellen`,
+	`carlygrayy`,
+	`ryan`,
+	`thomas`,
 	`kclairebrown`,
+	`lp`,
 ];
 
 
@@ -48,11 +48,10 @@ const calculateOffset = (targetPeep, targetDate)=>{
 };
 
 
-// REMINDER: Update this whenever you change the above list. Update to _what_ you might ask?? 🤷‍♂️ https://tenor.com/Hy99.gif
+// REMINDER: Update this whenever you change the above list
 //let PeepOffset = calculateOffset('thomas', new Date('2020-12-14T00:00:00'));
 //let PeepOffset = calculateOffset('kclairebrown', new Date('2021-01-01T00:00:00'));
-//let PeepOffset = calculateOffset('carlygrayy', new Date('2021-04-03T00:00:00'));
-let PeepOffset = calculateOffset('christian', new Date('2021-06-05T00:00:00'));
+let PeepOffset = calculateOffset('carlygrayy', new Date('2021-04-03T00:00:00'));
 
 
 
@@ -79,12 +78,32 @@ Slack.onMessage((msg)=>{
 })
 
 
-cron.scheduleJob(`0 22 * * *`, ()=>{
-	const nextUp = getSuggester(PeepOffset + 1);
-	Slack.send('happiness-and-cheer', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
-});
+// cron.scheduleJob(`0 22 * * *`, ()=>{
+// 	const nextUp = getSuggester(PeepOffset + 1);
+// 	Slack.send('happiness-and-cheer', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+// });
 
-cron.scheduleJob(`0 9 * * *`, ()=>{
-	const theChoosenOne = getSuggester(PeepOffset);
-	Slack.send('happiness-and-cheer', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
-});
+// cron.scheduleJob(`0 9 * * *`, ()=>{
+// 	const theChoosenOne = getSuggester(PeepOffset);
+// 	Slack.send('happiness-and-cheer', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+// });
+
+
+//Monday
+[1,3,5].map(day=>{
+
+	cron.scheduleJob(`0 22 * * * ${day-1}`, ()=>{
+		const nextUp = getSuggester(PeepOffset + 1);
+		Slack.send(nextUp, `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+
+		Slack.send('scott', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+	});
+
+	cron.scheduleJob(`0 9 * * * ${day}`, ()=>{
+		const theChoosenOne = getSuggester(PeepOffset);
+		Slack.send(theChoosenOne, `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+
+		Slack.send('scott', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+	});
+
+})
