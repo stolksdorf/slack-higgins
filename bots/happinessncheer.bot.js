@@ -75,7 +75,7 @@ Slack.onMessage((msg)=>{
 		Slack.send(msg.channel, `${mention(theChoosenOne)} is picking theme for today, and ${mention(nextUp)} will be picking for tomorrow.`)
 	}
 
-})
+});
 
 
 // cron.scheduleJob(`0 22 * * *`, ()=>{
@@ -89,14 +89,16 @@ Slack.onMessage((msg)=>{
 // });
 
 
-//Monday
-[1,3,5].map(day=>{
-
+//Monday, Wednesday, Friday
+//[1,3,5]
+[1,2,3,4,5,6,7].map(day=>{
 	cron.scheduleJob(`0 22 * * * ${day-1}`, ()=>{
 		const nextUp = getSuggester(PeepOffset + 1);
 		Slack.send(nextUp, `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
 
 		Slack.send('scott', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+
+		Slack.log('reminder fire');
 	});
 
 	cron.scheduleJob(`0 9 * * * ${day}`, ()=>{
@@ -104,6 +106,8 @@ Slack.onMessage((msg)=>{
 		Slack.send(theChoosenOne, `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
 
 		Slack.send('scott', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+
+		Slack.log('fire');
 	});
 
 })
