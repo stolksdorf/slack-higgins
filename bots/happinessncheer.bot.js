@@ -104,30 +104,30 @@ const Days= {
 };
 
 
-[
-	Days.Mon,
-	Days.Tue,
-	Days.Wed,
-	Days.Thu,
-	Days.Fri,
-	Days.Sat,
-	Days.Sun
-].map(day=>{
+// [
+// 	Days.Mon,
+// 	Days.Tue,
+// 	Days.Wed,
+// 	Days.Thu,
+// 	Days.Fri,
+// 	Days.Sat,
+// 	Days.Sun
+// ].map(day=>{
 
-	cron.scheduleJob({hour: 22, dayOfWeek: day-1}, ()=>{
-		const nextUp = getSuggester(PeepOffset + 1);
-		Slack.send(nextUp, `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+// 	cron.scheduleJob({hour: 22, dayOfWeek: day-1}, ()=>{
+// 		const nextUp = getSuggester(PeepOffset + 1);
+// 		Slack.send(nextUp, `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
 
-		Slack.send('scott', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
-		Slack.log('reminder fire');
-	});
+// 		Slack.send('scott', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+// 		Slack.log('reminder fire');
+// 	});
 
 
-	cron.scheduleJob({hour: 9, dayOfWeek: day}, ()=>{
-		const theChoosenOne = getSuggester(PeepOffset);
-		Slack.send(theChoosenOne, `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+// 	cron.scheduleJob({hour: 9, dayOfWeek: day}, ()=>{
+// 		const theChoosenOne = getSuggester(PeepOffset);
+// 		Slack.send(theChoosenOne, `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
 
-		Slack.send('scott', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
-		Slack.log('fire');
-	});
-})
+// 		Slack.send('scott', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+// 		Slack.log('fire');
+// 	});
+// })
