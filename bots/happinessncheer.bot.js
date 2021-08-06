@@ -118,7 +118,7 @@ const Days= {
 		const nextUp = getSuggester(PeepOffset + 1);
 		Slack.send(nextUp, `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
 
-		Slack.send('scott', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
+		//Slack.send('scott', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
 		Slack.log('reminder fire');
 	});
 
@@ -127,7 +127,7 @@ const Days= {
 		const theChoosenOne = getSuggester(PeepOffset);
 		Slack.send(theChoosenOne, `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
 
-		Slack.send('scott', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+		//Slack.send('scott', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
 		Slack.log('fire');
 	});
 })
