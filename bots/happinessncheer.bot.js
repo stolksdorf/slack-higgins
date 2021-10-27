@@ -23,137 +23,101 @@ Ideas:
 
 */
 
+const Days= { Mon : 1, Tue : 2, Wed : 3, Thu : 4, Fri : 5, Sat : 6, Sun : 7 };
+
+const pluck = (arr)=>arr[Math.floor(Math.random()*arr.length)];
 
 const Slack = require('pico-slack');
 const cron = require('node-schedule');
-const {differenceInCalendarDays} = require('date-fns');
 
+const DelegateEmoji = 'no_good'
 
-const peeps = [
-	`jenny`,
-	`sarahellen.w`,
-	`scott`,
-	`jogadora.calenso`,
-	`tskoops`,
-	`ross`,
-	`meggeroni`,
-	`chris`,
-	`evelyn`,
-	`david`,
-	`mark`,
-	`rebaybay`,
-	`simon`,
-	`jared`,
-	`christiefelker993`,
-	`katie`,
-	`rhenderson1993`,
-	`gleaver`,
-	`christian`,
-	`kellen`,
-	`carlygrayy`,
-	`ryan`,
-	`thomas`,
-	`kclairebrown`,
-	`lp`,
+const Peeps = [
+	{ name: `jenny`, public: false },
+	{ name: `sarahellen.w`, public: false },
+	{ name: `scott`, public: true },
+	{ name: `jogadora.calenso`, public: false },
+	{ name: `tskoops`, public: false },
+	{ name: `ross`, public: false },
+	{ name: `meggeroni`, public: false },
+	{ name: `chris`, public: false },
+	{ name: `evelyn`, public: false },
+	{ name: `david`, public: false },
+	{ name: `mark`, public: false },
+	{ name: `rebaybay`, public: false },
+	{ name: `simon`, public: false },
+	{ name: `jared`, public: false },
+	{ name: `christiefelker993`, public: false },
+	{ name: `katie`, public: false },
+	{ name: `rhenderson1993`, public: false },
+	{ name: `gleaver`, public: false },
+	{ name: `christian`, public: false },
+	{ name: `kellen`, public: false },
+	{ name: `carlygrayy`, public: false },
+	{ name: `ryan`, public: false },
+	{ name: `thomas`, public: false },
+	{ name: `kclairebrown`, public: false },
+	{ name: `lp`, public: false },
 ];
 
 
-const getSuggester = (offset=0, now=new Date()) =>{
-	const yearStart = new Date(now.getFullYear(), 0, 0);
-	const delta = differenceInCalendarDays(now, yearStart);
-	return peeps[(delta + offset) % peeps.length];
-};
 
-const calculateOffset = (targetPeep, targetDate)=>{
-	let offset = 0;
-	while(offset < peeps.length){
-		if(targetPeep == getSuggester(offset, targetDate)) break;
-		offset+=1;
-	}
-	return offset;
-};
+// const mention = (user)=>{
+// 	const userId = Object.entries(Slack.users).reduce((acc, [id, name])=>{
+// 		return (name===user) ? id : acc;
+// 	}, null);
+// 	if (!userId) return user;
+// 	return `<@${userId}>`;
+// };
 
 
-// REMINDER: Update this whenever you change the above list
-//let PeepOffset = calculateOffset('thomas', new Date('2020-12-14T00:00:00'));
-//let PeepOffset = calculateOffset('kclairebrown', new Date('2021-01-01T00:00:00'));
-let PeepOffset = calculateOffset('carlygrayy', new Date('2021-04-03T00:00:00'));
-
-
-
-const mention = (user)=>{
-	const userId = Object.entries(Slack.users).reduce((acc, [id, name])=>{
-		return (name===user) ? id : acc;
-	}, null);
-	if (!userId) return user;
-	return `<@${userId}>`;
-};
-
-
-Slack.onMessage((msg)=>{
-	if(msg.channel !== 'happiness-and-cheer') return;
-	if(!msg.mentionsBot) return;
-
-
-	if(Slack.has(msg.text, ['who', 'which'], ['up', 'theme'])){
-		const nextUp = getSuggester(PeepOffset + 1);
-		const theChoosenOne = getSuggester(PeepOffset);
-		Slack.send(msg.channel, `${mention(theChoosenOne)} is picking theme for today, and ${mention(nextUp)} will be picking for tomorrow.`)
-	}
-
-});
-
-
-// cron.scheduleJob(`0 22 * * *`, ()=>{
-// 	const nextUp = getSuggester(PeepOffset + 1);
-// 	Slack.send('happiness-and-cheer', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
-// });
-
-// cron.scheduleJob(`0 9 * * *`, ()=>{
-// 	const theChoosenOne = getSuggester(PeepOffset);
-// 	Slack.send('happiness-and-cheer', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
+// Slack.onMessage((msg)=>{
+// 	if(msg.channel !== 'happiness-and-cheer') return;
+// 	if(!msg.mentionsBot) return;
 // });
 
 
-//Monday, Wednesday, Friday
-//[1,3,5]
+let delegateEvt, lastPeep;
+Slack.onReact((evt)=>{
+	if(evt.reaction == DelegateEmoji && evt.item.ts == delegateEvt.ts){
+		Slack.log(`${lastPeep} has delegated`);
+		Slack.send(lastPeep, `You got it! Delegating to someone else.`)
+		sendReminder();
+	}
+})
 
-const Days= {
-	//Sun : 0,
-	Mon : 1,
-	Tue : 2,
-	Wed : 3,
-	Thu : 4,
-	Fri : 5,
-	Sat : 6,
-	Sun : 7
-};
+const sendReminder = async (peep=pluck(Peeps))=>{
+	lastPeep = peep.name;
+	Slack.log(`Sent H&C reminder to ${lastPeep}`);
+	delegateEvt = await Slack.send(peep.name, `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
+	Slack.react(delegateEvt, DelegateEmoji);
+}
 
 
 [
 	Days.Mon,
-	Days.Tue,
+	//Days.Tue,
 	Days.Wed,
-	Days.Thu,
+	//Days.Thu,
 	Days.Fri,
-	Days.Sat,
-	Days.Sun
+	//Days.Sat,
+	//Days.Sun
 ].map(day=>{
-
-	cron.scheduleJob({hour: 22, minute : 16, dayOfWeek: day-1}, ()=>{
-		const nextUp = getSuggester(PeepOffset + 1);
-		Slack.send(nextUp, `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
-
-		//Slack.send('scott', `Reminder: ${mention(nextUp)} will be picking theme for tomorrow.`);
-		Slack.log('reminder fire');
-	});
-
-
 	cron.scheduleJob({hour: 8, minute : 4, dayOfWeek: day}, ()=>{
-		const theChoosenOne = getSuggester(PeepOffset);
-		Slack.send(theChoosenOne, `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
-
-		//Slack.send('scott', `Reminder: ${mention(theChoosenOne)} which theme will you bless us with today?`);
-		Slack.log('fire');
+		sendReminder();
 	});
 })
+
+
+
+/** Testing **/
+Slack.onMessage((msg)=>{
+	if(msg.isDirect && msg.text == 'hc_ping'){
+		Peeps.map(peep=>{
+			Slack.send(peep.name, `This is a test message to ensure that direct message for happiness and cheer are working. Please let Scott know you've received this`);
+		})
+	}
+	if(msg.isDirect && msg.text == 'hc_trigger'){
+		sendReminder({ name: 'scott' })
+	}
+});
