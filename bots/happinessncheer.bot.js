@@ -1,3 +1,29 @@
+/*
+Ideas:
+
+- Add option to be called out publicly or privately
+- Turn user list into a more robust object
+	- public or private notifcations
+	- backup crew
+	- nicknames?
+
+
+- Store user list on a gist, remembers when it has triggered for each person
+-
+
+
+- Add a delegate emoji trigger: randomly assigns theme to another person
+
+- Add emoji trigger to record current theme to a gist
+	- Should use whoever says "theme" in happiness-and-cheer
+
+
+- Add test to send a test message out to each person with their settings
+
+
+*/
+
+
 const Slack = require('pico-slack');
 const cron = require('node-schedule');
 const {differenceInCalendarDays} = require('date-fns');
