@@ -61,7 +61,7 @@ const Peeps = [
 ];
 
 
-const getId = (target_name)=>(Object.entries(Slack.users).find(([id, name])=>target_name == name)||[])[0];
+const getId = (target_name)=>(Object.entries(Slack.dms).find(([name, id])=>target_name == name)||[])[1];
 
 
 // const mention = (user)=>{
@@ -78,6 +78,8 @@ const getId = (target_name)=>(Object.entries(Slack.users).find(([id, name])=>tar
 // 	if(!msg.mentionsBot) return;
 // });
 
+
+Slack.log(JSON.stringify(Slack.dms, null, '  '));
 
 let delegateEvt, lastPeep;
 Slack.onReact((evt)=>{
