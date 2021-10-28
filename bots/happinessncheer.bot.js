@@ -61,6 +61,8 @@ const Peeps = [
 ];
 
 
+const getId = (target_name)=>(Object.entries(Slack.users).find(([id, name])=>target_name == name)||[])[0];
+
 
 // const mention = (user)=>{
 // 	const userId = Object.entries(Slack.users).reduce((acc, [id, name])=>{
@@ -89,7 +91,7 @@ Slack.onReact((evt)=>{
 const sendReminder = async (peep=pluck(Peeps))=>{
 	lastPeep = peep.name;
 	Slack.log(`Sent H&C reminder to ${lastPeep}`);
-	delegateEvt = await Slack.send(peep.name, `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
+	delegateEvt = await Slack.send(getId(peep.name), `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
 	Slack.react(delegateEvt, DelegateEmoji);
 }
 
@@ -114,7 +116,9 @@ const sendReminder = async (peep=pluck(Peeps))=>{
 Slack.onMessage((msg)=>{
 	if(msg.isDirect && msg.text == 'hc_ping'){
 		Peeps.map(peep=>{
-			Slack.send(peep.name, `This is a test message to ensure that direct message for happiness and cheer are working. Please let Scott know you've received this`);
+			Slack.send(getId(peep.name), `This is a test message to ensure that direct message for happiness and cheer are working.
+
+				If you have already received this message, you don't have to let Scott know. DMs aren't working for a few people in Slack and he's trying to figure out why and who`);
 		})
 	}
 	if(msg.isDirect && msg.text == 'hc_trigger'){
