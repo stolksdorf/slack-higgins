@@ -69,7 +69,13 @@ Slack.connect(config.get('slack_bot_token'))
 	.then(()=>app.listen(process.env.PORT || 8000))
 	.then(()=>{
 		const {users, channels, dms, bots, user_ids, channel_ids, dm_ids} = Slack;
-		Slack.log({users, user_ids, channels, channel_ids, dms, dm_ids, bots});
+		Slack.log({users});
+		Slack.log({channels});
+		Slack.log({dms});
+		Slack.log({bots});
+		Slack.log({user_ids});
+		Slack.log({channel_ids});
+		Slack.log({dm_ids});
 	})
 	.then(()=>Slack.log('Rebooted!'))
 	.then(()=>Slack.onEvent('reconnect', ()=>Slack.log('Reconnected!')))

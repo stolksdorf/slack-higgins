@@ -51,7 +51,7 @@
     "pico-conf": "^1.5.1",
     "pico-gist": "^1.0.1",
     "pico-redis": "^1.0.0",
-    "pico-slack": "^2.4.2",
+    "pico-slack": "^2.4.3",
     "pos": "^0.4.2",
     "rcon": "^1.0.3",
     "request": "^2.88.0",
