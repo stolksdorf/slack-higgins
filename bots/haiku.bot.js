@@ -53,6 +53,8 @@ const add = (sentence, channel)=>{
 
 
 Slack.onMessage((msg)=>{
+	if(msg.isDirect) return;
+
 	const sentences = msg.text.split('\n');
 	sentences.map((sentence)=>{
 		if(!sentence) return;

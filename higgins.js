@@ -67,15 +67,15 @@ Slack.connect(config.get('slack_bot_token'))
 	.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
 	.then(()=>loadActions('./actions')).then((actionRouter)=>app.use(actionRouter))
 	.then(()=>app.listen(process.env.PORT || 8000))
-	.then(()=>{
+	.then(async ()=>{
 		const {users, channels, dms, bots, user_ids, channel_ids, dm_ids} = Slack;
-		Slack.log({users});
-		Slack.log({channels});
-		Slack.log({dms});
-		Slack.log({bots});
-		Slack.log({user_ids});
-		Slack.log({channel_ids});
-		Slack.log({dm_ids});
+		await Slack.log({users});
+		await Slack.log({channels});
+		await Slack.log({dms});
+		await Slack.log({bots});
+		await Slack.log({user_ids});
+		await Slack.log({channel_ids});
+		await Slack.log({dm_ids});
 	})
 	.then(()=>Slack.log('Rebooted!'))
 	.then(()=>Slack.onEvent('reconnect', ()=>Slack.log('Reconnected!')))
