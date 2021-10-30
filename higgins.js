@@ -31,8 +31,6 @@ try {
 
 
 
-
-
 Slack.bot.name = 'higgins';
 Slack.bot.icon = 'tophat';
 Slack.emitter.setMaxListeners(100);
@@ -51,7 +49,7 @@ const loadBots = async ()=>{
 	}
 	return bots.map((bot)=>{
 		if(bot.error) return;
-		console.log('loaded bot ->', bot.name);
+		//console.log('loaded bot ->', bot.name);
 		if(isRouter(bot.result)) app.use(bot.result);
 	})
 };

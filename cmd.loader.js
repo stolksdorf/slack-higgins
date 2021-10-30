@@ -26,7 +26,7 @@ module.exports = (cmdFolder)=>{
 			return _.reduce(cmdpaths, (r, cmdpath)=>{
 				try {
 					r.push(require(cmdpath));
-					console.log('loaded', cmdpath);
+					//console.log('loaded', cmdpath);
 				} catch (e){
 					Slack.error('Cmd Load Error', e);
 				}

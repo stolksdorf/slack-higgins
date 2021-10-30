@@ -61,7 +61,7 @@ const Peeps = [
 ];
 
 
-const getId = (target_name)=>(Object.entries(Slack.dms).find(([name, id])=>target_name == name)||[])[1];
+//const getId = (target_name)=>(Object.entries(Slack.dms).find(([name, id])=>target_name == name)||[])[1];
 
 
 // const mention = (user)=>{
@@ -79,8 +79,6 @@ const getId = (target_name)=>(Object.entries(Slack.dms).find(([name, id])=>targe
 // });
 
 
-Slack.log(JSON.stringify(Slack.dms, null, '  '));
-
 let delegateEvt, lastPeep;
 Slack.onReact((evt)=>{
 	if(evt.reaction == DelegateEmoji && evt.item.ts == delegateEvt.ts){
@@ -93,7 +91,7 @@ Slack.onReact((evt)=>{
 const sendReminder = async (peep=pluck(Peeps))=>{
 	lastPeep = peep.name;
 	Slack.log(`Sent H&C reminder to ${lastPeep}`);
-	delegateEvt = await Slack.send(getId(peep.name), `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
+	delegateEvt = await Slack.send(peep.name, `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
 	Slack.react(delegateEvt, DelegateEmoji);
 }
 
@@ -118,9 +116,12 @@ const sendReminder = async (peep=pluck(Peeps))=>{
 Slack.onMessage((msg)=>{
 	if(msg.isDirect && msg.text == 'hc_ping'){
 		Peeps.map(peep=>{
-			Slack.send(getId(peep.name), `This is a test message to ensure that direct message for happiness and cheer are working.
 
-				If you have already received this message, you don't have to let Scott know. DMs aren't working for a few people in Slack and he's trying to figure out why and who`);
+			Slack.send(peep.name, `This is a test message to ensure that direct message for happiness and cheer are working.
+
+				If you have already received this message, you don't have to let Scott know. DMs aren't working for a few people in Slack and he's trying to figure out why and who`)
+			.then(()=>Slack.log(`Success with ${peep.name}`))
+			.catch(()=>Slack.log(`Fail with ${peep.name}`))
 		})
 	}
 	if(msg.isDirect && msg.text == 'hc_trigger'){
