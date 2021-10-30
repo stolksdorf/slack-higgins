@@ -22,6 +22,7 @@ try {
 }
 
 
+
 const DB = require('./db.js');
 try {
 	DB.connect(config.get('database_url'), config.get('db', true));
@@ -66,6 +67,10 @@ Slack.connect(config.get('slack_bot_token'))
 	.then(()=>loadCmds('./cmds')).then((cmdRouter)=>app.use(cmdRouter))
 	.then(()=>loadActions('./actions')).then((actionRouter)=>app.use(actionRouter))
 	.then(()=>app.listen(process.env.PORT || 8000))
+	.then(()=>{
+		const {users, channels, dms, bots, user_ids, channel_ids, dm_ids} = Slack;
+		Slack.log({users, user_ids, channels, channel_ids, dms, dm_ids, bots});
+	})
 	.then(()=>Slack.log('Rebooted!'))
 	.then(()=>Slack.onEvent('reconnect', ()=>Slack.log('Reconnected!')))
 	.then(()=>Slack.onError((err)=>Slack.error(`Slack socket error: ${err}`, err)))

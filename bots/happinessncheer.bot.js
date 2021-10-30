@@ -11,7 +11,6 @@ Ideas:
 - Store user list on a gist, remembers when it has triggered for each person
 -
 
-
 - Add a delegate emoji trigger: randomly assigns theme to another person
 
 - Add emoji trigger to record current theme to a gist

@@ -3,6 +3,7 @@ const Slack = require('pico-slack');
 
 Slack.onMessage((msg)=>{
 	if(msg.isDirect && msg.text == 'info'){
+		Slack.log(msg)
 		const {users, channels, dms, bots} = Slack;
 		Slack.send(msg.user, "```"+JSON.stringify({users, channels, dms, bots}, null, '  ')+"```");
 	}
