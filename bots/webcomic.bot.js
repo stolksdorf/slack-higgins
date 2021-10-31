@@ -35,22 +35,23 @@ const getComics = (arr, count=3)=>{
 Slack.onMessage(async (msg)=>{
 	try{
 		if(msg.text.startsWith('comic:')){
-			const link = msg.text.split('comic:')[1].trim().replace('<', '').replace('>', '');
-
-			await Gist.append(GistId, {
-				webcomics : [{
-					date: (new Date()).toISOString(),
-					link,
-					user : msg.user,
-					shared : false
-				}]
-			})
-			Slack.send(msg.channel, 'Webcomic saved!');
+			const match = msg.text.match(/<(.+)\|.*>/);
+			if(match){
+				const link = match[1];
+				await Gist.append(GistId, {
+					webcomics : [{
+						date: (new Date()).toISOString(),
+						link,
+						user : msg.user,
+						shared : false
+					}]
+				})
+				Slack.send(msg.channel, 'Webcomic saved!');
+			}
 		}
 
 		if(Slack.has(msg, 'test', 'comic')){
 			SendWebcomics();
-
 		}
 	}catch(err){
 		console.log(err)
