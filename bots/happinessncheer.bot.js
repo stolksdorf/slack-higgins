@@ -29,7 +29,7 @@ const pluck = (arr)=>arr[Math.floor(Math.random()*arr.length)];
 const Slack = require('pico-slack');
 const cron = require('node-schedule');
 
-const DelegateEmoji = 'no_good'
+const DelegateEmoji = 'no_good';
 
 const Peeps = [
 	{ name: `jenny`, public: false },
@@ -92,10 +92,10 @@ const sendReminder = async (peep=pluck(Peeps), attempts=0)=>{
 		lastPeep = peep.name;
 		Slack.log(`Sent H&C reminder to ${lastPeep}`);
 		delegateEvt = await Slack.send(peep.name, `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
-		Slack.react(delegateEvt, DelegateEmoji);
+		await Slack.react(delegateEvt, DelegateEmoji);
 	}catch(err){
 		Slack.log(`Error with sending H&C reminder to ${peep.name}`);
-		if(attempts < 4) await sendReminder(pluck(Peeps), attempts+1);
+		if(attempts < 4) return await sendReminder(pluck(Peeps), attempts+1);
 	}
 }
 
