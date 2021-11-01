@@ -87,11 +87,16 @@ Slack.onReact((evt)=>{
 	}
 })
 
-const sendReminder = async (peep=pluck(Peeps))=>{
-	lastPeep = peep.name;
-	Slack.log(`Sent H&C reminder to ${lastPeep}`);
-	delegateEvt = await Slack.send(peep.name, `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
-	Slack.react(delegateEvt, DelegateEmoji);
+const sendReminder = async (peep=pluck(Peeps), attempts=0)=>{
+	try{
+		lastPeep = peep.name;
+		Slack.log(`Sent H&C reminder to ${lastPeep}`);
+		delegateEvt = await Slack.send(peep.name, `Reminder that you will be picking the #happiness-and-cheer theme today. If you don't want to just click the :${DelegateEmoji}: emoji below and I'll pick someone else.`);
+		Slack.react(delegateEvt, DelegateEmoji);
+	}catch(err){
+		Slack.log(`Error with sending H&C reminder to ${peep.name}`);
+		if(attempts < 4) await sendReminder(pluck(Peeps), attempts+1);
+	}
 }
 
 
@@ -124,6 +129,6 @@ Slack.onMessage((msg)=>{
 		})
 	}
 	if(msg.isDirect && msg.text == 'hc_trigger'){
-		sendReminder({ name: 'scott' })
+		sendReminder();
 	}
 });
