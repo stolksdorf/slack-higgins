@@ -8,8 +8,8 @@ let lastMessage = {};
 let lastSender  = {};
 
 Slack.onMessage((msg)=>{
-	if(Slack.has(msg.text, ['#bde', '#bigdecadeenergy'])){
-		Slack.sendAs('bdebot', 'eggplant', msg.channel, `:eggplant: <https://gist.github.com/stolksdorf/${crimeGistID}|#BigDecadeEnergy!> :eggplant:`)
+	if(Slack.has(msg.text, ['#bigcoupenergy','coup','#twentytwentycoup'])){
+		Slack.sendAs('coupbot', 'eggplant', msg.channel, `:man-with-bunny-ears-partying: <https://gist.github.com/stolksdorf/${crimeGistID}|#TwentyTwentyCoup!> :man-with-bunny-ears-partying:`)
 		Gist.append(crimeGistID, {
 			'BigDecadeEnergy' : `\n\n\`[in #${msg.channel} on ${(new Date()).toLocaleDateString()} at ${(new Date()).toLocaleTimeString()}]\`<br />`
 				+ `**${lastSender[msg.channel]}**: ${lastMessage[msg.channel]}<br />`
