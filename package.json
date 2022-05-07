@@ -34,7 +34,6 @@
   "dependencies": {
     "aws-sdk": "^2.437.0",
     "body-parser": "^1.18.3",
-    "cheerio": "^1.0.0-rc.2",
     "classnames": "^2.2.6",
     "date-fns": "^1.30.1",
     "express": "^4.16.4",
@@ -51,7 +50,7 @@
     "pico-conf": "^1.5.1",
     "pico-gist": "^1.0.1",
     "pico-redis": "^1.0.0",
-    "pico-slack": "^2.4.4",
+    "pico-slack": "^2.4.5",
     "pos": "^0.4.2",
     "rcon": "^1.0.3",
     "request": "^2.88.0",
