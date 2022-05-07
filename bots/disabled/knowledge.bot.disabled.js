@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 const pos = require('pos');
 const speak = require('speakeasy-nlp');

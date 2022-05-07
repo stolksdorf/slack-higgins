@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Slack = require('pico-slack');
+const Slack = require('../../utils/pico-slack');
 const Storage = require('pico-redis')('trivia');
 //const TriviaApi = require('./jservice.api.js');
 const TriviaApi = require('./triviafyi.api.js');

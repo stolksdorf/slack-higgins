@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const _ = require('lodash');
 
 

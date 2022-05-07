@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const request = require('superagent');
 const cron = require('node-schedule');
 
@@ -70,7 +70,6 @@ const run = async ()=>{
 };
 
 Slack.onChannelMessage('events', (msg)=>{
-	console.log(msg)
 	if(Slack.has(msg.text, 'apollo', ['events', 'shows', 'showtimes', 'playing'])){
 		run();
 	}

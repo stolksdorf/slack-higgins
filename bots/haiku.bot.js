@@ -1,5 +1,5 @@
 const config = require('pico-conf');
-const Slack = require('pico-slack').alias('haikubot', ':cherry_blossom:')
+const Slack = require('../utils/pico-slack').alias('haikubot', ':cherry_blossom:')
 const syllable = require('syllable');
 const Gist = require('pico-gist')(config.get('github_token'));
 const GistId = 'a6ceae1ba9192e372a6682d214665b56';

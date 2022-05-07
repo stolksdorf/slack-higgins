@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../../utils/pico-slack');
 
 const prevThemes = require('./prev_themes.js');
 

@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const config = require('pico-conf');
 const request = require('superagent');
 const cron = require('node-schedule');

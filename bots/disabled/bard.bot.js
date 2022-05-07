@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const fetch = require('node-fetch');
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 const getWords = async (constraint, word, topic) => {
   const response = await fetch('https://api.datamuse.com/words?' + constraint + word +'&qe=sp&md=p&max=1')

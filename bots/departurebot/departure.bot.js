@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
-const Slack = require('pico-slack');
+const Slack = require('../../utils/pico-slack');
 
 const quotes = fs.readFileSync('./bots/departurebot/departure.quotes.txt', 'utf8').split('\n');
 

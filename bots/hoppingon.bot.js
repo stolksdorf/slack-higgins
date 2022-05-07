@@ -1,4 +1,4 @@
-const Slack = require('pico-slack').alias('chrisbot', 'chris');
+const Slack = require('../utils/pico-slack').alias('chrisbot', 'chris');
 
 
 const hopping = [

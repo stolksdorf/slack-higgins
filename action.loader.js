@@ -2,7 +2,7 @@ const _ = require('lodash');
 const glob = require('glob');
 const path = require('path');
 const request = require('request');
-const Slack = require('pico-slack');
+const Slack = require('./utils/pico-slack');
 
 const router = require('express').Router();
 router.use(require('body-parser').urlencoded({ extended: false }))

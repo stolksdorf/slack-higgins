@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 Slack.onMessage((msg)=>{
 	if(msg.isDirect && Slack.has(msg.text, ['santachat', 'santabot'])){

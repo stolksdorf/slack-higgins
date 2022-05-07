@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const between = (str, term1, term2)=>{
 	const idx1 = str.indexOf(term1)+ term1.length;
 	const idx2 = str.indexOf(term2, idx1);

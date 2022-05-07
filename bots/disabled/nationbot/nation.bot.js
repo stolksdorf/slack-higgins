@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const NSAPI = require('./nationstates.api.js');
 const cron = require('node-schedule');
 const _ = require('lodash');

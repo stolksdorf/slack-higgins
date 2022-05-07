@@ -14,7 +14,7 @@ If the person who is it does not attempt to tag someone in X hrs, it resets to n
 */
 
 
-const Slack = require('pico-slack').alias('tagbot', '');
+const Slack = require('../../utils/pico-slack').alias('tagbot', '');
 
 const request = require('superagent');
 const config = require('pico-conf');

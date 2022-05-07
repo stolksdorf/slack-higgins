@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const utils = require('../utils');
 
 const Target = new Date('2020-05-04T09:00:00-04:00');

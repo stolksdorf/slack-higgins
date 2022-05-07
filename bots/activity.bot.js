@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const config = require('pico-conf');
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 
 const Gist = require('pico-gist')(config.get('github_token'));

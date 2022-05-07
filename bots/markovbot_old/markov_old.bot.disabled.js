@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const MarkovService = require('./markov_old.service.js');
 
 const formatNumber = (num)=>num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');

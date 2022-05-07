@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 const MIN = 1000 * 60;
 

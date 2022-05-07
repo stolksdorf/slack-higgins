@@ -1,4 +1,4 @@
-const Slack = require('pico-slack').alias('pollbot', 'bar_chart')
+const Slack = require('../../utils/pico-slack').alias('pollbot', 'bar_chart')
 const { processPollMessage, getHelpMessage, getMessage, emojis } = require('./poll.utils.js');
 
 

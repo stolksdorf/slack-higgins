@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const Config = require('pico-conf');
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const RCon = require('rcon');
 
 const ASKING_FOR_NOW = /(?:any\s*one|any\s*body).*(?:on|playing).*/i;

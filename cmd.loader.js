@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const glob = require('glob');
 const path = require('path');
-const Slack = require('pico-slack');
+const Slack = require('./utils/pico-slack');
 
 const router = require('express').Router();
 

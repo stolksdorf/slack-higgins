@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../../utils/pico-slack');
 
 const request = require('superagent');
 const config = require('pico-conf');

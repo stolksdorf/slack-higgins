@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const DB = require('../db.js');
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 const MessageModel = DB.sequelize.define('Message', {
 	author : {

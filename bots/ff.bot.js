@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 const fishEmojis = [
 	'fish',

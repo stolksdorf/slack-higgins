@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 
 Slack.onReact(({ reaction, item }) => {
 	const isProbablyADave = reaction.indexOf('dav') >= 0;

@@ -1,4 +1,4 @@
-const Slack = require('./utils/pico-slack');
+const Slack = require('./pico-slack.js');
 const glob = require('glob');
 const path = require('path');
 

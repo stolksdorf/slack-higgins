@@ -50,7 +50,6 @@
     "pico-conf": "^1.5.1",
     "pico-gist": "^1.0.1",
     "pico-redis": "^1.0.0",
-    "pico-slack": "^2.4.5",
     "pos": "^0.4.2",
     "rcon": "^1.0.3",
     "request": "^2.88.0",
@@ -59,6 +58,7 @@
     "string-similarity": "^1.2.2",
     "superagent": "^3.8.3",
     "syllable": "^3.2.0",
+    "ws": "^8.6.0",
     "xkcd": "^1.1.1",
     "xml2js": "^0.4.19"
   },

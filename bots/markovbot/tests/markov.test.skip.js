@@ -1,4 +1,4 @@
-const Slack = require('pico-slack');
+const Slack = require('../utils/pico-slack');
 const Markov = require('./markov.engine2.js');
 const config = require('../../config')
 const fs = require('fs').promises;
