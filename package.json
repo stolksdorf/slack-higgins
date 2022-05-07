@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/stolksdorf/slack-higgins#readme",
   "dependencies": {
-    "aws-sdk": "^2.437.0",
+    "aws-sdk": "^2.814.0",
     "body-parser": "^1.18.3",
     "classnames": "^2.2.6",
     "date-fns": "^1.30.1",
