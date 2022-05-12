@@ -3,6 +3,8 @@ const request = require('superagent');
 const cron = require('node-schedule');
 
 
+const CHANNEL = 'movies-and-tv';
+
 const findBetween = (str, open, close)=>{
 	let start = str.indexOf(open);
 	if(start == -1) return '';
@@ -66,11 +68,13 @@ const run = async ()=>{
 	events = filterEventsByWeeksOut(events, 1);
 	events = groupEventsByMovie(events);
 
-	Slack.send('events', makeSlackMessage(events));
+	let msg = await Slack.send(CHANNEL, 'Apollo Showtimes for the next 7 days');
+	await Slack.thread(msg, makeSlackMessage(events));
 };
 
-Slack.onChannelMessage('events', (msg)=>{
-	if(Slack.has(msg.text, 'apollo', ['events', 'shows', 'showtimes', 'playing'])){
+Slack.onChannelMessage(CHANNEL, (msg)=>{
+
+	if(Slack.has(msg.text, 'apollo', ['events', 'shows', 'showtimes', 'playing']) && !msg.inThread){
 		run();
 	}
 });

@@ -33,7 +33,7 @@ const processEvent = (event)=>{
 	evt.channel_id = event.channel;
 	evt.user_id = event.user;
 	if(event.bot_id) evt.user_id = Slack.bots[event.bot_id];
-
+	evt.inThread = !!event.thread_ts;
 	if(event.item && event.item.channel) evt.channel_id = event.item.channel;
 	if(evt.channel_id) evt.channel = Slack.channels[evt.channel_id];
 	if(evt.user_id) evt.user = Slack.users[evt.user_id];
