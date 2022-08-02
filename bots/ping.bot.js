@@ -11,6 +11,9 @@ const urls = [
 
 
 let lastCheck = {};
+urls.map(url=>lastCheck[url] = true);
+
+
 const check = async (url)=>{
 	let res;
 	try{
