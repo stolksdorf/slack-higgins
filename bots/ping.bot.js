@@ -1,4 +1,4 @@
-//const Slack = require('../utils/pico-slack');
+const Slack = require('../utils/pico-slack');
 const request = require('superagent');
 const isScott = (msg)=>msg.user == 'scoot' || msg.user == 'scott';
 
@@ -6,7 +6,8 @@ const urls = [
 	'http://stolksdorf.com/ping',
 	'https://stolksdorf.com/ping',
 	'http://www.stolksdorf.com/ping',
-	'https://www.stolksdorf.com/ping'
+	'https://www.stolksdorf.com/ping',
+	'https://www.stolksdorf.com/does_not_exist'
 ];
 
 
@@ -45,8 +46,11 @@ const check = async ()=>{
 
 const init = ()=>{
 	Slack.onMessage(async (msg)=>{
+		console.log('here1')
 		if(!isScott(msg)) return;
-		if(msg.text !== 'ping') return ;
+		console.log('here2')
+		if(msg.text !== 'ping') return;
+		console.log('here3')
 		Object.entries(await checkURLs()).map(([url, status])=>{
 			Slack.send('scott', `${url} is ${status?'up':'down'}`);
 		})
