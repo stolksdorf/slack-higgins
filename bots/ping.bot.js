@@ -1,5 +1,5 @@
-const Slack = require('../utils/pico-slack');
-const request = require('request');
+//const Slack = require('../utils/pico-slack');
+const request = require('superagent');
 const isScott = (msg)=>msg.user == 'scoot' || msg.user == 'scott';
 
 const urls = [
@@ -14,39 +14,49 @@ let lastCheck = {};
 urls.map(url=>lastCheck[url] = true);
 
 
-const check = async (url)=>{
-	let res;
+const checkURL = async (url)=>{
 	try{
-		await request(url);
-		res = true;
+		await request.get(url).timeout({response: 1000}).send();
+		return true;
 	}catch(err){
-		res = false;
+		return false;
 	}
+};
 
-	if(lastCheck[url] !== res){
-		lastCheck[url] = res;
-		Slack.send('scott', `${url} is ${res?'up':'down'}.`);
-		//Slack.send('scoot', `${url} is ${res?'up':'down'}.`);
-	}
-}
+const checkURLs = async()=>{
+	return Promise.all(urls.map(url=>checkURL(url)))
+		.then((res)=>res.reduce((acc, x, idx)=>{
+			acc[urls[idx]] = x;
+			return acc;
+		}, {}));
+};
 
-Slack.onMessage(async (msg)=>{
-	if(!isScott(msg)) return;
-	if(msg.text !== 'ping') return ;
-	const ping = async (url)=>{
-		try{
-			const res = await request(url);
-			Slack.send(msg.user, `${url}\nSuccess.`)
-		}catch(err){
-			Slack.send(msg.user, `${url}\n${err.toString()}`)
+
+const check = async ()=>{
+	Object.entries(await checkURLs()).map(([url, status])=>{
+		if(lastCheck[url] !== status){
+			Slack.send('scott', `${url} is ${status?'up':'down'}`)
 		}
-	}
+		lastCheck[url] = status;
+	})
+};
 
-	urls.map(ping);
-});
 
 
-const MIN = 60 * 1000;
-setInterval(()=>{
-	urls.map(check);
-}, 20 * MIN);
+const init = ()=>{
+	Slack.onMessage(async (msg)=>{
+		if(!isScott(msg)) return;
+		if(msg.text !== 'ping') return ;
+		Object.entries(await checkURLs()).map(([url, status])=>{
+			Slack.send('scott', `${url} is ${status?'up':'down'}`);
+		})
+	});
+
+	const MIN = 60 * 1000;
+	setInterval(()=>{
+		check()
+	}, 20 * MIN);
+};
+
+init();
+
