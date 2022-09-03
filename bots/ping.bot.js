@@ -6,13 +6,20 @@ const urls = [
 	'http://stolksdorf.com/ping',
 	'https://stolksdorf.com/ping',
 	'http://www.stolksdorf.com/ping',
-	'https://www.stolksdorf.com/ping',
-	'https://www.stolksdorf.com/does_not_exist'
+	'https://www.stolksdorf.com/ping'
 ];
 
 
 let lastCheck = {};
 urls.map(url=>lastCheck[url] = true);
+
+
+const loop = (func)=>{
+	let timeout = func();
+	setTimeout(()=>{
+		loop(func);
+	}, timeout);
+};
 
 
 const checkURL = async (url)=>{
@@ -32,34 +39,31 @@ const checkURLs = async()=>{
 		}, {}));
 };
 
-
+const MIN = 60 * 1000;
 const check = async ()=>{
+	let allGood = true;
 	Object.entries(await checkURLs()).map(([url, status])=>{
 		if(lastCheck[url] !== status){
 			Slack.send('scott', `${url} is ${status?'up':'down'}`)
 		}
 		lastCheck[url] = status;
-	})
+		if(!status) allGood = false;
+	});
+	return allGood ? 20 * MIN : 1 * MIN;
 };
 
 
 
 const init = ()=>{
 	Slack.onMessage(async (msg)=>{
-		console.log('here1')
 		if(!isScott(msg)) return;
-		console.log('here2')
 		if(msg.text !== 'ping') return;
-		console.log('here3')
 		Object.entries(await checkURLs()).map(([url, status])=>{
 			Slack.send('scott', `${url} is ${status?'up':'down'}`);
 		})
 	});
 
-	const MIN = 60 * 1000;
-	setInterval(()=>{
-		check()
-	}, 20 * MIN);
+	loop(check);
 };
 
 init();
