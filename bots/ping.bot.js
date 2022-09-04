@@ -14,9 +14,9 @@ let lastCheck = {};
 urls.map(url=>lastCheck[url] = true);
 
 
-const loop = (func)=>{
-	let timeout = func();
-	setTimeout(()=>{
+const loop = async (func)=>{
+	let timeout = await func();
+	setTimeout(async ()=>{
 		loop(func);
 	}, timeout);
 };
@@ -39,12 +39,14 @@ const checkURLs = async()=>{
 		}, {}));
 };
 
+
+
 const MIN = 60 * 1000;
 const check = async ()=>{
 	let allGood = true;
 	Object.entries(await checkURLs()).map(([url, status])=>{
 		if(lastCheck[url] !== status){
-			Slack.send('scott', `${url} is ${status?'up':'down'}`)
+			Slack.send('scott', `${url} is ${status?'up':'down'}`);
 		}
 		lastCheck[url] = status;
 		if(!status) allGood = false;
@@ -62,7 +64,7 @@ const init = ()=>{
 			Slack.send('scott', `${url} is ${status?'up':'down'}`);
 		})
 	});
-
+	debugger;
 	loop(check);
 };
 
