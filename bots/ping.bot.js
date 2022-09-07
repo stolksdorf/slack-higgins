@@ -51,7 +51,7 @@ const check = async ()=>{
 		lastCheck[url] = status;
 		if(!status) allGood = false;
 	});
-	return allGood ? 20 * MIN : 1 * MIN;
+	return allGood ? 20 * MIN : 0.1 * MIN;
 };
 
 
