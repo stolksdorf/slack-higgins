@@ -42,17 +42,20 @@ const checkURLs = async()=>{
 
 
 const MIN = 60 * 1000;
-const check = async ()=>{
-	let allGood = true;
-	Object.entries(await checkURLs()).map(([url, status])=>{
-		if(lastCheck[url] !== status){
-			Slack.send('scott', `${url} is ${status?'up':'down'}`);
-		}
-		lastCheck[url] = status;
-		if(!status) allGood = false;
-	});
-	return allGood ? 20 * MIN : 0.1 * MIN;
-};
+// const check = async ()=>{
+// 	let allGood = true;
+
+// 	Object.entries(await checkURLs()).map(([url, status])=>{
+// 		if(lastCheck[url] !== status){
+// 			Slack.send('scott', `${url} is ${status?'up':'down'}`);
+// 		}
+// 		lastCheck[url] = status;
+// 		if(!status) allGood = false;
+// 	});
+
+
+// 	return allGood ? 20 * MIN : 0.1 * MIN;
+// };
 
 
 
@@ -64,8 +67,7 @@ const init = ()=>{
 			Slack.send('scott', `${url} is ${status?'up':'down'}`);
 		})
 	});
-	debugger;
-	loop(check);
+	//loop(check);
 };
 
 init();
