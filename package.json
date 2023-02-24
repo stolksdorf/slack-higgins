@@ -54,7 +54,7 @@
     "pos": "^0.4.2",
     "rcon": "^1.0.3",
     "request": "^2.88.0",
-    "sequelize": "^4.41.2",
+    "sequelize": "^6.29.0",
     "speakeasy-nlp": "^0.2.13",
     "string-similarity": "^1.2.2",
     "superagent": "^3.8.3",
