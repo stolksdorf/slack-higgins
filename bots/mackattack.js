@@ -1,4 +1,4 @@
-const _ = require('lodash');
+
 const Slack = require('../utils/pico-slack');
 
 Slack.onMessage((msg)=>{
