@@ -1,4 +1,4 @@
-const Slack = require('../utils/pico-slack');
+/*const Slack = require('../utils/pico-slack');
 
 Slack.onReact(({ reaction, item }) => {
 	const isProbablyADave = reaction.indexOf('dav') >= 0;
@@ -6,3 +6,4 @@ Slack.onReact(({ reaction, item }) => {
 		Slack.react(item, 'star_of_david').catch(()=>null);
 	}
 });
+*/
